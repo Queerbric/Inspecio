@@ -19,14 +19,18 @@ package io.github.queerbric.inspecio.mixin;
 
 import net.minecraft.client.gui.tooltip.BundleTooltipComponent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BundleTooltipComponent.class)
 public abstract class BundleTooltipComponentMixin {
+	@Shadow
+	protected abstract int getStackCount();
+
 	@Inject(method = "getDisplayColumns", at = @At("HEAD"), cancellable = true)
 	private void onGetDisplayColumns(CallbackInfoReturnable<Integer> cir) {
-		cir.setReturnValue(9);
+		cir.setReturnValue(Math.min(this.getStackCount(), 9));
 	}
 }
