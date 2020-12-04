@@ -24,13 +24,12 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.FoodComponent;
 
-public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
-	private final FoodComponent component;
+public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
+	private final int prot;
 
-	public FoodTooltipComponent(FoodComponent component) {
-		this.component = component;
+	public ArmorTooltipComponent(int prot) {
+		this.prot = prot;
 	}
 
 	@Override
@@ -45,20 +44,17 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		return this.component.getHunger() / 2 * 9;
+		return this.prot / 2 * 9;
 	}
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		textureManager.bindTexture(InGameHud.GUI_ICONS_TEXTURE);
-		for (int i = 0; i < (this.component.getHunger() + 1) / 2; i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y, 16, 27, 9, 9, 256, 256);
+		for (int i = 0; i < this.prot / 2; i++) {
+			DrawableHelper.drawTexture(matrices, x + i * 9, y, 34, 9, 9, 9, 256, 256);
 		}
-		for (int i = 0; i < this.component.getHunger() / 2; i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y, 52, 27, 9, 9, 256, 256);
-		}
-		if (this.component.getHunger() % 2 == 1) {
-			DrawableHelper.drawTexture(matrices, x + this.component.getHunger() / 2 * 9, y, 61, 27, 9, 9, 256, 256);
+		if (this.prot % 2 == 1) {
+			DrawableHelper.drawTexture(matrices, x + this.prot / 2 * 9, y, 25, 9, 9, 9, 256, 256);
 		}
 	}
 }

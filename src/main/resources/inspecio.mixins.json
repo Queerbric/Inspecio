@@ -6,7 +6,10 @@
     "BundleTooltipComponentMixin",
     "FilledMapItemMixin",
     "ScreenMixin",
-    "ShulkerBoxItemMixin"
+	"ShulkerBoxItemMixin",
+	"ItemMixin",
+	"PotionItemMixin",
+	"LingeringPotionItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
