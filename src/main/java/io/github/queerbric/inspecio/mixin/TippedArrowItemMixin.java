@@ -13,15 +13,15 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PotionItem;
+import net.minecraft.item.TippedArrowItem;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
-@Mixin(PotionItem.class)
-public abstract class PotionItemMixin extends Item {
+@Mixin(TippedArrowItem.class)
+public abstract class TippedArrowItemMixin extends Item {
 	
-	public PotionItemMixin(Settings settings) {
+	public TippedArrowItemMixin(Settings settings) {
 		super(settings);
 	}
 
@@ -32,6 +32,6 @@ public abstract class PotionItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 1.0F));
+		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 0.125F));
 	}
 }

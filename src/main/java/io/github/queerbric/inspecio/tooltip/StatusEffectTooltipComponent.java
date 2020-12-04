@@ -37,9 +37,11 @@ import net.minecraft.util.math.Matrix4f;
 
 public class StatusEffectTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final List<StatusEffectInstance> list;
+	private final float mult;
 
-	public StatusEffectTooltipComponent(List<StatusEffectInstance> list) {
+	public StatusEffectTooltipComponent(List<StatusEffectInstance> list, float mult) {
 		this.list = list;
+		this.mult = mult;
 	}
 
 	@Override
@@ -93,7 +95,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 			}
 			textRenderer.draw(string, x + 24, y + i * 20 + off, 16777215, true, matrix4f, immediate, false, 0, 15728880);
 			if (statusEffectInstance.getDuration() > 1) {
-				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, 1.0F);
+				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, mult);
 				textRenderer.draw(string2, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 			}
 		}

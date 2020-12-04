@@ -9,7 +9,8 @@
 	"ShulkerBoxItemMixin",
 	"ItemMixin",
 	"PotionItemMixin",
-	"LingeringPotionItemMixin"
+	"LingeringPotionItemMixin",
+	"TippedArrowItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
