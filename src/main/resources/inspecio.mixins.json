@@ -3,13 +3,13 @@
   "package": "io.github.queerbric.inspecio.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "BlockItemMixin",
     "BundleTooltipComponentMixin",
     "FilledMapItemMixin",
-    "ScreenMixin",
-	"ShulkerBoxItemMixin",
-	"ItemMixin",
-	"PotionItemMixin",
-	"LingeringPotionItemMixin"
+    "ItemMixin",
+    "LingeringPotionItemMixin",
+    "PotionItemMixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

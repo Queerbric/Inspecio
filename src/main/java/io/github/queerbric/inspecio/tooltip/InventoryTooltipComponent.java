@@ -61,13 +61,13 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int k, TextureManager textureManager) {
+	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		int x = 1;
 		int y = 0;
 		int lines = this.getColumns();
 
 		for (ItemStack stack : this.inventory) {
-			this.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, k, textureManager);
+			this.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, z, textureManager);
 			itemRenderer.renderInGuiWithOverrides(stack, xOffset + x, yOffset + y);
 			itemRenderer.renderGuiItemOverlay(textRenderer, stack, xOffset + x, yOffset + y);
 			x += 18;
