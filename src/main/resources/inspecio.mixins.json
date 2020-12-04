@@ -3,14 +3,17 @@
   "package": "io.github.queerbric.inspecio.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "BlockItemMixin",
     "BundleTooltipComponentMixin",
+    "EntityAccessor",
     "FilledMapItemMixin",
     "ScreenMixin",
 	"ShulkerBoxItemMixin",
 	"ItemMixin",
 	"PotionItemMixin",
 	"LingeringPotionItemMixin",
-	"TippedArrowItemMixin"
+	"TippedArrowItemMixin",
+    "FishBucketItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

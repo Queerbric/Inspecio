@@ -17,15 +17,20 @@
 
 package io.github.queerbric.inspecio.mixin;
 
+import io.github.queerbric.inspecio.tooltip.BeesTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.InventoryTooltipComponent;
+import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -39,17 +44,22 @@ import java.util.List;
 import java.util.Optional;
 
 @Mixin(BlockItem.class)
-public abstract class ShulkerBoxItemMixin extends Item {
+public abstract class BlockItemMixin extends Item {
 	@Shadow
 	public abstract Block getBlock();
 
-	public ShulkerBoxItemMixin(Settings settings) {
+	public BlockItemMixin(Settings settings) {
 		super(settings);
 	}
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		if (this.getBlock() instanceof ShulkerBoxBlock) {
+		if (this.getBlock() instanceof BeehiveBlock) {
+			CompoundTag blockEntityTag = stack.getOrCreateSubTag("BlockEntityTag");
+			ListTag bees = blockEntityTag.getList("Bees", 10);
+			if (!bees.isEmpty())
+				return Optional.of(new BeesTooltipComponent(bees));
+		} else if (this.getBlock() instanceof ShulkerBoxBlock) {
 			DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 			Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
 			return inventory.stream().allMatch(ItemStack::isEmpty) ? Optional.empty()
@@ -60,7 +70,7 @@ public abstract class ShulkerBoxItemMixin extends Item {
 
 	@Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
 	private void onAppendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
-		if (this.getBlock() instanceof ShulkerBoxBlock) {
+		if (this.getBlock() instanceof ShulkerBoxBlock && !Screen.hasControlDown()) {
 			ci.cancel();
 		}
 	}
