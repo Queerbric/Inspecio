@@ -17,21 +17,17 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import net.minecraft.client.MinecraftClient;
+import io.github.queerbric.inspecio.mixin.EntityAccessor;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * Represents a tooltip component which displays bees from a beehive.
@@ -40,20 +36,17 @@ import java.util.function.Function;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class BeesTooltipComponent extends EntityTooltipComponent {
-	private final List<Bee> bees = new ArrayList<>();
+public class FishTooltipComponent extends EntityTooltipComponent {
+	private final Entity entity;
 
-	public BeesTooltipComponent(ListTag bees) {
-		bees.stream().map(tag -> (CompoundTag) tag).forEach(tag -> {
-			CompoundTag bee = tag.getCompound("EntityData");
-			bee.remove("UUID");
-			bee.remove("Passengers");
-			bee.remove("Leash");
-			Entity entity = EntityType.loadEntityWithPassengers(bee, this.client.world, Function.identity());
-			if (entity != null) {
-				this.bees.add(new Bee(tag.getInt("TicksInHive"), entity));
+	public FishTooltipComponent(EntityType<?> type, CompoundTag itemTag) {
+		this.entity = type.create(this.client.world);
+		if (this.entity != null) {
+			EntityType.loadFromEntityTag(this.client.world, null, this.entity, itemTag);
+			if (itemTag.contains("BucketVariantTag", 3) && this.entity instanceof TropicalFishEntity) {
+				((TropicalFishEntity) this.entity).setVariant(itemTag.getInt("BucketVariantTag"));
 			}
-		});
+		}
 	}
 
 	@Override
@@ -62,45 +55,23 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 	}
 
 	@Override
-	public int getHeight() {
-		return this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 28 : 20);
-	}
-
-	@Override
-	public int getWidth(TextRenderer textRenderer) {
-		return this.bees.size() * 24;
-	}
-
-	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
-		MinecraftClient client = MinecraftClient.getInstance();
-		matrices.push();
-		matrices.translate(0, 0, z);
-		int xOffset = x;
-		for (Bee bee : this.bees) {
-			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee, bee.ticksInHive, true, true);
-			xOffset += 26;
+		if (this.shouldRender()) {
+			matrices.push();
+			matrices.translate(0, 0, z);
+			((EntityAccessor) this.entity).setTouchingWater(true);
+			this.renderEntity(matrices, x + 14, y, this.entity, 0, true, false, 90.f);
+			matrices.pop();
 		}
-		matrices.pop();
 	}
 
 	@Override
 	protected boolean shouldRender() {
-		return !this.bees.isEmpty();
+		return this.entity != null;
 	}
 
 	@Override
 	protected boolean shouldRenderCustomNames() {
-		return this.bees.stream().map(bee -> bee.bee.hasCustomName()).reduce(false, (first, second) -> first || second) && Screen.hasControlDown();
-	}
-
-	static class Bee {
-		final int ticksInHive;
-		final Entity bee;
-
-		Bee(int ticksInHive, Entity bee) {
-			this.ticksInHive = ticksInHive;
-			this.bee = bee;
-		}
+		return false;
 	}
 }

@@ -5,7 +5,9 @@
   "client": [
     "BlockItemMixin",
     "BundleTooltipComponentMixin",
+    "EntityAccessor",
     "FilledMapItemMixin",
+    "FishBucketItemMixin",
     "ItemMixin",
     "LingeringPotionItemMixin",
     "PotionItemMixin",
