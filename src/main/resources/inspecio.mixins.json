@@ -1,13 +1,13 @@
 {
   "required": true,
-  "package": "dev.emi.inspecio.mixin",
+  "package": "io.github.queerbric.inspecio.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
   "client": [
-	  "FilledMapItemMixin",
-	  "ScreenMixin"
+    "BundleTooltipComponentMixin",
+    "FilledMapItemMixin",
+    "ScreenMixin",
+    "ShulkerBoxItemMixin"
   ],
-  "server": [],
   "injectors": {
     "defaultRequire": 1
   }

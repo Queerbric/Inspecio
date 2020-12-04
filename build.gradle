@@ -1,14 +1,13 @@
 plugins {
 	id 'fabric-loom' version '0.5-SNAPSHOT'
+	id 'java-library'
 	id 'maven-publish'
+	id 'net.minecrell.licenser' version '0.4.1'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
 group = project.maven_group
+version = project.mod_version
+archivesBaseName = project.archives_base_name
 
 minecraft {
 }
@@ -18,6 +17,10 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
 }
 
 processResources {
@@ -33,23 +36,20 @@ processResources {
 	}
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
-}
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
+	withSourcesJar()
 }
 
 jar {
 	from "LICENSE"
+}
+
+license {
+	header file('HEADER')
+	include '**/*.java'
 }
 
 // configure the maven publication
