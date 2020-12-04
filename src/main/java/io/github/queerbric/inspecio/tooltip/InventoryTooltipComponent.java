@@ -52,7 +52,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 
 	@Override
 	public int getHeight() {
-		return 18 * this.inventory.size() / this.getColumns() + 2;
+		return 18 * this.inventory.size() / this.getColumns() + 3;
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	@Override
 	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		int x = 1;
-		int y = 0;
+		int y = 1;
 		int lines = this.getColumns();
 
 		for (ItemStack stack : this.inventory) {
