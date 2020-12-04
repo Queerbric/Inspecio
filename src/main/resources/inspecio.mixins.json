@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "dev.emi.inspecio.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [
+	  "FilledMapItemMixin",
+	  "ScreenMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

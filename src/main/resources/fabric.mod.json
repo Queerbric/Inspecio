@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "inspecio",
+  "version": "${version}",
+  "name": "Inspecio",
+  "description": "More Tooltips",
+  "authors": [
+	"Emi",
+	"LambdAurora"
+  ],
+  "contributors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/inspecio/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [],
+    "client": [],
+    "server": []
+  },
+  "mixins": [
+    "inspecio.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.10.6"
+  }
+}
