@@ -19,19 +19,21 @@ package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.tooltip.BeesTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.InventoryTooltipComponent;
-import net.minecraft.block.BeehiveBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.*;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -59,11 +61,14 @@ public abstract class BlockItemMixin extends Item {
 			ListTag bees = blockEntityTag.getList("Bees", 10);
 			if (!bees.isEmpty())
 				return Optional.of(new BeesTooltipComponent(bees));
-		} else if (this.getBlock() instanceof ShulkerBoxBlock) {
+		} else if (this.getBlock() instanceof ChestBlock || this.getBlock() instanceof BarrelBlock || this.getBlock() instanceof ShulkerBoxBlock) {
+			DyeColor color = null;
+			if (this.getBlock() instanceof ShulkerBoxBlock)
+				color = ((ShulkerBoxBlock) this.getBlock()).getColor();
 			DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 			Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
 			return inventory.stream().allMatch(ItemStack::isEmpty) ? Optional.empty()
-					: Optional.of(new InventoryTooltipComponent(inventory, ((ShulkerBoxBlock) this.getBlock()).getColor()));
+					: Optional.of(new InventoryTooltipComponent(inventory, color));
 		}
 		return super.getTooltipData(stack);
 	}

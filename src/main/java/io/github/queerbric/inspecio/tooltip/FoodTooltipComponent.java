@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -40,12 +41,12 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 	@Override
 	public int getHeight() {
-		return 11;
+		return 22;
 	}
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		return this.component.getHunger() / 2 * 9;
+		return Math.max(this.component.getHunger() / 2 * 9, this.getSaturation() / 2 * 9);
 	}
 
 	@Override
@@ -60,5 +61,21 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		if (this.component.getHunger() % 2 == 1) {
 			DrawableHelper.drawTexture(matrices, x + this.component.getHunger() / 2 * 9, y, 61, 27, 9, 9, 256, 256);
 		}
+
+		RenderSystem.color4f(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
+		for (int i = 0; i <Math.max(1, (this.getSaturation() + 1) / 2); i++) {
+			DrawableHelper.drawTexture(matrices, x + i * 9, y + 11, 25, 27, 9, 9, 256, 256);
+		}
+		RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
+		for (int i = 0; i < this.getSaturation() / 2; i++) {
+			DrawableHelper.drawTexture(matrices, x + i * 9, y + 11, 52, 27, 9, 9, 256, 256);
+		}
+		if (this.getSaturation() % 2 == 1) {
+			DrawableHelper.drawTexture(matrices, x + this.getSaturation() / 2 * 9, y + 11, 61, 27, 9, 9, 256, 256);
+		}
+	}
+
+	private int getSaturation() {
+		return (int) (this.component.getHunger() * this.component.getSaturationModifier() * 2.f);
 	}
 }

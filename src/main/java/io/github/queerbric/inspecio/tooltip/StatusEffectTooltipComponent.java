@@ -17,8 +17,6 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import java.util.List;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -35,13 +33,15 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.util.math.Matrix4f;
 
+import java.util.List;
+
 public class StatusEffectTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final List<StatusEffectInstance> list;
-	private final float mult;
+	private final float multiplier;
 
-	public StatusEffectTooltipComponent(List<StatusEffectInstance> list, float mult) {
+	public StatusEffectTooltipComponent(List<StatusEffectInstance> list, float multiplier) {
 		this.list = list;
-		this.mult = mult;
+		this.multiplier = multiplier;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 			StatusEffectInstance statusEffectInstance = list.get(i);
 			String string = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
 			if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
-			   string = string + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
+				string = string + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
 			}
 			max = Math.max(max, 26 + textRenderer.getWidth(string));
 		}
@@ -93,9 +93,11 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 			if (statusEffectInstance.getDuration() <= 1) {
 				off += 5;
 			}
-			textRenderer.draw(string, x + 24, y + i * 20 + off, 16777215, true, matrix4f, immediate, false, 0, 15728880);
+			Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
+			textRenderer.draw(string, x + 24, y + i * 20 + off, color != null ? color : 16777215,
+					true, matrix4f, immediate, false, 0, 15728880);
 			if (statusEffectInstance.getDuration() > 1) {
-				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, mult);
+				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
 				textRenderer.draw(string2, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 			}
 		}
