@@ -41,12 +41,12 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 	@Override
 	public int getHeight() {
-		return 22;
+		return 11;
 	}
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		return Math.max(this.component.getHunger() / 2 * 9, this.getSaturation() / 2 * 9);
+		return Math.max(this.component.getHunger() / 2 * 9, (int) (this.component.getHunger() * this.component.getSaturationModifier() * 9));
 	}
 
 	@Override
@@ -55,6 +55,16 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		for (int i = 0; i < (this.component.getHunger() + 1) / 2; i++) {
 			DrawableHelper.drawTexture(matrices, x + i * 9, y, 16, 27, 9, 9, 256, 256);
 		}
+		RenderSystem.color4f(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
+		float saturation = this.component.getHunger() * this.component.getSaturationModifier();
+		for (int i = 0; i < saturation; i++) {
+			int width = 9;
+			if (saturation - i < 1f) {
+				width = Math.round(width * (saturation - i));
+			}
+			DrawableHelper.drawTexture(matrices, x + i * 9, y, 25, 27, width, 9, 256, 256);
+		}
+		RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
 		for (int i = 0; i < this.component.getHunger() / 2; i++) {
 			DrawableHelper.drawTexture(matrices, x + i * 9, y, 52, 27, 9, 9, 256, 256);
 		}
@@ -62,6 +72,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 			DrawableHelper.drawTexture(matrices, x + this.component.getHunger() / 2 * 9, y, 61, 27, 9, 9, 256, 256);
 		}
 
+		/*
 		RenderSystem.color4f(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
 		for (int i = 0; i <Math.max(1, (this.getSaturation() + 1) / 2); i++) {
 			DrawableHelper.drawTexture(matrices, x + i * 9, y + 11, 25, 27, 9, 9, 256, 256);
@@ -72,7 +83,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		}
 		if (this.getSaturation() % 2 == 1) {
 			DrawableHelper.drawTexture(matrices, x + this.getSaturation() / 2 * 9, y + 11, 61, 27, 9, 9, 256, 256);
-		}
+		}*/
 	}
 
 	private int getSaturation() {
