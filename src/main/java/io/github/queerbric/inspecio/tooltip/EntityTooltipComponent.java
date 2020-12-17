@@ -30,6 +30,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
+/**
+ * Represents a tooltip component for entities.
+ *
+ * @author LambdAurora
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public abstract class EntityTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	protected final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -67,14 +74,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		Quaternion quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(-10.f);
 		quaternion.hamiltonProduct(quaternion2);
 		matrices.multiply(quaternion);
-		entity.yaw = defaultYaw * 40.f;
-		entity.pitch = 0.f;
-		if (entity instanceof LivingEntity) {
-			if (spin)
-				((LivingEntity) entity).bodyYaw = (float) (((System.currentTimeMillis() / 10) + ageOffset) % 360);
-			else
-				((LivingEntity) entity).bodyYaw = defaultYaw;
-		}
+		this.setupAngles(entity, ageOffset, spin, defaultYaw);
 		EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
 		quaternion2.conjugate();
 		entityRenderDispatcher.setRotation(quaternion2);
@@ -87,6 +87,16 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		entityRenderDispatcher.setRenderShadows(true);
 		matrices.pop();
 		DiffuseLighting.enableGuiDepthLighting();
+	}
+
+	protected void setupAngles(Entity entity, int ageOffset, boolean spin, float defaultYaw) {
+		float yaw = spin ? (float) (((System.currentTimeMillis() / 10) + ageOffset) % 360) : defaultYaw;
+		entity.yaw = yaw;
+		entity.setHeadYaw(yaw);
+		entity.pitch = 0.f;
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).bodyYaw = yaw;
+		}
 	}
 
 	protected abstract boolean shouldRender();

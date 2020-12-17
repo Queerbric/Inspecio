@@ -17,7 +17,6 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
@@ -57,11 +56,6 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
-		return this;
-	}
-
-	@Override
 	public int getHeight() {
 		return this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 28 : 20);
 	}
@@ -73,7 +67,6 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
-		MinecraftClient client = MinecraftClient.getInstance();
 		matrices.push();
 		matrices.translate(0, 0, z);
 		int xOffset = x;

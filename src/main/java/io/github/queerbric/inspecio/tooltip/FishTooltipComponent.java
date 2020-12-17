@@ -25,7 +25,6 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.CompoundTag;
 
@@ -50,16 +49,12 @@ public class FishTooltipComponent extends EntityTooltipComponent {
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
-		return this;
-	}
-
-	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		if (this.shouldRender()) {
 			matrices.push();
 			matrices.translate(0, 0, z);
 			((EntityAccessor) this.entity).setTouchingWater(true);
+			this.entity.setVelocity(1.f, 1.f, 1.f);
 			this.renderEntity(matrices, x + 14, y, this.entity, 0, true, false, 90.f);
 			matrices.pop();
 		}
