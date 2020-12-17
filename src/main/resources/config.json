@@ -1,0 +1,45 @@
+{
+  "armor": true,
+  "banner_pattern": true,
+  "containers": [
+    {
+      "id": "shulker_box",
+      "compact": false,
+      "color": true
+    },
+    {
+      "id": "chest",
+      "compact": false,
+      "loot_table": true
+    },
+    {
+      "id": "barrel",
+      "compact": false,
+      "loot_table": true
+    }
+  ],
+  "entities": {
+    "bee": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "fish_bucket": {
+      "enabled": true,
+      "spin": true,
+      "pufferfish_puffstate": 0
+    }
+  },
+  "filled_map": true,
+  "food": {
+    "hunger": true,
+    "saturation": true,
+    "separate_saturation": false
+  },
+  "potion_effects": {
+    "potions": true,
+    "tipped_arrows": true,
+    "spectral_arrow": true
+  },
+  "sign": true
+}
