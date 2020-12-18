@@ -26,31 +26,31 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Represents the different tooltip modes for signs.
+ * Represents the different tooltip modes for jukeboxes.
  *
  * @author LambdAurora
  * @version 1.0.0
  * @since 1.0.0
  */
-public enum SignTooltipMode {
+public enum JukeboxTooltipMode {
 	DISABLED,
 	FAST,
 	FANCY;
 
-	public static final PrimitiveCodec<SignTooltipMode> CODEC = new PrimitiveCodec<SignTooltipMode>() {
+	public static final PrimitiveCodec<JukeboxTooltipMode> CODEC = new PrimitiveCodec<JukeboxTooltipMode>() {
 		@Override
-		public <T> DataResult<SignTooltipMode> read(final DynamicOps<T> ops, final T input) {
+		public <T> DataResult<JukeboxTooltipMode> read(final DynamicOps<T> ops, final T input) {
 			return ops.getStringValue(input).map(id -> byId(id).orElse(DISABLED));
 		}
 
 		@Override
-		public <T> T write(final DynamicOps<T> ops, final SignTooltipMode value) {
+		public <T> T write(final DynamicOps<T> ops, final JukeboxTooltipMode value) {
 			return ops.createString(value.getName());
 		}
 
 		@Override
 		public String toString() {
-			return "SignTooltipMode";
+			return "JukeboxTooltipMode";
 		}
 	};
 
@@ -59,12 +59,12 @@ public enum SignTooltipMode {
 	}
 
 	/**
-	 * Returns the next sign tooltip mode available.
+	 * Returns the next jukebox tooltip mode available.
 	 *
-	 * @return The next available sign tooltip mode.
+	 * @return The next available jukebox tooltip mode.
 	 */
-	public SignTooltipMode next() {
-		SignTooltipMode[] v = values();
+	public JukeboxTooltipMode next() {
+		JukeboxTooltipMode[] v = values();
 		if (v.length == this.ordinal() + 1)
 			return v[0];
 		return v[this.ordinal() + 1];
@@ -75,12 +75,12 @@ public enum SignTooltipMode {
 	}
 
 	/**
-	 * Gets the sign tooltip mode from its identifier.
+	 * Gets the jukebox tooltip mode from its identifier.
 	 *
-	 * @param id The identifier of the sign tooltip mode.
-	 * @return The sign tooltip mode if found, else empty.
+	 * @param id The identifier of the jukebox tooltip mode.
+	 * @return The jukebox tooltip mode if found, else empty.
 	 */
-	public static @NotNull Optional<SignTooltipMode> byId(@NotNull String id) {
+	public static @NotNull Optional<JukeboxTooltipMode> byId(@NotNull String id) {
 		return Arrays.stream(values()).filter(mode -> mode.getName().equalsIgnoreCase(id)).findFirst();
 	}
 }

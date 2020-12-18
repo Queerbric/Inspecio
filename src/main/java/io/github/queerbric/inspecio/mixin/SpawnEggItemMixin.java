@@ -17,26 +17,30 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import io.github.queerbric.inspecio.tooltip.MapTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.SpawnEntityTooltipComponent;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.item.FilledMapItem;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Optional;
 
-@Mixin(FilledMapItem.class)
-public abstract class FilledMapItemMixin extends Item {
+@Mixin(SpawnEggItem.class)
+public class SpawnEggItemMixin extends Item {
+	@Shadow
+	@Final
+	private EntityType<?> type;
 
-	public FilledMapItemMixin(Settings settings) {
+	public SpawnEggItemMixin(Settings settings) {
 		super(settings);
 	}
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		Optional<TooltipData> data = MapTooltipComponent.of(stack.getTag());
-		if (data.isPresent()) return data;
-		return super.getTooltipData(stack);
+		return Optional.of(new SpawnEntityTooltipComponent(this.type, stack.getOrCreateTag()));
 	}
 }

@@ -52,6 +52,8 @@ public class InspecioConfig {
 			Codec.list(ContainerConfig.CODEC).fieldOf("containers").forGetter(InspecioConfig::getContainers),
 			Codec.BOOL.fieldOf("armor").forGetter(InspecioConfig::hasArmor),
 			Codec.BOOL.fieldOf("banner_pattern").forGetter(InspecioConfig::hasBannerPattern),
+			Codec.BOOL.fieldOf("filled_map").forGetter(InspecioConfig::hasFilledMap),
+			JukeboxTooltipMode.CODEC.fieldOf("jukebox").forGetter(InspecioConfig::getJukeboxTooltipMode),
 			SignTooltipMode.CODEC.fieldOf("sign").forGetter(InspecioConfig::getSignTooltipMode)
 	).apply(instance, InspecioConfig::new));
 	private static final JsonParser JSON_PARSER = new JsonParser();
@@ -59,12 +61,19 @@ public class InspecioConfig {
 	private final List<ContainerConfig> containers;
 	private boolean armor;
 	private boolean bannerPattern;
+	private boolean filledMap;
+	private JukeboxTooltipMode jukeboxTooltipMode;
 	private SignTooltipMode signTooltipMode;
 
-	public InspecioConfig(List<ContainerConfig> containers, boolean armor, boolean bannerPattern, SignTooltipMode signTooltipMode) {
+	public InspecioConfig(List<ContainerConfig> containers,
+						  boolean armor, boolean bannerPattern, boolean filledMap,
+						  JukeboxTooltipMode jukeboxTooltipMode,
+						  SignTooltipMode signTooltipMode) {
 		this.containers = containers;
 		this.armor = armor;
 		this.bannerPattern = bannerPattern;
+		this.filledMap = filledMap;
+		this.jukeboxTooltipMode = jukeboxTooltipMode;
 		this.signTooltipMode = signTooltipMode;
 	}
 
@@ -104,6 +113,22 @@ public class InspecioConfig {
 		else if (item.getBlock() instanceof BarrelBlock)
 			return this.getOptionalContainer("barrel");
 		return Optional.empty();
+	}
+
+	public boolean hasFilledMap() {
+		return this.filledMap;
+	}
+
+	public void setFilledMap(boolean filledMap) {
+		this.filledMap = filledMap;
+	}
+
+	public JukeboxTooltipMode getJukeboxTooltipMode() {
+		return this.jukeboxTooltipMode;
+	}
+
+	public void setJukeboxTooltipMode(JukeboxTooltipMode jukeboxTooltipMode) {
+		this.jukeboxTooltipMode = jukeboxTooltipMode;
 	}
 
 	public SignTooltipMode getSignTooltipMode() {
@@ -207,6 +232,9 @@ public class InspecioConfig {
 	}
 
 	public static InspecioConfig defaultConfig() {
-		return new InspecioConfig(new ArrayList<>(), true, true, SignTooltipMode.FANCY);
+		return new InspecioConfig(new ArrayList<>(),
+				true, true, true,
+				JukeboxTooltipMode.FANCY,
+				SignTooltipMode.FANCY);
 	}
 }
