@@ -35,6 +35,8 @@ public class SignItemMixin extends WallStandingBlockItem {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		return SignTooltipComponent.fromItemStack(stack);
+		Optional<TooltipData> data = SignTooltipComponent.fromItemStack(stack);
+		if (!data.isPresent()) return super.getTooltipData(stack);
+		return data;
 	}
 }

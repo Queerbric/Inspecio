@@ -17,12 +17,11 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.SignTooltipMode;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SignBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.*;
@@ -39,10 +38,13 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.SignType;
 import net.minecraft.util.math.Matrix4f;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 
 public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final MinecraftClient client = MinecraftClient.getInstance();
+	private final SignTooltipMode tooltipMode = Inspecio.get().getConfig().getSignTooltipMode();
 	private final SignType type;
 	private final Text[] text;
 	private final DyeColor color;
@@ -56,6 +58,9 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	}
 
 	public static Optional<TooltipData> fromItemStack(ItemStack stack) {
+		if (!Inspecio.get().getConfig().getSignTooltipMode().isEnabled())
+			return Optional.empty();
+
 		if (stack.getItem() instanceof SignItem) {
 			Block block = ((SignItem) stack.getItem()).getBlock();
 			CompoundTag tag = stack.getSubTag("BlockEntityTag");
@@ -84,16 +89,34 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 	@Override
 	public int getHeight() {
-		return 48;
+		if (this.tooltipMode == SignTooltipMode.FANCY)
+			return 48;
+		return this.text.length * 10;
 	}
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		return 94;
+		if (this.tooltipMode == SignTooltipMode.FANCY)
+			return 94;
+		return Arrays.stream(this.text).map(textRenderer::getWidth).max(Comparator.naturalOrder()).orElse(94);
+	}
+
+	@Override
+	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
+		if (this.tooltipMode != SignTooltipMode.FAST)
+			return;
+
+		for (Text text : this.text) {
+			textRenderer.draw(text, x, y, this.color.getSignColor(), true, matrix4f, immediate, false, 0, 15728880);
+			y += 10;
+		}
 	}
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
+		if (this.tooltipMode != SignTooltipMode.FANCY)
+			return;
+
 		DiffuseLighting.disableGuiDepthLighting();
 		matrices.push();
 		matrices.translate(x + 2, y, z);

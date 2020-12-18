@@ -18,11 +18,13 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.datafixers.util.Pair;
+import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
@@ -40,15 +42,22 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.util.DyeColor;
 
 import java.util.List;
+import java.util.Optional;
 
 public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final MinecraftClient client = MinecraftClient.getInstance();
 	private final BannerPattern pattern;
 	private final ModelPart bannerField;
 
-	public BannerTooltipComponent(BannerPattern pattern) {
+	private BannerTooltipComponent(BannerPattern pattern) {
 		this.pattern = pattern;
 		this.bannerField = this.client.getEntityModelLoader().getModelPart(EntityModelLayers.BANNER).getChild("flag");
+	}
+
+	public static Optional<TooltipData> of(BannerPattern pattern) {
+		if (!Inspecio.get().getConfig().hasBannerPattern())
+			return Optional.empty();
+		return Optional.of(new BannerTooltipComponent(pattern));
 	}
 
 	@Override
