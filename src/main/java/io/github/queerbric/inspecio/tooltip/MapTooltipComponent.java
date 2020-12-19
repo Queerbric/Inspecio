@@ -17,22 +17,36 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.CompoundTag;
+
+import java.util.Optional;
 
 public class MapTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	public int map;
 
 	public MapTooltipComponent(int map) {
 		this.map = map;
+	}
+
+	public static Optional<TooltipData> of(CompoundTag tag) {
+		if (!Inspecio.get().getConfig().hasFilledMap()) return Optional.empty();
+		int map = -1;
+		if (tag != null && tag.contains("map", 99)) {
+			map = tag.getInt("map");
+		}
+		return map == -1 ? Optional.empty() : Optional.of(new MapTooltipComponent(map));
 	}
 
 	@Override
@@ -45,7 +59,7 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 		if (map == -1) return 0;
 		return 128 + 2;
 	}
-	
+
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
 		if (map == -1) return 0;

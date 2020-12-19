@@ -39,6 +39,8 @@ public abstract class BannerPatternItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		return Optional.of(new BannerTooltipComponent(this.getPattern()));
+		Optional<TooltipData> data = BannerTooltipComponent.of(this.getPattern());
+		if (!data.isPresent()) return super.getTooltipData(stack);
+		return data;
 	}
 }

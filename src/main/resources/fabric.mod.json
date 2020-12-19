@@ -14,9 +14,9 @@
   "icon": "assets/inspecio/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [],
-    "client": [],
-    "server": []
+    "client": [
+      "io.github.queerbric.inspecio.Inspecio"
+    ]
   },
   "mixins": [
     "inspecio.mixins.json"

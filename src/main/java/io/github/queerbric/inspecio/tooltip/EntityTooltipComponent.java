@@ -27,6 +27,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
@@ -47,7 +48,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 
 	@Override
 	public int getHeight() {
-		return !this.shouldRender() ? 0 : (this.shouldRenderCustomNames() ? 28 : 20);
+		return !this.shouldRender() ? 0 : (this.shouldRenderCustomNames() ? 32 : 24);
 	}
 
 	@Override
@@ -60,13 +61,18 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 	}
 
 	protected void renderEntity(MatrixStack matrices, int x, int y, Entity entity, int ageOffset, boolean spin, boolean allowCustomName, float defaultYaw) {
-		float size = 22;
+		float size = 24;
 		if (Math.max(entity.getWidth(), entity.getHeight()) > 1.0) {
 			size /= Math.max(entity.getWidth(), entity.getHeight());
 		}
 		DiffuseLighting.disableGuiDepthLighting();
 		matrices.push();
-		matrices.translate(x + 10, y + 16, 1050);
+		int yOffset = 16;
+		if (entity instanceof SquidEntity) {
+			size = 16;
+			yOffset = 2;
+		}
+		matrices.translate(x + 10, y + yOffset, 1050);
 		matrices.scale(1f, 1f, -1);
 		matrices.translate(0, 0, 1000);
 		matrices.scale(size, size, size);

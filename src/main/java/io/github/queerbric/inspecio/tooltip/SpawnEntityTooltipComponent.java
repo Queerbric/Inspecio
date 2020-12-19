@@ -19,7 +19,7 @@ package io.github.queerbric.inspecio.tooltip;
 
 import io.github.queerbric.inspecio.mixin.EntityAccessor;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
@@ -28,20 +28,28 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.CompoundTag;
 
-/**
- * Represents a tooltip component which displays bees from a beehive.
- *
- * @author LambdAurora
- * @version 1.0.0
- * @since 1.0.0
- */
-public class FishTooltipComponent extends EntityTooltipComponent {
+import java.util.UUID;
+
+public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 	private final Entity entity;
 
-	public FishTooltipComponent(EntityType<?> type, CompoundTag itemTag) {
+	public SpawnEntityTooltipComponent(EntityType<?> type, CompoundTag itemTag) {
 		this.entity = type.create(this.client.world);
 		if (this.entity != null) {
-			EntityType.loadFromEntityTag(this.client.world, null, this.entity, itemTag);
+
+			CompoundTag itemEntityTag = itemTag.getCompound("EntityTag").copy();
+			if (!itemEntityTag.contains("VillagerData")) {
+				CompoundTag villagerData = new CompoundTag();
+				villagerData.putString("profession", "minecraft:none");
+				villagerData.putInt("level", 1);
+				villagerData.putString("type", "minecraft:plains");
+				itemEntityTag.put("VillagerData", villagerData);
+			}
+			CompoundTag entityTag = entity.toTag(new CompoundTag());
+			UUID uuid = entity.getUuid();
+			entityTag.copyFrom(itemEntityTag);
+			entity.setUuid(uuid);
+			entity.fromTag(entityTag);
 			if (itemTag.contains("BucketVariantTag", 3) && this.entity instanceof TropicalFishEntity) {
 				((TropicalFishEntity) this.entity).setVariant(itemTag.getInt("BucketVariantTag"));
 			}
@@ -49,13 +57,23 @@ public class FishTooltipComponent extends EntityTooltipComponent {
 	}
 
 	@Override
+	public int getHeight() {
+		return super.getHeight() + 36;
+	}
+
+	@Override
+	public int getWidth(TextRenderer textRenderer) {
+		return 60 + 24;
+	}
+
+	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		if (this.shouldRender()) {
 			matrices.push();
-			matrices.translate(2, 2, z);
+			matrices.translate(30, 0, z);
 			((EntityAccessor) this.entity).setTouchingWater(true);
 			this.entity.setVelocity(1.f, 1.f, 1.f);
-			this.renderEntity(matrices, x + 16, y, this.entity, 0, true, false, 90.f);
+			this.renderEntity(matrices, x + 16, y + 20, this.entity, 0, true, false, 90.f);
 			matrices.pop();
 		}
 	}
@@ -67,6 +85,6 @@ public class FishTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	protected boolean shouldRenderCustomNames() {
-		return false;
+		return this.entity.hasCustomName() && Screen.hasControlDown();
 	}
 }

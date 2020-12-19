@@ -1,12 +1,39 @@
+/*
+ * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package io.github.queerbric.inspecio;
 
+import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.item.BlockItem;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,20 +47,34 @@ import java.util.Optional;
  * @since 1.0.0
  */
 public class InspecioConfig {
+	public static final Path CONFIG_PATH = FileSystems.getDefault().getPath("config", "inspecio.json");
 	public static final Codec<InspecioConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.list(ContainerConfig.CODEC).fieldOf("containers").forGetter(InspecioConfig::getContainers),
 			Codec.BOOL.fieldOf("armor").forGetter(InspecioConfig::hasArmor),
-			Codec.BOOL.fieldOf("banner_pattern").forGetter(InspecioConfig::hasBannerPattern)
+			Codec.BOOL.fieldOf("banner_pattern").forGetter(InspecioConfig::hasBannerPattern),
+			Codec.BOOL.fieldOf("filled_map").forGetter(InspecioConfig::hasFilledMap),
+			JukeboxTooltipMode.CODEC.fieldOf("jukebox").forGetter(InspecioConfig::getJukeboxTooltipMode),
+			SignTooltipMode.CODEC.fieldOf("sign").forGetter(InspecioConfig::getSignTooltipMode)
 	).apply(instance, InspecioConfig::new));
+	private static final JsonParser JSON_PARSER = new JsonParser();
 
 	private final List<ContainerConfig> containers;
 	private boolean armor;
 	private boolean bannerPattern;
+	private boolean filledMap;
+	private JukeboxTooltipMode jukeboxTooltipMode;
+	private SignTooltipMode signTooltipMode;
 
-	public InspecioConfig(List<ContainerConfig> containers, boolean armor, boolean bannerPattern) {
+	public InspecioConfig(List<ContainerConfig> containers,
+						  boolean armor, boolean bannerPattern, boolean filledMap,
+						  JukeboxTooltipMode jukeboxTooltipMode,
+						  SignTooltipMode signTooltipMode) {
 		this.containers = containers;
 		this.armor = armor;
 		this.bannerPattern = bannerPattern;
+		this.filledMap = filledMap;
+		this.jukeboxTooltipMode = jukeboxTooltipMode;
+		this.signTooltipMode = signTooltipMode;
 	}
 
 	public boolean hasArmor() {
@@ -72,6 +113,30 @@ public class InspecioConfig {
 		else if (item.getBlock() instanceof BarrelBlock)
 			return this.getOptionalContainer("barrel");
 		return Optional.empty();
+	}
+
+	public boolean hasFilledMap() {
+		return this.filledMap;
+	}
+
+	public void setFilledMap(boolean filledMap) {
+		this.filledMap = filledMap;
+	}
+
+	public JukeboxTooltipMode getJukeboxTooltipMode() {
+		return this.jukeboxTooltipMode;
+	}
+
+	public void setJukeboxTooltipMode(JukeboxTooltipMode jukeboxTooltipMode) {
+		this.jukeboxTooltipMode = jukeboxTooltipMode;
+	}
+
+	public SignTooltipMode getSignTooltipMode() {
+		return this.signTooltipMode;
+	}
+
+	public void setSignTooltipMode(SignTooltipMode signTooltipMode) {
+		this.signTooltipMode = signTooltipMode;
 	}
 
 	public static class ContainerConfig {
@@ -125,5 +190,51 @@ public class InspecioConfig {
 			boolean shulkerBox = id.equals("shulker_box");
 			return new ContainerConfig(id, false, shulkerBox, !shulkerBox);
 		}
+	}
+
+	public static InspecioConfig load(Inspecio mod) {
+		mod.log("Loading configuration...");
+
+		if (!Files.exists(CONFIG_PATH)) {
+			try {
+				if (!Files.exists(CONFIG_PATH.getParent()))
+					Files.createDirectory(CONFIG_PATH.getParent());
+			} catch (IOException e) {
+				mod.warn("Could not create missing \"config\" directory.");
+				e.printStackTrace();
+				return defaultConfig();
+			}
+
+			Path defaultPath = FabricLoader.getInstance().getModContainer(Inspecio.NAMESPACE)
+					.map(container -> container.getPath("config.json"))
+					.orElse(null);
+
+			if (defaultPath == null)
+				return defaultConfig();
+
+			try {
+				Files.copy(defaultPath, CONFIG_PATH);
+			} catch (IOException e) {
+				mod.warn("Could not copy default configuration.");
+				e.printStackTrace();
+				return defaultConfig();
+			}
+		}
+
+		try {
+			DataResult<InspecioConfig> result = CODEC.decode(JsonOps.INSTANCE, JSON_PARSER.parse(Files.newBufferedReader(CONFIG_PATH))).map(Pair::getFirst);
+			return result.result().orElseGet(InspecioConfig::defaultConfig);
+		} catch (IOException e) {
+			mod.warn("Could not load configuration file.");
+			e.printStackTrace();
+			return defaultConfig();
+		}
+	}
+
+	public static InspecioConfig defaultConfig() {
+		return new InspecioConfig(new ArrayList<>(),
+				true, true, true,
+				JukeboxTooltipMode.FANCY,
+				SignTooltipMode.FANCY);
 	}
 }

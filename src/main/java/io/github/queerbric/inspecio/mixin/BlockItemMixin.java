@@ -19,14 +19,12 @@ package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.tooltip.BeesTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.InventoryTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.JukeboxTooltipComponent;
 import net.minecraft.block.*;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -69,6 +67,9 @@ public abstract class BlockItemMixin extends Item {
 			Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
 			return inventory.stream().allMatch(ItemStack::isEmpty) ? Optional.empty()
 					: Optional.of(new InventoryTooltipComponent(inventory, color));
+		} else if (this.getBlock() instanceof JukeboxBlock) {
+			Optional<TooltipData> data = JukeboxTooltipComponent.of(stack);
+			if (data.isPresent()) return data;
 		}
 		return super.getTooltipData(stack);
 	}

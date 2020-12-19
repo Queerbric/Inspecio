@@ -57,7 +57,7 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	public int getHeight() {
-		return this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 28 : 20);
+		return this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 32 : 24);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		matrices.push();
-		matrices.translate(0, 0, z);
+		matrices.translate(2, 4, z);
 		int xOffset = x;
 		for (Bee bee : this.bees) {
 			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee, bee.ticksInHive, true, true);
