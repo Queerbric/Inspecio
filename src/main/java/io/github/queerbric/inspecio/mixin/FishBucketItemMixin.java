@@ -41,6 +41,8 @@ public abstract class FishBucketItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		return Optional.of(new FishTooltipComponent(this.fishType, stack.getOrCreateTag()));
+		Optional<TooltipData> data = FishTooltipComponent.of(this.fishType, stack.getOrCreateTag());
+		if (data.isPresent()) return data;
+		return super.getTooltipData(stack);
 	}
 }

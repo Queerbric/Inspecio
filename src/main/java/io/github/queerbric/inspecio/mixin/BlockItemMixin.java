@@ -55,10 +55,8 @@ public abstract class BlockItemMixin extends Item {
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
 		if (this.getBlock() instanceof BeehiveBlock) {
-			CompoundTag blockEntityTag = stack.getOrCreateSubTag("BlockEntityTag");
-			ListTag bees = blockEntityTag.getList("Bees", 10);
-			if (!bees.isEmpty())
-				return Optional.of(new BeesTooltipComponent(bees));
+			Optional<TooltipData> data = BeesTooltipComponent.of(stack);
+			if (data.isPresent()) return data;
 		} else if (this.getBlock() instanceof ChestBlock || this.getBlock() instanceof BarrelBlock || this.getBlock() instanceof ShulkerBoxBlock) {
 			DyeColor color = null;
 			if (this.getBlock() instanceof ShulkerBoxBlock)

@@ -85,7 +85,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		DrawableHelper.drawTexture(matrices, x, y, z, 0.f, 0.f, 18, 18, 128, 128);
 	}
 
-	private int getColumns() {
+	protected int getColumns() {
 		return 9;
 	}
 }

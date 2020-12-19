@@ -15,48 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- package io.github.queerbric.inspecio.mixin;
-
-import java.util.List;
-import java.util.Optional;
+package io.github.queerbric.inspecio.mixin;
 
 import com.google.common.collect.Lists;
-
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
+import io.github.queerbric.inspecio.tooltip.*;
+import net.minecraft.client.item.TooltipData;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import io.github.queerbric.inspecio.tooltip.ArmorTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.CompoundTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.ConvertibleTooltipData;
-import io.github.queerbric.inspecio.tooltip.FoodTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
-import net.minecraft.client.item.TooltipData;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.ItemStack;
+import java.util.List;
+import java.util.Optional;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
-	
+
 	@Inject(at = @At("RETURN"), method = "getTooltipData", cancellable = true)
 	private void getTooltipData(CallbackInfoReturnable<Optional<TooltipData>> info) {
 		// Data is the plural and datum is the singular actually, but no one cares
 		List<TooltipData> datas = Lists.newArrayList();
-		info.getReturnValue().ifPresent(data -> datas.add(data));
+		info.getReturnValue().ifPresent(datas::add);
 		if ((datas.size() > 0 && datas.get(0) instanceof ConvertibleTooltipData)) {
 			// We can't wrap arbitrary TooltipDatas until ConvertibleTooltipData is merged
 			return;
 		}
+		InspecioConfig config = Inspecio.get().getConfig();
+
 		ItemStack stack = (ItemStack) (Object) this;
-		if (stack.isFood()) {
+		if (stack.isFood() && config.getFoodConfig().isEnabled()) {
 			FoodComponent comp = stack.getItem().getFoodComponent();
 			datas.add(new FoodTooltipComponent(comp));
-			if (comp.getStatusEffects().size() > 0) {
+			if (comp.getStatusEffects().size() > 0 && config.getEffectsConfig().hasFood()) {
 				datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
 			}
-		} else if (stack.getItem() instanceof ArmorItem) {
+		} else if (stack.getItem() instanceof ArmorItem && config.hasArmor()) {
 			ArmorItem armor = (ArmorItem) stack.getItem();
 			int prot = armor.getMaterial().getProtectionAmount(armor.getSlotType());
 			datas.add(new ArmorTooltipComponent(prot));

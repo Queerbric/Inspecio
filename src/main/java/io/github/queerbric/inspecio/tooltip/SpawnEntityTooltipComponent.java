@@ -17,26 +17,40 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.mixin.EntityAccessor;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.CompoundTag;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 	private final Entity entity;
 
-	public SpawnEntityTooltipComponent(EntityType<?> type, CompoundTag itemTag) {
-		this.entity = type.create(this.client.world);
-		if (this.entity != null) {
+	public SpawnEntityTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {
+		super(config);
+		this.entity = entity;
+	}
 
+	public static Optional<TooltipData> of(EntityType<?> type, CompoundTag itemTag) {
+		InspecioConfig.EntitiesConfig entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+		if (!entitiesConfig.getSpawnEggConfig().isEnabled())
+			return Optional.empty();
+
+		MinecraftClient client = MinecraftClient.getInstance();
+		Entity entity = type.create(client.world);
+		if (entity != null) {
+			adjustEntity(entity, itemTag, entitiesConfig);
 			CompoundTag itemEntityTag = itemTag.getCompound("EntityTag").copy();
 			if (!itemEntityTag.contains("VillagerData")) {
 				CompoundTag villagerData = new CompoundTag();
@@ -50,10 +64,9 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 			entityTag.copyFrom(itemEntityTag);
 			entity.setUuid(uuid);
 			entity.fromTag(entityTag);
-			if (itemTag.contains("BucketVariantTag", 3) && this.entity instanceof TropicalFishEntity) {
-				((TropicalFishEntity) this.entity).setVariant(itemTag.getInt("BucketVariantTag"));
-			}
+			return Optional.of(new SpawnEntityTooltipComponent(entitiesConfig.getSpawnEggConfig(), entity));
 		}
+		return Optional.empty();
 	}
 
 	@Override
@@ -73,7 +86,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 			matrices.translate(30, 0, z);
 			((EntityAccessor) this.entity).setTouchingWater(true);
 			this.entity.setVelocity(1.f, 1.f, 1.f);
-			this.renderEntity(matrices, x + 16, y + 20, this.entity, 0, true, false, 90.f);
+			this.renderEntity(matrices, x + 16, y + 20, this.entity, 0, this.config.shouldSpin(), true, 90.f);
 			matrices.pop();
 		}
 	}
@@ -85,6 +98,6 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	protected boolean shouldRenderCustomNames() {
-		return this.entity.hasCustomName() && Screen.hasControlDown();
+		return this.entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown());
 	}
 }

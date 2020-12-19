@@ -17,19 +17,23 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -42,7 +46,8 @@ import java.util.function.Function;
 public class BeesTooltipComponent extends EntityTooltipComponent {
 	private final List<Bee> bees = new ArrayList<>();
 
-	public BeesTooltipComponent(ListTag bees) {
+	public BeesTooltipComponent(InspecioConfig.EntityConfig config, ListTag bees) {
+		super(config);
 		bees.stream().map(tag -> (CompoundTag) tag).forEach(tag -> {
 			CompoundTag bee = tag.getCompound("EntityData");
 			bee.remove("UUID");
@@ -53,6 +58,17 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 				this.bees.add(new Bee(tag.getInt("TicksInHive"), entity));
 			}
 		});
+	}
+
+	public static Optional<TooltipData> of(ItemStack stack) {
+		InspecioConfig.EntityConfig config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
+		if (!config.isEnabled())
+			return Optional.empty();
+		CompoundTag blockEntityTag = stack.getOrCreateSubTag("BlockEntityTag");
+		ListTag bees = blockEntityTag.getList("Bees", 10);
+		if (!bees.isEmpty())
+			return Optional.of(new BeesTooltipComponent(config, bees));
+		return Optional.empty();
 	}
 
 	@Override
@@ -71,7 +87,8 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 		matrices.translate(2, 4, z);
 		int xOffset = x;
 		for (Bee bee : this.bees) {
-			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee, bee.ticksInHive, true, true);
+			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee, bee.ticksInHive,
+					this.config.shouldSpin(), true);
 			xOffset += 26;
 		}
 		matrices.pop();
@@ -84,7 +101,8 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	protected boolean shouldRenderCustomNames() {
-		return this.bees.stream().map(bee -> bee.bee.hasCustomName()).reduce(false, (first, second) -> first || second) && Screen.hasControlDown();
+		return this.bees.stream().map(bee -> bee.bee.hasCustomName()).reduce(false, (first, second) -> first || second)
+				&& (this.config.shouldAlwaysShowName() || Screen.hasControlDown());
 	}
 
 	static class Bee {
