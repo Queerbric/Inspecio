@@ -35,13 +35,26 @@ import net.minecraft.util.math.Matrix4f;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
+
 public class StatusEffectTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final List<StatusEffectInstance> list;
+	private final List<Float> chances = Lists.newArrayList();
 	private final float multiplier;
 
 	public StatusEffectTooltipComponent(List<StatusEffectInstance> list, float multiplier) {
 		this.list = list;
 		this.multiplier = multiplier;
+	}
+
+	public StatusEffectTooltipComponent(List<Pair<StatusEffectInstance, Float>> list) {
+		this.list = Lists.newArrayList();
+		for (Pair<StatusEffectInstance, Float> pair : list) {
+			this.list.add(pair.getFirst());
+			this.chances.add(pair.getSecond());
+		}
+		multiplier = 1;
 	}
 
 	@Override
@@ -62,6 +75,16 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 			String string = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
 			if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
 				string = string + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
+			}
+			if (statusEffectInstance.getDuration() > 1) {
+				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
+				if (chances.size() > i && chances.get(i) < 1f) {
+					string2 += " - " + (int) (chances.get(i) * 100f) + "%";
+				}
+				max = Math.max(max, 26 + textRenderer.getWidth(string2));
+			} else if (chances.size() > i && chances.get(i) < 1f) {
+				String string2 = (int) (chances.get(i) * 100f) + "%";
+				max = Math.max(max, 26 + textRenderer.getWidth(string2));
 			}
 			max = Math.max(max, 26 + textRenderer.getWidth(string));
 		}
@@ -98,6 +121,12 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 					true, matrix4f, immediate, false, 0, 15728880);
 			if (statusEffectInstance.getDuration() > 1) {
 				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
+				if (chances.size() > i && chances.get(i) < 1f) {
+					string2 += " - " + (int) (chances.get(i) * 100f) + "%";
+				}
+				textRenderer.draw(string2, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+			} else if (chances.size() > i && chances.get(i) < 1f) {
+				String string2 = (int) (chances.get(i) * 100f) + "%";
 				textRenderer.draw(string2, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 			}
 		}

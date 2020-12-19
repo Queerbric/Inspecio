@@ -8,7 +8,7 @@
     "EntityAccessor",
     "FilledMapItemMixin",
     "FishBucketItemMixin",
-    "ItemMixin",
+    "ItemStackMixin",
     "LingeringPotionItemMixin",
     "PotionItemMixin",
     "ScreenMixin",
