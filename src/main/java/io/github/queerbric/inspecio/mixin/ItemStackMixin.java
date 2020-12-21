@@ -21,22 +21,63 @@ import com.google.common.collect.Lists;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.tooltip.*;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 import java.util.Optional;
 
 @Mixin(ItemStack.class)
-public class ItemStackMixin {
+public abstract class ItemStackMixin {
 
-	@Inject(at = @At("RETURN"), method = "getTooltipData", cancellable = true)
+	@Shadow
+	public abstract int getRepairCost();
+
+	private final ThreadLocal<List<Text>> inspecio$tooltipList = new ThreadLocal<>();
+
+	@Inject(
+			method = "getTooltip",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;hasCustomName()Z"),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private void onGetTooltipBeing(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list) {
+		this.inspecio$tooltipList.set(list);
+	}
+
+	@Inject(
+			method = "getTooltip",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/item/ItemStack;isDamaged()Z"
+			)
+	)
+	private void onGetTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
+		if (!context.isAdvanced())
+			return;
+
+		List<Text> tooltip = this.inspecio$tooltipList.get();
+
+		int repairCost;
+		if ((repairCost = this.getRepairCost()) != 0) {
+			tooltip.add(new TranslatableText("inspecio.tooltip.repair_cost", repairCost)
+					.formatted(Formatting.GRAY));
+		}
+	}
+
+	@Inject(method = "getTooltipData", at = @At("RETURN"), cancellable = true)
 	private void getTooltipData(CallbackInfoReturnable<Optional<TooltipData>> info) {
 		// Data is the plural and datum is the singular actually, but no one cares
 		List<TooltipData> datas = Lists.newArrayList();
@@ -59,6 +100,7 @@ public class ItemStackMixin {
 			int prot = armor.getMaterial().getProtectionAmount(armor.getSlotType());
 			datas.add(new ArmorTooltipComponent(prot));
 		}
+
 		if (datas.size() == 1) {
 			info.setReturnValue(Optional.of(datas.get(0)));
 		} else if (datas.size() > 1) {

@@ -17,10 +17,15 @@
 
 package io.github.queerbric.inspecio.mixin;
 
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.tooltip.BeesTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.InventoryTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.JukeboxTooltipComponent;
-import net.minecraft.block.*;
+import net.minecraft.block.BeehiveBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.JukeboxBlock;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -28,8 +33,6 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
@@ -54,20 +57,23 @@ public abstract class BlockItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
+		InspecioConfig.ContainersConfig containersConfig = Inspecio.get().getConfig().getContainersConfig();
 		if (this.getBlock() instanceof BeehiveBlock) {
 			Optional<TooltipData> data = BeesTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
-		} else if (this.getBlock() instanceof ChestBlock || this.getBlock() instanceof BarrelBlock || this.getBlock() instanceof ShulkerBoxBlock) {
-			DyeColor color = null;
-			if (this.getBlock() instanceof ShulkerBoxBlock)
-				color = ((ShulkerBoxBlock) this.getBlock()).getColor();
-			DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
-			Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
-			return inventory.stream().allMatch(ItemStack::isEmpty) ? Optional.empty()
-					: Optional.of(new InventoryTooltipComponent(inventory, color));
 		} else if (this.getBlock() instanceof JukeboxBlock) {
 			Optional<TooltipData> data = JukeboxTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
+		} else {
+			InspecioConfig.StorageContainerConfig config = containersConfig.forBlock(this.getBlock());
+			if (config != null) {
+				DyeColor color = null;
+				if (this.getBlock() instanceof ShulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
+					color = ((ShulkerBoxBlock) this.getBlock()).getColor();
+				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
+				Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
+				return InventoryTooltipComponent.of(stack, config.isCompact(), color);
+			}
 		}
 		return super.getTooltipData(stack);
 	}

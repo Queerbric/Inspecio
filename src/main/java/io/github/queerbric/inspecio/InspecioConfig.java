@@ -27,11 +27,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.BarrelBlock;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.item.BlockItem;
+import net.minecraft.block.*;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,8 +38,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -63,10 +59,10 @@ public class InspecioConfig {
 	public static final SignTooltipMode DEFAULT_SIGN_TOOLTIP_MODE = SignTooltipMode.FANCY;
 
 	public static final Codec<InspecioConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.list(ContainerConfig.CODEC).fieldOf("containers").orElseGet(ArrayList::new)
-					.forGetter(InspecioConfig::getContainers),
 			Codec.BOOL.fieldOf("armor").orElse(DEFAULT_ARMOR).forGetter(InspecioConfig::hasArmor),
 			Codec.BOOL.fieldOf("banner_pattern").orElse(DEFAULT_BANNER_PATTERN).forGetter(InspecioConfig::hasBannerPattern),
+			ContainersConfig.CODEC.fieldOf("containers").orElseGet(ContainersConfig::defaultConfig)
+					.forGetter(InspecioConfig::getContainersConfig),
 			EffectsConfig.CODEC.fieldOf("effects").orElseGet(EffectsConfig::defaultConfig)
 					.forGetter(InspecioConfig::getEffectsConfig),
 			EntitiesConfig.CODEC.fieldOf("entities").orElseGet(EntitiesConfig::defaultConfig)
@@ -83,9 +79,9 @@ public class InspecioConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final JsonParser JSON_PARSER = new JsonParser();
 
-	private final List<ContainerConfig> containers;
 	private boolean armor;
 	private boolean bannerPattern;
+	private final ContainersConfig containersConfig;
 	private final EffectsConfig effectsConfig;
 	private final EntitiesConfig entitiesConfig;
 	private boolean filledMap;
@@ -93,17 +89,17 @@ public class InspecioConfig {
 	private JukeboxTooltipMode jukeboxTooltipMode;
 	private SignTooltipMode signTooltipMode;
 
-	public InspecioConfig(List<ContainerConfig> containers,
-						  boolean armor, boolean bannerPattern,
+	public InspecioConfig(boolean armor, boolean bannerPattern,
+						  ContainersConfig containersConfig,
 						  EffectsConfig effectsConfig,
 						  EntitiesConfig entitiesConfig,
 						  boolean filledMap,
 						  FoodConfig foodConfig,
 						  JukeboxTooltipMode jukeboxTooltipMode,
 						  SignTooltipMode signTooltipMode) {
-		this.containers = containers;
 		this.armor = armor;
 		this.bannerPattern = bannerPattern;
+		this.containersConfig = containersConfig;
 		this.effectsConfig = effectsConfig;
 		this.entitiesConfig = entitiesConfig;
 		this.filledMap = filledMap;
@@ -128,26 +124,8 @@ public class InspecioConfig {
 		this.bannerPattern = bannerPattern;
 	}
 
-	public List<ContainerConfig> getContainers() {
-		return this.containers;
-	}
-
-	public Optional<ContainerConfig> getOptionalContainer(String id) {
-		return this.containers.stream().filter(config -> config.getId().equals(id)).findFirst();
-	}
-
-	public ContainerConfig getContainer(String id) {
-		return this.getOptionalContainer(id).orElseGet(() -> ContainerConfig.of(id));
-	}
-
-	public Optional<ContainerConfig> getContainerForItem(BlockItem item) {
-		if (item.getBlock() instanceof ShulkerBoxBlock)
-			return this.getOptionalContainer("shulker_box");
-		else if (item.getBlock() instanceof ChestBlock)
-			return this.getOptionalContainer("chest");
-		else if (item.getBlock() instanceof BarrelBlock)
-			return this.getOptionalContainer("barrel");
-		return Optional.empty();
+	public ContainersConfig getContainersConfig() {
+		return this.containersConfig;
 	}
 
 	public EffectsConfig getEffectsConfig() {
@@ -210,27 +188,72 @@ public class InspecioConfig {
 		return this;
 	}
 
-	public static class ContainerConfig {
-		public static final Codec<ContainerConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.STRING.fieldOf("id").forGetter(ContainerConfig::getId),
-				Codec.BOOL.fieldOf("compact").forGetter(ContainerConfig::isCompact),
-				Codec.BOOL.optionalFieldOf("color", false).forGetter(ContainerConfig::isColored),
-				Codec.BOOL.optionalFieldOf("loot_table", false).forGetter(ContainerConfig::hasLootTable)
-		).apply(instance, ContainerConfig::new));
+	public static class ContainersConfig {
+		public static final Codec<ContainersConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				StorageContainerConfig.CODEC.fieldOf("storage").orElseGet(StorageContainerConfig::defaultConfig)
+						.forGetter(ContainersConfig::getStorageConfig),
+				ShulkerBoxConfig.CODEC.fieldOf("shulker_box").orElseGet(ShulkerBoxConfig::defaultConfig)
+						.forGetter(ContainersConfig::getShulkerBoxConfig)
+		).apply(instance, ContainersConfig::new));
 
-		private final String id;
-		private boolean compact;
-		private boolean color;
-		private boolean lootTable;
+		private final StorageContainerConfig storageContainerConfig;
+		private final ShulkerBoxConfig shulkerBoxConfig;
 
-		public ContainerConfig(String id, boolean compact, boolean color, boolean lootTable) {
-			this.id = id;
-			this.compact = compact;
-			this.color = color;
+		public ContainersConfig(StorageContainerConfig storageContainerConfig, ShulkerBoxConfig shulkerBoxConfig) {
+			this.storageContainerConfig = storageContainerConfig;
+			this.shulkerBoxConfig = shulkerBoxConfig;
 		}
 
-		public String getId() {
-			return this.id;
+		public StorageContainerConfig getStorageConfig() {
+			return this.storageContainerConfig;
+		}
+
+		public ShulkerBoxConfig getShulkerBoxConfig() {
+			return this.shulkerBoxConfig;
+		}
+
+		public @Nullable StorageContainerConfig forBlock(Block block) {
+			InspecioConfig.StorageContainerConfig config = null;
+			if (block instanceof ChestBlock
+					|| block instanceof BarrelBlock
+					|| block instanceof DispenserBlock
+					|| block instanceof HopperBlock) config = this.getStorageConfig();
+			else if (block instanceof ShulkerBoxBlock) config = this.getShulkerBoxConfig();
+			return config;
+		}
+
+		public static ContainersConfig defaultConfig() {
+			return new ContainersConfig(StorageContainerConfig.defaultConfig(), ShulkerBoxConfig.defaultConfig());
+		}
+	}
+
+	public static class StorageContainerConfig {
+		public static final boolean DEFAULT_ENABLED = true;
+		public static final boolean DEFAULT_COMPACT = false;
+		public static final boolean DEFAULT_LOOT_TABLE = true;
+
+		public static final Codec<StorageContainerConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(StorageContainerConfig::isEnabled),
+				Codec.BOOL.fieldOf("compact").orElse(DEFAULT_COMPACT).forGetter(StorageContainerConfig::isCompact),
+				Codec.BOOL.fieldOf("loot_table").orElse(DEFAULT_LOOT_TABLE).forGetter(StorageContainerConfig::hasLootTable)
+		).apply(instance, StorageContainerConfig::new));
+
+		private boolean enabled;
+		private boolean compact;
+		private boolean lootTable;
+
+		public StorageContainerConfig(boolean enabled, boolean compact, boolean lootTable) {
+			this.enabled = enabled;
+			this.compact = compact;
+			this.lootTable = lootTable;
+		}
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 		}
 
 		public boolean isCompact() {
@@ -241,14 +264,6 @@ public class InspecioConfig {
 			this.compact = compact;
 		}
 
-		public boolean isColored() {
-			return this.color;
-		}
-
-		public void setColored(boolean color) {
-			this.color = color;
-		}
-
 		public boolean hasLootTable() {
 			return this.lootTable;
 		}
@@ -257,9 +272,38 @@ public class InspecioConfig {
 			this.lootTable = lootTable;
 		}
 
-		public static ContainerConfig of(String id) {
-			boolean shulkerBox = id.equals("shulker_box");
-			return new ContainerConfig(id, false, shulkerBox, !shulkerBox);
+		public static StorageContainerConfig defaultConfig() {
+			return new StorageContainerConfig(DEFAULT_ENABLED, DEFAULT_COMPACT, DEFAULT_LOOT_TABLE);
+		}
+	}
+
+	public static class ShulkerBoxConfig extends StorageContainerConfig {
+		public static final boolean DEFAULT_COLOR = true;
+
+		public static final Codec<ShulkerBoxConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(StorageContainerConfig::isEnabled),
+				Codec.BOOL.fieldOf("compact").forGetter(StorageContainerConfig::isCompact),
+				Codec.BOOL.fieldOf("loot_table").orElse(DEFAULT_LOOT_TABLE).forGetter(StorageContainerConfig::hasLootTable),
+				Codec.BOOL.fieldOf("color").orElse(DEFAULT_COLOR).forGetter(ShulkerBoxConfig::hasColor)
+		).apply(instance, ShulkerBoxConfig::new));
+
+		private boolean color;
+
+		public ShulkerBoxConfig(boolean enabled, boolean compact, boolean lootTable, boolean color) {
+			super(enabled, compact, lootTable);
+			this.color = color;
+		}
+
+		public boolean hasColor() {
+			return this.color;
+		}
+
+		public void setColor(boolean color) {
+			this.color = color;
+		}
+
+		public static ShulkerBoxConfig defaultConfig() {
+			return new ShulkerBoxConfig(DEFAULT_ENABLED, DEFAULT_COMPACT, DEFAULT_LOOT_TABLE, DEFAULT_COLOR);
 		}
 	}
 
@@ -535,8 +579,8 @@ public class InspecioConfig {
 	 * @return the default configuration
 	 */
 	public static InspecioConfig defaultConfig() {
-		return new InspecioConfig(new ArrayList<>(),
-				DEFAULT_ARMOR, DEFAULT_BANNER_PATTERN,
+		return new InspecioConfig(DEFAULT_ARMOR, DEFAULT_BANNER_PATTERN,
+				ContainersConfig.defaultConfig(),
 				EffectsConfig.defaultConfig(),
 				EntitiesConfig.defaultConfig(),
 				DEFAULT_FILLED_MAP,

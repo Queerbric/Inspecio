@@ -18,31 +18,86 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.block.Block;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.HopperBlock;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.inventory.Inventories;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
- * Represents the shulker box tooltip component.
+ * Represents the inventory tooltip component.
  *
  * @author LambdAurora
  * @version 1.0.0
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
-	private final DefaultedList<ItemStack> inventory;
+	private final List<ItemStack> inventory;
+	private final int columns;
 	private final DyeColor color;
 
-	public InventoryTooltipComponent(DefaultedList<ItemStack> inventory, @Nullable DyeColor color) {
+	public InventoryTooltipComponent(List<ItemStack> inventory, int columns, @Nullable DyeColor color) {
 		this.inventory = inventory;
+		this.columns = columns == 0 ? inventory.size() / 3 : columns;
 		this.color = color;
+	}
+
+	private static int getInvSizeFor(ItemStack stack) {
+		if (stack.getItem() instanceof BlockItem) {
+			Block block = ((BlockItem) stack.getItem()).getBlock();
+			if (block instanceof DispenserBlock)
+				return 9;
+			else if (block instanceof HopperBlock)
+				return 5;
+			return 27;
+		}
+		return 0;
+	}
+
+	public static Optional<TooltipData> of(ItemStack stack, boolean compact, @Nullable DyeColor color) {
+		if (!stack.getOrCreateTag().contains("BlockEntityTag"))
+			return Optional.empty();
+
+		List<ItemStack> inventory = DefaultedList.ofSize(getInvSizeFor(stack), ItemStack.EMPTY);
+		Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), (DefaultedList<ItemStack>) inventory);
+		if (inventory.stream().allMatch(ItemStack::isEmpty))
+			return Optional.empty();
+
+		int columns = inventory.size() % 3 == 0 ? inventory.size() / 3 : inventory.size();
+
+		if (compact) {
+			List<ItemStack> compactedInventory = new ArrayList<>();
+			inventory.forEach(invStack -> {
+				if (invStack.isEmpty())
+					return;
+				Optional<ItemStack> compactStack = compactedInventory.stream().filter(other -> ItemStack.canCombine(other, invStack))
+						.findFirst();
+				if (compactStack.isPresent())
+					compactStack.get().increment(invStack.getCount());
+				else
+					compactedInventory.add(invStack);
+			});
+
+			inventory = compactedInventory;
+			columns = 9;
+		}
+
+		return Optional.of(new InventoryTooltipComponent(inventory, columns, color));
 	}
 
 	@Override
@@ -52,7 +107,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 
 	@Override
 	public int getHeight() {
-		return 18 * this.inventory.size() / this.getColumns() + 3;
+		return 18 * Math.max(1, this.inventory.size() / this.getColumns()) + 3;
 	}
 
 	@Override
@@ -86,6 +141,6 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	protected int getColumns() {
-		return 9;
+		return this.columns;
 	}
 }

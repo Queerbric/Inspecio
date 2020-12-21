@@ -29,7 +29,6 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FoodComponent;
-import net.minecraft.util.math.MathHelper;
 
 public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final InspecioConfig.FoodConfig foodConfig = Inspecio.get().getConfig().getFoodConfig();
