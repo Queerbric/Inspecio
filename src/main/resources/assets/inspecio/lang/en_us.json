@@ -1,3 +1,4 @@
 {
+  "inspecio.tooltip.loot_table": "Loot Table: %s",
   "inspecio.tooltip.repair_cost": "Repair Cost: %d"
 }

@@ -17,26 +17,10 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.google.common.collect.Lists;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
-import io.github.queerbric.inspecio.tooltip.ArmorTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.CompoundTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.ConvertibleTooltipData;
-import io.github.queerbric.inspecio.tooltip.FoodTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
-import net.minecraft.client.MinecraftClient;
+import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,13 +32,18 @@ import net.minecraft.tag.Tag;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.List;
+import java.util.Optional;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-	private static final Identifier HIDDEN_EFFECTS_TAG = new Identifier("inspecio", "hidden_effects");
-
 	@Shadow
 	public abstract int getRepairCost();
 
@@ -104,8 +93,7 @@ public abstract class ItemStackMixin {
 		if (stack.isFood() && config.getFoodConfig().isEnabled()) {
 			FoodComponent comp = stack.getItem().getFoodComponent();
 			datas.add(new FoodTooltipComponent(comp));
-			MinecraftClient client = MinecraftClient.getInstance();
-			Tag<Item> tag = client.world.getTagManager().method_33164(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
+			Tag<Item> tag = Inspecio.getHiddenEffectsTag();
 			if (tag != null && tag.contains(stack.getItem())) {
 				datas.add(new StatusEffectTooltipComponent());
 			} else {

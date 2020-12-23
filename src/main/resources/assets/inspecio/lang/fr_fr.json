@@ -1,3 +1,4 @@
 {
+  "inspecio.tooltip.loot_table": "Table de butin: %s",
   "inspecio.tooltip.repair_cost": "Coût de réparation: %d"
 }
