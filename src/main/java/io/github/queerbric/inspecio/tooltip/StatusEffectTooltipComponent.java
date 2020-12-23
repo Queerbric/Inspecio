@@ -20,6 +20,8 @@ package io.github.queerbric.inspecio.tooltip;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import io.github.queerbric.inspecio.Inspecio;
+import it.unimi.dsi.fastutil.floats.FloatArrayList;
+import it.unimi.dsi.fastutil.floats.FloatList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -42,7 +44,7 @@ import java.util.List;
 public class StatusEffectTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private static final Identifier MYSTERY_TEXTURE = new Identifier(Inspecio.NAMESPACE, "textures/mob_effects/mystery.png");
 	private List<StatusEffectInstance> list = Lists.newArrayList();
-	private List<Float> chances = Lists.newArrayList();
+	private final FloatList chances = new FloatArrayList();
 	private boolean hidden = false;
 	private float multiplier;
 
@@ -54,8 +56,9 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	public StatusEffectTooltipComponent(List<Pair<StatusEffectInstance, Float>> list) {
 		for (Pair<StatusEffectInstance, Float> pair : list) {
 			this.list.add(pair.getFirst());
-			this.chances.add(pair.getSecond());
+			this.chances.add(pair.getSecond().floatValue());
 		}
+		this.multiplier = 1.f;
 	}
 
 	public StatusEffectTooltipComponent() {
@@ -88,13 +91,13 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				statusEffectName = statusEffectName + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
 			}
 			if (statusEffectInstance.getDuration() > 1) {
-				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
-				if (chances.size() > i && chances.get(i) < 1f) {
-					string2 += " - " + (int) (chances.get(i) * 100f) + "%";
+				String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
+				if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
+					duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
 				}
-				max = Math.max(max, 26 + textRenderer.getWidth(string2));
-			} else if (chances.size() > i && chances.get(i) < 1f) {
-				String string2 = (int) (chances.get(i) * 100f) + "%";
+				max = Math.max(max, 26 + textRenderer.getWidth(duration));
+			} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
+				String string2 = (int) (this.chances.getFloat(i) * 100f) + "%";
 				max = Math.max(max, 26 + textRenderer.getWidth(string2));
 			}
 			max = Math.max(max, 26 + textRenderer.getWidth(statusEffectName));
@@ -140,14 +143,14 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				textRenderer.draw(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
 						true, matrix4f, immediate, false, 0, 15728880);
 				if (statusEffectInstance.getDuration() > 1) {
-					String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
-					if (chances.size() > i && chances.get(i) < 1f) {
-						string2 += " - " + (int) (chances.get(i) * 100f) + "%";
+					String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
+					if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
+						duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
 					}
-					textRenderer.draw(string2, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
-				} else if (chances.size() > i && chances.get(i) < 1f) {
-					String string2 = (int) (chances.get(i) * 100f) + "%";
-					textRenderer.draw(string2, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+					textRenderer.draw(duration, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+				} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
+					String chance = (int) (this.chances.getFloat(i) * 100f) + "%";
+					textRenderer.draw(chance, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 				}
 			}
 		}
