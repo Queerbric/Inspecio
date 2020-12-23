@@ -32,13 +32,20 @@ import io.github.queerbric.inspecio.tooltip.CompoundTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.ConvertibleTooltipData;
 import io.github.queerbric.inspecio.tooltip.FoodTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
+import net.fabricmc.fabric.api.tag.TagRegistry;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tag.Tag;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
+	private static final Identifier HIDDEN_EFFECTS_TAG = new Identifier("inspecio", "hidden_effects");
 	
 	@Inject(at = @At("RETURN"), method = "getTooltipData", cancellable = true)
 	private void getTooltipData(CallbackInfoReturnable<Optional<TooltipData>> info) {
@@ -53,8 +60,14 @@ public class ItemStackMixin {
 		if (stack.isFood()) {
 			FoodComponent comp = stack.getItem().getFoodComponent();
 			datas.add(new FoodTooltipComponent(comp));
-			if (comp.getStatusEffects().size() > 0) {
-				datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
+			MinecraftClient client = MinecraftClient.getInstance();
+			Tag<Item> tag = client.world.getTagManager().method_33164(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
+			if (tag != null && tag.contains(stack.getItem())) {
+				datas.add(new StatusEffectTooltipComponent());
+			} else {
+				if (comp.getStatusEffects().size() > 0) {
+					datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
+				}
 			}
 		} else if (stack.getItem() instanceof ArmorItem) {
 			ArmorItem armor = (ArmorItem) stack.getItem();
