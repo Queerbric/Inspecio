@@ -18,6 +18,9 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
+import io.github.queerbric.inspecio.SaturationTooltipMode;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -28,6 +31,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FoodComponent;
 
 public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
+	private final InspecioConfig.FoodConfig foodConfig = Inspecio.get().getConfig().getFoodConfig();
 	private final FoodComponent component;
 
 	public FoodTooltipComponent(FoodComponent component) {
@@ -41,7 +45,10 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 	@Override
 	public int getHeight() {
-		return 11;
+		int height = 11;
+		if (this.foodConfig.hasHunger() && this.foodConfig.getSaturationMode() == SaturationTooltipMode.SEPARATED)
+			height += 11;
+		return height;
 	}
 
 	@Override
@@ -52,9 +59,17 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		textureManager.bindTexture(InGameHud.GUI_ICONS_TEXTURE);
-		for (int i = 0; i < (this.component.getHunger() + 1) / 2; i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y, 16, 27, 9, 9, 256, 256);
+		int saturationY = y;
+		if (this.foodConfig.getSaturationMode() == SaturationTooltipMode.SEPARATED && this.foodConfig.hasHunger()) saturationY += 11;
+
+		// Draw hunger outline.
+		if (this.foodConfig.hasHunger()) {
+			for (int i = 0; i < (this.component.getHunger() + 1) / 2; i++) {
+				DrawableHelper.drawTexture(matrices, x + i * 9, y, 16, 27, 9, 9, 256, 256);
+			}
 		}
+
+		// Draw saturation outline.
 		RenderSystem.color4f(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
 		float saturation = this.component.getHunger() * this.component.getSaturationModifier();
 		for (int i = 0; i < saturation; i++) {
@@ -62,28 +77,34 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 			if (saturation - i < 1f) {
 				width = Math.round(width * (saturation - i));
 			}
-			DrawableHelper.drawTexture(matrices, x + i * 9, y, 25, 27, width, 9, 256, 256);
-		}
-		RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
-		for (int i = 0; i < this.component.getHunger() / 2; i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y, 52, 27, 9, 9, 256, 256);
-		}
-		if (this.component.getHunger() % 2 == 1) {
-			DrawableHelper.drawTexture(matrices, x + this.component.getHunger() / 2 * 9, y, 61, 27, 9, 9, 256, 256);
+			DrawableHelper.drawTexture(matrices, x + i * 9, saturationY, 25, 27, width, 9, 256, 256);
 		}
 
-		/*
-		RenderSystem.color4f(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
-		for (int i = 0; i <Math.max(1, (this.getSaturation() + 1) / 2); i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y + 11, 25, 27, 9, 9, 256, 256);
-		}
+		// Draw hunger bars.
 		RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
-		for (int i = 0; i < this.getSaturation() / 2; i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y + 11, 52, 27, 9, 9, 256, 256);
+		if (this.foodConfig.hasHunger()) {
+			for (int i = 0; i < this.component.getHunger() / 2; i++) {
+				DrawableHelper.drawTexture(matrices, x + i * 9, y, 52, 27, 9, 9, 256, 256);
+			}
+			if (this.component.getHunger() % 2 == 1) {
+				DrawableHelper.drawTexture(matrices, x + this.component.getHunger() / 2 * 9, y, 61, 27, 9, 9, 256, 256);
+			}
 		}
-		if (this.getSaturation() % 2 == 1) {
-			DrawableHelper.drawTexture(matrices, x + this.getSaturation() / 2 * 9, y + 11, 61, 27, 9, 9, 256, 256);
-		}*/
+
+		// Draw saturation bar if separate (or alone).
+		if (this.foodConfig.getSaturationMode() == SaturationTooltipMode.SEPARATED || !this.foodConfig.hasHunger()) {
+			RenderSystem.color4f(229 / 255.f, 204 / 255.f, 209 / 255.f, 1.f);
+			int intSaturation = Math.max(1, this.getSaturation());
+			if (saturation * 2 - intSaturation > 0.2)
+				intSaturation++;
+			for (int i = 0; i < intSaturation / 2; i++) {
+				DrawableHelper.drawTexture(matrices, x + i * 9, saturationY, 52, 27, 9, 9, 256, 256);
+			}
+			if (intSaturation % 2 == 1) {
+				DrawableHelper.drawTexture(matrices, x + this.getSaturation() / 2 * 9, saturationY, 61, 27, 9, 9, 256, 256);
+			}
+			RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
+		}
 	}
 
 	private int getSaturation() {

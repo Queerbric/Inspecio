@@ -21,6 +21,12 @@ import net.fabricmc.api.ClientModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Represents the Inspecio mod.
+ *
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class Inspecio implements ClientModInitializer {
 	public static final String NAMESPACE = "inspecio";
 	private static Inspecio INSTANCE;
@@ -37,7 +43,7 @@ public class Inspecio implements ClientModInitializer {
 	/**
 	 * Prints a message to the terminal.
 	 *
-	 * @param info The message to print.
+	 * @param info the message to log
 	 */
 	public void log(String info) {
 		this.logger.info("[Inspecio] " + info);
@@ -46,10 +52,20 @@ public class Inspecio implements ClientModInitializer {
 	/**
 	 * Prints a warning message to the terminal.
 	 *
-	 * @param info The message to print.
+	 * @param info the message to log
 	 */
 	public void warn(String info) {
 		this.logger.warn("[Inspecio] " + info);
+	}
+
+	/**
+	 * Prints a warning message to the terminal.
+	 *
+	 * @param info the message to log
+	 * @param throwable the exception to log, including its stack trace.
+	 */
+	public void warn(String info, Throwable throwable) {
+		this.logger.warn("[Inspecio] " + info, throwable);
 	}
 
 	public InspecioConfig getConfig() {

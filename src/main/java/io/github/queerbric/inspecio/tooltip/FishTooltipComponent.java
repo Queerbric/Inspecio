@@ -17,16 +17,20 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.mixin.EntityAccessor;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.Optional;
 
 /**
  * Represents a tooltip component which displays bees from a beehive.
@@ -38,14 +42,24 @@ import net.minecraft.nbt.CompoundTag;
 public class FishTooltipComponent extends EntityTooltipComponent {
 	private final Entity entity;
 
-	public FishTooltipComponent(EntityType<?> type, CompoundTag itemTag) {
-		this.entity = type.create(this.client.world);
-		if (this.entity != null) {
-			EntityType.loadFromEntityTag(this.client.world, null, this.entity, itemTag);
-			if (itemTag.contains("BucketVariantTag", 3) && this.entity instanceof TropicalFishEntity) {
-				((TropicalFishEntity) this.entity).setVariant(itemTag.getInt("BucketVariantTag"));
-			}
+	private FishTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {
+		super(config);
+		this.entity = entity;
+	}
+
+	public static Optional<TooltipData> of(EntityType<?> type, CompoundTag itemTag) {
+		InspecioConfig.EntitiesConfig entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+		if (!entitiesConfig.getFishBucketConfig().isEnabled())
+			return Optional.empty();
+
+		MinecraftClient client = MinecraftClient.getInstance();
+		Entity entity = type.create(client.world);
+		if (entity != null) {
+			EntityType.loadFromEntityTag(client.world, null, entity, itemTag);
+			adjustEntity(entity, itemTag, entitiesConfig);
+			return Optional.of(new FishTooltipComponent(entitiesConfig.getFishBucketConfig(), entity));
 		}
+		return Optional.empty();
 	}
 
 	@Override
@@ -55,7 +69,7 @@ public class FishTooltipComponent extends EntityTooltipComponent {
 			matrices.translate(2, 2, z);
 			((EntityAccessor) this.entity).setTouchingWater(true);
 			this.entity.setVelocity(1.f, 1.f, 1.f);
-			this.renderEntity(matrices, x + 16, y, this.entity, 0, true, false, 90.f);
+			this.renderEntity(matrices, x + 16, y, this.entity, 0, this.config.shouldSpin(), false, 90.f);
 			matrices.pop();
 		}
 	}

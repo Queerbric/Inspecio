@@ -17,10 +17,7 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
@@ -29,9 +26,11 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
 
+import java.util.List;
+
 public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTooltipData {
 	private List<TooltipComponent> components = Lists.newArrayList();
-	
+
 	public void addComponent(TooltipComponent component) {
 		components.add(component);
 	}
@@ -54,7 +53,7 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	public int getWidth(TextRenderer textRenderer) {
 		int width = 0;
 		for (TooltipComponent comp : components) {
-			if(comp.getWidth(textRenderer) > width) {
+			if (comp.getWidth(textRenderer) > width) {
 				width = comp.getWidth(textRenderer);
 			}
 		}

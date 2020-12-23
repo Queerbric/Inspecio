@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio.mixin;
 
+import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -37,6 +38,7 @@ public class SpectralArrowItemMixin extends ArrowItem {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
+		if (!Inspecio.get().getConfig().getEffectsConfig().hasSpectralArrow()) return super.getTooltipData(stack);
 		return Optional.of(new StatusEffectTooltipComponent(Collections.singletonList(new StatusEffectInstance(StatusEffects.GLOWING, 200, 0)), 1.f));
 	}
 }

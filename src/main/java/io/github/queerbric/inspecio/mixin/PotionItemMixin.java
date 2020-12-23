@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio.mixin;
 
+import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -51,7 +52,7 @@ public abstract class PotionItemMixin extends Item {
 
 	@Inject(method = "appendTooltip", at = @At("RETURN"))
 	private void onAppendTooltipPost(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo info) {
-		if (tooltip.size() > this.inspecio$oldTooltipLength.get()) {
+		if (tooltip.size() > this.inspecio$oldTooltipLength.get() && Inspecio.get().getConfig().getEffectsConfig().hasPotions()) {
 			while (tooltip.size() > 1) {
 				if (tooltip.get(this.inspecio$oldTooltipLength.get()) == LiteralText.EMPTY) {
 					tooltip.remove(this.inspecio$oldTooltipLength.get().intValue());
@@ -64,6 +65,7 @@ public abstract class PotionItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
+		if (!Inspecio.get().getConfig().getEffectsConfig().hasPotions()) return super.getTooltipData(stack);
 		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 1.0F));
 	}
 }

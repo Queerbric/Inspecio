@@ -47,7 +47,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 	private final MusicDiscItem disc;
 
 	public JukeboxTooltipComponent(ItemStack discStack) {
-		super(DefaultedList.ofSize(1, discStack), null);
+		super(DefaultedList.ofSize(1, discStack), 1, null);
 		this.disc = (MusicDiscItem) discStack.getItem();
 	}
 

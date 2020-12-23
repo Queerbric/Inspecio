@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import io.github.queerbric.inspecio.InspecioConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -27,7 +28,10 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
@@ -40,6 +44,11 @@ import net.minecraft.util.math.Vec3f;
  */
 public abstract class EntityTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	protected final MinecraftClient client = MinecraftClient.getInstance();
+	protected final InspecioConfig.EntityConfig config;
+
+	protected EntityTooltipComponent(InspecioConfig.EntityConfig config) {
+		this.config = config;
+	}
 
 	@Override
 	public TooltipComponent getComponent() {
@@ -87,7 +96,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		entityRenderDispatcher.setRenderShadows(false);
 		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		entity.age = this.client.player.age + ageOffset;
-		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && Screen.hasControlDown());
+		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown()));
 		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, 15728880);
 		immediate.draw();
 		entityRenderDispatcher.setRenderShadows(true);
@@ -108,4 +117,12 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 	protected abstract boolean shouldRender();
 
 	protected abstract boolean shouldRenderCustomNames();
+
+	protected static void adjustEntity(Entity entity, CompoundTag itemTag, InspecioConfig.EntitiesConfig config) {
+		if (itemTag.contains("BucketVariantTag", 3) && entity instanceof TropicalFishEntity) {
+			((TropicalFishEntity) entity).setVariant(itemTag.getInt("BucketVariantTag"));
+		} else if (entity instanceof PufferfishEntity) {
+			((PufferfishEntity) entity).setPuffState(config.getPufferFishPuffState());
+		}
+	}
 }

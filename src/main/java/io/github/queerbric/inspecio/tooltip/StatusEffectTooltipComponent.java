@@ -17,6 +17,8 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -35,9 +37,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
 
 import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.mojang.datafixers.util.Pair;
 
 public class StatusEffectTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private static final Identifier MYSTERY_TEXTURE = new Identifier("inspecio", "textures/mob_effects/mystery.png");
