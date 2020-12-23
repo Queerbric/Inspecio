@@ -48,6 +48,14 @@ Compact:
 
 ![loot_table](images/loot_table.png)
 
+#### Bee Hive Tooltip
+
+![bees](images/beehive.png)
+
+#### Sign Tooltip
+
+![sign](images/sign.png)
+
 #### Banner Pattern
 
 ![banner_pattern](images/banner_pattern.png)
@@ -70,3 +78,99 @@ Compact:
 
 Only shows up if Advanced Tooltip is enabled (`F3 + H`).
 ![repair_cost](images/repair_cost.png)
+
+## Configuration
+
+The configuration file of the mod is located in `<minecraft directory>/config/inspecio.json`.
+
+Here's the default configuration:
+
+```json
+{
+  "food": {
+    "hunger": true,
+    "saturation": "merged"
+  },
+  "jukebox": "fancy",
+  "sign": "fancy",
+  "entities": {
+    "bee": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "fish_bucket": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "spawn_egg": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "pufferfish_puff_state": 2
+  },
+  "filled_map": true,
+  "armor": true,
+  "banner_pattern": true,
+  "containers": {
+    "storage": {
+      "enabled": true,
+      "compact": false,
+      "loot_table": true
+    },
+    "shulker_box": {
+      "enabled": true,
+      "compact": false,
+      "loot_table": true,
+      "color": true
+    }
+  },
+  "effects": {
+    "potions": true,
+    "tipped_arrows": true,
+    "spectral_arrow": true,
+    "food": true
+  }
+}
+```
+
+Here's a list of each configuration entries and what they do:
+
+ - `armor` (`bool`) - if `true` then displays the armor bar on armor items, else `false`.
+ - `banner_pattern` (`bool`) - if `true` then displays the pattern in the tooltip of banner patterns, else `false`.
+ - `containers`
+   - `storage`
+     - `enabled` (`bool`) - `true` if the inventory of storage items like chests, barrels, etc. should be shown in the tooltip, else `false`.
+     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, else `false`.
+     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, else `false`.
+   - `shulker_box`
+     - `enabled` (`bool`) - `true` if the inventory of shulker boxes should be shown in the tooltip, else `false`.
+     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, else `false`.
+     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, else `false`.
+     - `color` (`bool`) - `true` if the inventory tooltip should be colored the same as the shulker box, else `false`.
+ - `effects`
+   - `potions` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on potion items, else `false`.
+   - `tipped_arrows` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on tipped arrows, else `false`.
+   - `spectral_arrow` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on spectral arrow item, else `false`.
+   - `food` (`bool`) - if `true` then adds effect tooltips on food items, else `false`.
+ - `entities`
+   - `bee`
+     - `enabled` (`bool`) - if `true` then displays bees if present in the beehive tooltip, else `false`.
+     - `always_show_name` (`bool`) - if `true` then always show name of bees, else `false` and use the CTRL key instead.
+     - `spin` (`bool`) - `true` if the bees spin in the tooltip, else `false`
+   - `fish_bucket`
+     - `enabled` (`bool`) - `true` if fish bucket tooltips should display the entity they hold, else `false`.
+     - `spin` (`bool`) - `true` if the entity spins in the tooltip, else `false`.
+   - `spawn_egg`
+     - `enabled` (`bool`) - `true` if spawn egg tooltips should display the entity they hold, else `false`.
+     - `always_show_name` (`bool`) - `true` if the name of the hold entity should always be shown, else `false`.
+     - `spin` (`bool`) - `true` if the entity spins in the tooltip, else `false`.
+   - `pufferfish_puff_state` (`int`) - the pufferfish puff state, between 0 and 2 inclusive.
+ - `filled_map` (`bool`) - `true` if filled map tooltips should display the map, else `false`.
+ - `food`
+   - `hunger` (`bool`) - `true` if hunger bar should be displayed on food items, else `false`.
+   - `saturation` (`string`) - `"disabled"` does nothing, `"merged"` adds the saturation bar as an outline to the hunger bar, `"separated"` adds its own saturation bar.
+ - `jukebox` (`string`) - `"disabled"` does nothing, `"fast"` will add the inserted disc name if possible in the tooltip of jukeboxes, `"fancy"` will display the disc item as well.
+ - `sign` (`string`) - `"disabled"` does nothing, `"fast"` will add the sign content as text tooltip if possible, `"fancy"` will add a fancy sign tooltip if possible.

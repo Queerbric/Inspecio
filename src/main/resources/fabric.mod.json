@@ -9,8 +9,12 @@
     "LambdAurora"
   ],
   "contributors": [],
-  "contact": {},
-  "license": "MIT",
+  "contact": {
+    "homepage": "https://modrinth.com/mod/inspecio",
+    "sources": "https://github.com/Queerbric/Inspecio.git",
+    "issues": "https://github.com/Queerbric/Inspecio/issues"
+  },
+  "license": "LGPLv3",
   "icon": "assets/inspecio/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -22,6 +26,7 @@
     "inspecio.mixins.json"
   ],
   "depends": {
+    "minecraft": ">=1.17-alpha.20.51.a",
     "fabricloader": ">=0.10.6",
     "fabric-resource-loader-v0": "*"
   }
