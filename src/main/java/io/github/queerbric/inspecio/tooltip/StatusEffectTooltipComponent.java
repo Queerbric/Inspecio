@@ -19,6 +19,7 @@ package io.github.queerbric.inspecio.tooltip;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
+import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -39,7 +40,7 @@ import net.minecraft.util.math.Matrix4f;
 import java.util.List;
 
 public class StatusEffectTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
-	private static final Identifier MYSTERY_TEXTURE = new Identifier("inspecio", "textures/mob_effects/mystery.png");
+	private static final Identifier MYSTERY_TEXTURE = new Identifier(Inspecio.NAMESPACE, "textures/mob_effects/mystery.png");
 	private List<StatusEffectInstance> list = Lists.newArrayList();
 	private List<Float> chances = Lists.newArrayList();
 	private boolean hidden = false;
@@ -68,23 +69,23 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 
 	@Override
 	public int getHeight() {
-		if (hidden) {
+		if (this.hidden) {
 			return 20;
 		}
-		return list.size() * 20;
+		return this.list.size() * 20;
 	}
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		if (hidden) {
+		if (this.hidden) {
 			return 26 + textRenderer.getWidth("§kffffffff§r");
 		}
 		int max = 64;
 		for (int i = 0; i < list.size(); i++) {
 			StatusEffectInstance statusEffectInstance = list.get(i);
-			String string = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
+			String statusEffectName = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
 			if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
-				string = string + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
+				statusEffectName = statusEffectName + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
 			}
 			if (statusEffectInstance.getDuration() > 1) {
 				String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
@@ -96,14 +97,14 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				String string2 = (int) (chances.get(i) * 100f) + "%";
 				max = Math.max(max, 26 + textRenderer.getWidth(string2));
 			}
-			max = Math.max(max, 26 + textRenderer.getWidth(string));
+			max = Math.max(max, 26 + textRenderer.getWidth(statusEffectName));
 		}
 		return max;
 	}
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
-		if (hidden) {
+		if (this.hidden) {
 			textureManager.bindTexture(MYSTERY_TEXTURE);
 			DrawableHelper.drawTexture(matrices, x, y, 0, 0, 18, 18, 18, 18);
 		} else {
@@ -121,22 +122,22 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, Immediate immediate) {
-		if (hidden) {
+		if (this.hidden) {
 			textRenderer.draw("§kffffffff§r", x + 24, y, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 			textRenderer.draw("§kf§r:§kff§r", x + 24, y + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 		} else {
 			for (int i = 0; i < list.size(); i++) {
 				StatusEffectInstance statusEffectInstance = list.get(i);
-				String string = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
+				String statusEffectName = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
 				if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
-					string = string + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
+					statusEffectName = statusEffectName + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
 				}
 				int off = 0;
 				if (statusEffectInstance.getDuration() <= 1) {
 					off += 5;
 				}
 				Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
-				textRenderer.draw(string, x + 24, y + i * 20 + off, color != null ? color : 16777215,
+				textRenderer.draw(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
 						true, matrix4f, immediate, false, 0, 15728880);
 				if (statusEffectInstance.getDuration() > 1) {
 					String string2 = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);

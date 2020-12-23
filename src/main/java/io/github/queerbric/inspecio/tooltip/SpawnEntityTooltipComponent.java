@@ -76,7 +76,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		return 60 + 24;
+		return 128;
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 			matrices.translate(30, 0, z);
 			((EntityAccessor) this.entity).setTouchingWater(true);
 			this.entity.setVelocity(1.f, 1.f, 1.f);
-			this.renderEntity(matrices, x + 16, y + 20, this.entity, 0, this.config.shouldSpin(), true, 90.f);
+			this.renderEntity(matrices, x + 20, y + 20, this.entity, 0, this.config.shouldSpin(), true, 90.f);
 			matrices.pop();
 		}
 	}

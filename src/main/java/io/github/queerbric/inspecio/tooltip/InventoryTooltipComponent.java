@@ -107,7 +107,10 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 
 	@Override
 	public int getHeight() {
-		return 18 * Math.max(1, this.inventory.size() / this.getColumns()) + 3;
+		int rows = this.inventory.size() / this.getColumns();
+		if (this.inventory.size() % this.getColumns() != 0)
+			rows++;
+		return 18 * rows + 3;
 	}
 
 	@Override

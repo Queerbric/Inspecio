@@ -17,9 +17,27 @@
 
 package io.github.queerbric.inspecio;
 
+import io.github.queerbric.inspecio.resource.InspecioResourceReloader;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.tag.Tag;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Represents the Inspecio mod.
@@ -29,8 +47,10 @@ import org.apache.logging.log4j.Logger;
  */
 public class Inspecio implements ClientModInitializer {
 	public static final String NAMESPACE = "inspecio";
+	public static final Identifier HIDDEN_EFFECTS_TAG = new Identifier(NAMESPACE, "hidden_effects");
 	private static Inspecio INSTANCE;
 	private final Logger logger = LogManager.getLogger("inspecio");
+	private final InspecioResourceReloader resourceReloader = new InspecioResourceReloader();
 	private InspecioConfig config;
 
 	@Override
@@ -38,6 +58,7 @@ public class Inspecio implements ClientModInitializer {
 		INSTANCE = this;
 
 		this.config = InspecioConfig.load(this);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.resourceReloader);
 	}
 
 	/**
@@ -62,6 +83,16 @@ public class Inspecio implements ClientModInitializer {
 	 * Prints a warning message to the terminal.
 	 *
 	 * @param info the message to log
+	 * @param params parameters to the message.
+	 */
+	public void warn(String info, Object... params) {
+		this.logger.warn("[Inspecio] " + info, params);
+	}
+
+	/**
+	 * Prints a warning message to the terminal.
+	 *
+	 * @param info the message to log
 	 * @param throwable the exception to log, including its stack trace.
 	 */
 	public void warn(String info, Throwable throwable) {
@@ -74,5 +105,33 @@ public class Inspecio implements ClientModInitializer {
 
 	public static Inspecio get() {
 		return INSTANCE;
+	}
+
+	/**
+	 * Appends block item tooltips.
+	 *
+	 * @param stack the stack to add tooltip to
+	 * @param block the block
+	 * @param tooltip the tooltip
+	 */
+	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
+		InspecioConfig.StorageContainerConfig config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
+		if (config != null && config.hasLootTable()) {
+			CompoundTag blockEntityTag = stack.getOrCreateSubTag("BlockEntityTag");
+			if (blockEntityTag.contains("LootTable")) {
+				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
+						new LiteralText(blockEntityTag.getString("LootTable"))
+								.formatted(Formatting.GOLD))
+						.formatted(Formatting.GRAY));
+			}
+		}
+	}
+
+	public static @Nullable Tag<Item> getHiddenEffectsTag() {
+		Tag<Item> tag = MinecraftClient.getInstance().world.getTagManager().method_33164(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
+		if (tag == null) {
+			tag = get().resourceReloader.getCurrentGroup().getTag(HIDDEN_EFFECTS_TAG);
+		}
+		return tag;
 	}
 }

@@ -81,7 +81,13 @@ public abstract class BlockItemMixin extends Item {
 	@Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
 	private void onAppendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
 		if (this.getBlock() instanceof ShulkerBoxBlock && !Screen.hasControlDown()) {
+			Inspecio.appendBlockItemTooltip(stack, this.getBlock(), tooltip);
 			ci.cancel();
 		}
+	}
+
+	@Inject(method = "appendTooltip", at = @At("TAIL"), cancellable = true)
+	private void onAppendTooltipEnd(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
+		Inspecio.appendBlockItemTooltip(stack, this.getBlock(), tooltip);
 	}
 }
