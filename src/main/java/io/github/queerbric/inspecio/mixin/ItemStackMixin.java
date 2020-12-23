@@ -113,7 +113,8 @@ public abstract class ItemStackMixin {
 					datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
 				}
 			}
-		} else if (stack.getItem() instanceof ArmorItem && config.hasArmor()) {
+		}
+		if (stack.getItem() instanceof ArmorItem && config.hasArmor()) {
 			ArmorItem armor = (ArmorItem) stack.getItem();
 			int prot = armor.getMaterial().getProtectionAmount(armor.getSlotType());
 			datas.add(new ArmorTooltipComponent(prot));
