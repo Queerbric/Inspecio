@@ -34,10 +34,15 @@ Most of the mod is configurable, some parts can be enabled/disabled to your hear
 #### Shulker Box tooltips (and other storage blocks)
 
 Normal:
+
 ![normal](images/simple_shulker_box_tooltip.png)
+
 Colored:
+
 ![colored](images/colored_shulker_box_tooltip.png)
+
 Compact:
+
 ![compact](images/compact_shulker_box_tooltip.png)
 
 #### Jukebox tooltip
