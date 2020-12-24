@@ -65,6 +65,10 @@ Compact:
 
 ![banner_pattern](images/banner_pattern.png)
 
+#### Filled Map
+
+![map](images/filled_map.png)
+
 #### Entities
 
 ##### Bucket of Fish
