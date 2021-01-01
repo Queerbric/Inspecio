@@ -60,8 +60,8 @@ public class InspecioConfig {
 	public static final SignTooltipMode DEFAULT_SIGN_TOOLTIP_MODE = SignTooltipMode.FANCY;
 
 	public static final Codec<InspecioConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.BOOL.fieldOf("armor").orElse(DEFAULT_ARMOR).forGetter(InspecioConfig::hasArmor),
-			Codec.BOOL.fieldOf("banner_pattern").orElse(DEFAULT_BANNER_PATTERN).forGetter(InspecioConfig::hasBannerPattern),
+			configEntry("armor", DEFAULT_ARMOR, InspecioConfig::hasArmor),
+			configEntry("banner_pattern", DEFAULT_BANNER_PATTERN, InspecioConfig::hasArmor),
 			configEntry(ContainersConfig.CODEC, "containers", ContainersConfig::defaultConfig, InspecioConfig::getContainersConfig),
 			configEntry(EffectsConfig.CODEC, "effects", EffectsConfig::defaultConfig, InspecioConfig::getEffectsConfig),
 			configEntry(EntitiesConfig.CODEC, "entities", EntitiesConfig::defaultConfig, InspecioConfig::getEntitiesConfig),
@@ -71,8 +71,14 @@ public class InspecioConfig {
 			configEntry(SignTooltipMode.CODEC, "sign", () -> DEFAULT_SIGN_TOOLTIP_MODE, InspecioConfig::getSignTooltipMode)
 	).apply(instance, InspecioConfig::new));
 
+	private static <C> RecordCodecBuilder<C, Boolean> configEntry(String path, boolean defaultValue, Function<C, Boolean> getter) {
+		String[] parts = path.split("/");
+		return Codec.BOOL.fieldOf(parts[parts.length - 1]).orElse(Inspecio.onConfigError(path), defaultValue).forGetter(getter);
+	}
+
 	private static <C, E> RecordCodecBuilder<C, E> configEntry(Codec<E> codec, String path, Supplier<E> defaultGetter, Function<C, E> getter) {
-		return codec.fieldOf(path).orElseGet(Inspecio.onConfigError(path), defaultGetter).forGetter(getter);
+		String[] parts = path.split("/");
+		return codec.fieldOf(parts[parts.length - 1]).orElseGet(Inspecio.onConfigError(path), defaultGetter).forGetter(getter);
 	}
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -185,10 +191,8 @@ public class InspecioConfig {
 
 	public static class ContainersConfig {
 		public static final Codec<ContainersConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				StorageContainerConfig.CODEC.fieldOf("storage").orElseGet(StorageContainerConfig::defaultConfig)
-						.forGetter(ContainersConfig::getStorageConfig),
-				ShulkerBoxConfig.CODEC.fieldOf("shulker_box").orElseGet(ShulkerBoxConfig::defaultConfig)
-						.forGetter(ContainersConfig::getShulkerBoxConfig)
+				configEntry(StorageContainerConfig.CODEC, "containers/storage", StorageContainerConfig::defaultConfig, ContainersConfig::getStorageConfig),
+				configEntry(ShulkerBoxConfig.CODEC, "containers/shulker_box", ShulkerBoxConfig::defaultConfig, ContainersConfig::getShulkerBoxConfig)
 		).apply(instance, ContainersConfig::new));
 
 		private final StorageContainerConfig storageContainerConfig;
@@ -228,9 +232,9 @@ public class InspecioConfig {
 		public static final boolean DEFAULT_LOOT_TABLE = true;
 
 		public static final Codec<StorageContainerConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(StorageContainerConfig::isEnabled),
-				Codec.BOOL.fieldOf("compact").orElse(DEFAULT_COMPACT).forGetter(StorageContainerConfig::isCompact),
-				Codec.BOOL.fieldOf("loot_table").orElse(DEFAULT_LOOT_TABLE).forGetter(StorageContainerConfig::hasLootTable)
+				configEntry("containers/storage/enabled", DEFAULT_ENABLED, StorageContainerConfig::isEnabled),
+				configEntry("containers/storage/compact", DEFAULT_COMPACT, StorageContainerConfig::isCompact),
+				configEntry("containers/storage/loot_table", DEFAULT_LOOT_TABLE, StorageContainerConfig::hasLootTable)
 		).apply(instance, StorageContainerConfig::new));
 
 		private boolean enabled;
@@ -276,10 +280,10 @@ public class InspecioConfig {
 		public static final boolean DEFAULT_COLOR = true;
 
 		public static final Codec<ShulkerBoxConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(StorageContainerConfig::isEnabled),
-				Codec.BOOL.fieldOf("compact").forGetter(StorageContainerConfig::isCompact),
-				Codec.BOOL.fieldOf("loot_table").orElse(DEFAULT_LOOT_TABLE).forGetter(StorageContainerConfig::hasLootTable),
-				Codec.BOOL.fieldOf("color").orElse(DEFAULT_COLOR).forGetter(ShulkerBoxConfig::hasColor)
+				configEntry("containers/shulker_box/enabled", DEFAULT_ENABLED, StorageContainerConfig::isEnabled),
+				configEntry("containers/shulker_box/compact", DEFAULT_COMPACT, StorageContainerConfig::isCompact),
+				configEntry("containers/shulker_box/loot_table", DEFAULT_LOOT_TABLE, StorageContainerConfig::hasLootTable),
+				configEntry("containers/shulker_box/color", DEFAULT_COLOR, ShulkerBoxConfig::hasColor)
 		).apply(instance, ShulkerBoxConfig::new));
 
 		private boolean color;
@@ -315,10 +319,10 @@ public class InspecioConfig {
 		public static boolean DEFAULT_FOOD = true;
 
 		public static final Codec<EffectsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.BOOL.fieldOf("potions").orElse(DEFAULT_POTIONS).forGetter(EffectsConfig::hasPotions),
-				Codec.BOOL.fieldOf("tipped_arrows").orElse(DEFAULT_TIPPED_ARROWS).forGetter(EffectsConfig::hasTippedArrows),
-				Codec.BOOL.fieldOf("spectral_arrow").orElse(DEFAULT_SPECTRAL_ARROW).forGetter(EffectsConfig::hasSpectralArrow),
-				Codec.BOOL.fieldOf("food").orElse(DEFAULT_FOOD).forGetter(EffectsConfig::hasFood)
+				configEntry("effects/potions", DEFAULT_POTIONS, EffectsConfig::hasPotions),
+				configEntry("effects/tipped_arrows", DEFAULT_TIPPED_ARROWS, EffectsConfig::hasTippedArrows),
+				configEntry("effects/spectral_arrow", DEFAULT_SPECTRAL_ARROW, EffectsConfig::hasSpectralArrow),
+				configEntry("effects/food", DEFAULT_FOOD, EffectsConfig::hasFood)
 		).apply(instance, EffectsConfig::new));
 
 		private boolean potions;
@@ -380,12 +384,9 @@ public class InspecioConfig {
 		public static final int DEFAULT_PUFF_STATE = 2;
 
 		public static final Codec<EntitiesConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				EntityConfig.CODEC.fieldOf("bee").orElseGet(EntityConfig::defaultConfig)
-						.forGetter(EntitiesConfig::getBeeConfig),
-				EntityConfig.CODEC.fieldOf("fish_bucket").orElseGet(EntityConfig::defaultConfig)
-						.forGetter(EntitiesConfig::getFishBucketConfig),
-				EntityConfig.CODEC.fieldOf("spawn_egg").orElseGet(EntityConfig::defaultConfig)
-						.forGetter(EntitiesConfig::getSpawnEggConfig),
+				configEntry(EntityConfig.CODEC, "entities/bee", EntityConfig::defaultConfig, EntitiesConfig::getBeeConfig),
+				configEntry(EntityConfig.CODEC, "entities/fish_bucket", EntityConfig::defaultConfig, EntitiesConfig::getFishBucketConfig),
+				configEntry(EntityConfig.CODEC, "entities/spawn_egg", EntityConfig::defaultConfig, EntitiesConfig::getSpawnEggConfig),
 				Codec.INT.fieldOf("pufferfish_puff_state").orElse(DEFAULT_PUFF_STATE)
 						.forGetter(EntitiesConfig::getPufferFishPuffState)
 		).apply(instance, EntitiesConfig::new));
@@ -496,9 +497,8 @@ public class InspecioConfig {
 		public static final boolean DEFAULT_SHOW_PLAYER_ICON = false;
 
 		public static final Codec<FilledMapConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(FilledMapConfig::isEnabled),
-				Codec.BOOL.fieldOf("show_player_icon").orElse(DEFAULT_SHOW_PLAYER_ICON)
-						.forGetter(FilledMapConfig::shouldShowPlayerIcon)
+				configEntry("filled_map/enabled", DEFAULT_ENABLED, FilledMapConfig::isEnabled),
+				configEntry("filled_map/show_player_icon", DEFAULT_SHOW_PLAYER_ICON, FilledMapConfig::shouldShowPlayerIcon)
 		).apply(instance, FilledMapConfig::new));
 
 		private boolean enabled;
@@ -541,9 +541,9 @@ public class InspecioConfig {
 		public static final SaturationTooltipMode DEFAULT_SATURATION_TOOLTIP_MODE = SaturationTooltipMode.MERGED;
 
 		public static final Codec<FoodConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.BOOL.fieldOf("hunger").orElse(DEFAULT_HUNGER).forGetter(FoodConfig::hasHunger),
-				SaturationTooltipMode.CODEC.fieldOf("saturation").orElse(DEFAULT_SATURATION_TOOLTIP_MODE)
-						.forGetter(FoodConfig::getSaturationMode)
+				configEntry("food/hunger", DEFAULT_HUNGER, FoodConfig::hasHunger),
+				configEntry(SaturationTooltipMode.CODEC, "food/saturation", () -> DEFAULT_SATURATION_TOOLTIP_MODE,
+						FoodConfig::getSaturationMode)
 		).apply(instance, FoodConfig::new));
 
 		private boolean hunger;

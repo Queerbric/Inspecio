@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 /**
  * Represents the Inspecio mod.
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 public class Inspecio implements ClientModInitializer {

@@ -120,7 +120,10 @@ Here's the default configuration:
     },
     "pufferfish_puff_state": 2
   },
-  "filled_map": true,
+  "filled_map": {
+    "enabled": true,
+    "show_player_icon": false
+  },
   "armor": true,
   "banner_pattern": true,
   "containers": {
@@ -177,7 +180,9 @@ Here's a list of each configuration entries and what they do:
      - `always_show_name` (`bool`) - `true` if the name of the hold entity should always be shown, else `false`.
      - `spin` (`bool`) - `true` if the entity spins in the tooltip, else `false`.
    - `pufferfish_puff_state` (`int`) - the pufferfish puff state, between 0 and 2 inclusive.
- - `filled_map` (`bool`) - `true` if filled map tooltips should display the map, else `false`.
+ - `filled_map`
+   - `enabled` (`bool`) - `true` if filled map tooltips should display the map, else `false`.
+   - `show_player_icon` (`bool`) - `true` if show the player icon on filled map tooltips, else `false`.
  - `food`
    - `hunger` (`bool`) - `true` if hunger bar should be displayed on food items, else `false`.
    - `saturation` (`string`) - `"disabled"` does nothing, `"merged"` adds the saturation bar as an outline to the hunger bar, `"separated"` adds its own saturation bar.
