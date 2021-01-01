@@ -39,6 +39,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Represents the Inspecio configuration.
@@ -46,7 +48,7 @@ import java.util.Optional;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 public class InspecioConfig {
@@ -54,27 +56,24 @@ public class InspecioConfig {
 
 	public static final boolean DEFAULT_ARMOR = true;
 	public static final boolean DEFAULT_BANNER_PATTERN = true;
-	public static final boolean DEFAULT_FILLED_MAP = true;
 	public static final JukeboxTooltipMode DEFAULT_JUKEBOX_TOOLTIP_MODE = JukeboxTooltipMode.FANCY;
 	public static final SignTooltipMode DEFAULT_SIGN_TOOLTIP_MODE = SignTooltipMode.FANCY;
 
 	public static final Codec<InspecioConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.BOOL.fieldOf("armor").orElse(DEFAULT_ARMOR).forGetter(InspecioConfig::hasArmor),
 			Codec.BOOL.fieldOf("banner_pattern").orElse(DEFAULT_BANNER_PATTERN).forGetter(InspecioConfig::hasBannerPattern),
-			ContainersConfig.CODEC.fieldOf("containers").orElseGet(ContainersConfig::defaultConfig)
-					.forGetter(InspecioConfig::getContainersConfig),
-			EffectsConfig.CODEC.fieldOf("effects").orElseGet(EffectsConfig::defaultConfig)
-					.forGetter(InspecioConfig::getEffectsConfig),
-			EntitiesConfig.CODEC.fieldOf("entities").orElseGet(EntitiesConfig::defaultConfig)
-					.forGetter(InspecioConfig::getEntitiesConfig),
-			Codec.BOOL.fieldOf("filled_map").orElse(DEFAULT_FILLED_MAP).forGetter(InspecioConfig::hasFilledMap),
-			FoodConfig.CODEC.fieldOf("food").orElseGet(FoodConfig::defaultConfig)
-					.forGetter(InspecioConfig::getFoodConfig),
-			JukeboxTooltipMode.CODEC.fieldOf("jukebox").orElse(DEFAULT_JUKEBOX_TOOLTIP_MODE)
-					.forGetter(InspecioConfig::getJukeboxTooltipMode),
-			SignTooltipMode.CODEC.fieldOf("sign").orElse(DEFAULT_SIGN_TOOLTIP_MODE)
-					.forGetter(InspecioConfig::getSignTooltipMode)
+			configEntry(ContainersConfig.CODEC, "containers", ContainersConfig::defaultConfig, InspecioConfig::getContainersConfig),
+			configEntry(EffectsConfig.CODEC, "effects", EffectsConfig::defaultConfig, InspecioConfig::getEffectsConfig),
+			configEntry(EntitiesConfig.CODEC, "entities", EntitiesConfig::defaultConfig, InspecioConfig::getEntitiesConfig),
+			configEntry(FilledMapConfig.CODEC, "filled_map", FilledMapConfig::defaultConfig, InspecioConfig::getFilledMapConfig),
+			configEntry(FoodConfig.CODEC, "food", FoodConfig::defaultConfig, InspecioConfig::getFoodConfig),
+			configEntry(JukeboxTooltipMode.CODEC, "jukebox", () -> DEFAULT_JUKEBOX_TOOLTIP_MODE, InspecioConfig::getJukeboxTooltipMode),
+			configEntry(SignTooltipMode.CODEC, "sign", () -> DEFAULT_SIGN_TOOLTIP_MODE, InspecioConfig::getSignTooltipMode)
 	).apply(instance, InspecioConfig::new));
+
+	private static <C, E> RecordCodecBuilder<C, E> configEntry(Codec<E> codec, String path, Supplier<E> defaultGetter, Function<C, E> getter) {
+		return codec.fieldOf(path).orElseGet(Inspecio.onConfigError(path), defaultGetter).forGetter(getter);
+	}
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final JsonParser JSON_PARSER = new JsonParser();
@@ -84,7 +83,7 @@ public class InspecioConfig {
 	private final ContainersConfig containersConfig;
 	private final EffectsConfig effectsConfig;
 	private final EntitiesConfig entitiesConfig;
-	private boolean filledMap;
+	private final FilledMapConfig filledMapConfig;
 	private final FoodConfig foodConfig;
 	private JukeboxTooltipMode jukeboxTooltipMode;
 	private SignTooltipMode signTooltipMode;
@@ -93,7 +92,7 @@ public class InspecioConfig {
 						  ContainersConfig containersConfig,
 						  EffectsConfig effectsConfig,
 						  EntitiesConfig entitiesConfig,
-						  boolean filledMap,
+						  FilledMapConfig filledMapConfig,
 						  FoodConfig foodConfig,
 						  JukeboxTooltipMode jukeboxTooltipMode,
 						  SignTooltipMode signTooltipMode) {
@@ -102,7 +101,7 @@ public class InspecioConfig {
 		this.containersConfig = containersConfig;
 		this.effectsConfig = effectsConfig;
 		this.entitiesConfig = entitiesConfig;
-		this.filledMap = filledMap;
+		this.filledMapConfig = filledMapConfig;
 		this.foodConfig = foodConfig;
 		this.jukeboxTooltipMode = jukeboxTooltipMode;
 		this.signTooltipMode = signTooltipMode;
@@ -136,12 +135,8 @@ public class InspecioConfig {
 		return this.entitiesConfig;
 	}
 
-	public boolean hasFilledMap() {
-		return this.filledMap;
-	}
-
-	public void setFilledMap(boolean filledMap) {
-		this.filledMap = filledMap;
+	public FilledMapConfig getFilledMapConfig() {
+		return this.filledMapConfig;
 	}
 
 	public FoodConfig getFoodConfig() {
@@ -491,6 +486,51 @@ public class InspecioConfig {
 	}
 
 	/**
+	 * Represents filled map configuration.
+	 *
+	 * @version 1.0.1
+	 * @since 1.0.1
+	 */
+	public static class FilledMapConfig {
+		public static final boolean DEFAULT_ENABLED = true;
+		public static final boolean DEFAULT_SHOW_PLAYER_ICON = false;
+
+		public static final Codec<FilledMapConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(FilledMapConfig::isEnabled),
+				Codec.BOOL.fieldOf("show_player_icon").orElse(DEFAULT_SHOW_PLAYER_ICON)
+						.forGetter(FilledMapConfig::shouldShowPlayerIcon)
+		).apply(instance, FilledMapConfig::new));
+
+		private boolean enabled;
+		private boolean showPlayerIcon;
+
+		public FilledMapConfig(boolean enabled, boolean showPlayerIcon) {
+			this.enabled = enabled;
+			this.showPlayerIcon = showPlayerIcon;
+		}
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		public boolean shouldShowPlayerIcon() {
+			return this.showPlayerIcon;
+		}
+
+		public void setShowPlayerIcon(boolean showPlayerIcon) {
+			this.showPlayerIcon = showPlayerIcon;
+		}
+
+		public static FilledMapConfig defaultConfig() {
+			return new FilledMapConfig(DEFAULT_ENABLED, DEFAULT_SHOW_PLAYER_ICON);
+		}
+	}
+
+	/**
 	 * Represents food configuration.
 	 *
 	 * @version 1.0.0
@@ -583,7 +623,7 @@ public class InspecioConfig {
 				ContainersConfig.defaultConfig(),
 				EffectsConfig.defaultConfig(),
 				EntitiesConfig.defaultConfig(),
-				DEFAULT_FILLED_MAP,
+				FilledMapConfig.defaultConfig(),
 				FoodConfig.defaultConfig(),
 				DEFAULT_JUKEBOX_TOOLTIP_MODE,
 				DEFAULT_SIGN_TOOLTIP_MODE);

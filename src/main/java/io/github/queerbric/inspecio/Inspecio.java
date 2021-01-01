@@ -38,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Represents the Inspecio mod.
@@ -105,6 +106,10 @@ public class Inspecio implements ClientModInitializer {
 
 	public static Inspecio get() {
 		return INSTANCE;
+	}
+
+	static Consumer<String> onConfigError(String path) {
+		return error -> get().warn("Configuration error at \"" + path + "\", error: " + error);
 	}
 
 	/**
