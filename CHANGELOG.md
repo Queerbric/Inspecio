@@ -17,3 +17,8 @@
    - Added repair cost tooltip.
    - Added loot table tooltip.
  - Added configuration through JSON file.
+
+### 1.0.1
+
+ - Added config error logging.
+ - Fixed map tooltip rendering.
