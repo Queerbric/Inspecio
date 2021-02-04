@@ -54,7 +54,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		this.type = type;
 		this.text = text;
 		this.color = color;
-		this.model = SignBlockEntityRenderer.method_32157(this.client.getEntityModelLoader(), this.type);
+		this.model = SignBlockEntityRenderer.createSignModel(this.client.getEntityModelLoader(), this.type);
 	}
 
 	public static Optional<TooltipData> fromItemStack(ItemStack stack) {
@@ -64,7 +64,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		if (stack.getItem() instanceof SignItem) {
 			Block block = ((SignItem) stack.getItem()).getBlock();
 			CompoundTag tag = stack.getSubTag("BlockEntityTag");
-			if (tag != null) return Optional.of(fromTag(SignBlockEntityRenderer.method_32155(block), tag));
+			if (tag != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), tag));
 		}
 		return Optional.empty();
 	}
@@ -125,11 +125,11 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		matrices.translate(45, 56, 0);
 		matrices.scale(65, 65, -65);
 		VertexConsumerProvider.Immediate immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
-		SpriteIdentifier spriteIdentifier = TexturedRenderLayers.method_33082(this.type);
+		SpriteIdentifier spriteIdentifier = TexturedRenderLayers.getSignTextureId(this.type);
 		VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(immediate, this.model::getLayer);
-		this.model.foot.visible = false;
-		this.model.field_27756.visible = true;
-		this.model.field_27756.render(matrices, vertexConsumer, 15728880, OverlayTexture.DEFAULT_UV);
+		this.model.stick.visible = false;
+		this.model.root.visible = true;
+		this.model.root.render(matrices, vertexConsumer, 15728880, OverlayTexture.DEFAULT_UV);
 		immediate.draw();
 		matrices.pop();
 

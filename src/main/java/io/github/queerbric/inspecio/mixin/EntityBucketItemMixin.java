@@ -17,10 +17,10 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import io.github.queerbric.inspecio.tooltip.FishTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.EntityBucketTooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.FishBucketItem;
+import net.minecraft.item.EntityBucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -29,19 +29,19 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Optional;
 
-@Mixin(FishBucketItem.class)
-public abstract class FishBucketItemMixin extends Item {
+@Mixin(EntityBucketItem.class)
+public abstract class EntityBucketItemMixin extends Item {
 	@Shadow
 	@Final
-	private EntityType<?> fishType;
+	private EntityType<?> entityType;
 
-	public FishBucketItemMixin(Settings settings) {
+	public EntityBucketItemMixin(Settings settings) {
 		super(settings);
 	}
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		Optional<TooltipData> data = FishTooltipComponent.of(this.fishType, stack.getOrCreateTag());
+		Optional<TooltipData> data = EntityBucketTooltipComponent.of(this.entityType, stack.getOrCreateTag());
 		if (data.isPresent()) return data;
 		return super.getTooltipData(stack);
 	}

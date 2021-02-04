@@ -91,8 +91,8 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		VertexConsumerProvider.Immediate immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
-		List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.method_24280(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
-		BannerBlockEntityRenderer.method_29999(matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, this.bannerField, ModelLoader.BANNER_BASE, true, list);
+		List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.getPatternsFromTag(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
+		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
 		immediate.draw();
 		matrices.pop();

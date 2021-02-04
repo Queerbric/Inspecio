@@ -133,7 +133,7 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static @Nullable Tag<Item> getHiddenEffectsTag() {
-		Tag<Item> tag = MinecraftClient.getInstance().world.getTagManager().method_33164(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
+		Tag<Item> tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
 		if (tag == null) {
 			tag = get().resourceReloader.getCurrentGroup().getTag(HIDDEN_EFFECTS_TAG);
 		}

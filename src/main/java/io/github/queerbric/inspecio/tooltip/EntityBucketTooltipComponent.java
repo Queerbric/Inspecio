@@ -39,10 +39,10 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class FishTooltipComponent extends EntityTooltipComponent {
+public class EntityBucketTooltipComponent extends EntityTooltipComponent {
 	private final Entity entity;
 
-	private FishTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {
+	private EntityBucketTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {
 		super(config);
 		this.entity = entity;
 	}
@@ -57,7 +57,7 @@ public class FishTooltipComponent extends EntityTooltipComponent {
 		if (entity != null) {
 			EntityType.loadFromEntityTag(client.world, null, entity, itemTag);
 			adjustEntity(entity, itemTag, entitiesConfig);
-			return Optional.of(new FishTooltipComponent(entitiesConfig.getFishBucketConfig(), entity));
+			return Optional.of(new EntityBucketTooltipComponent(entitiesConfig.getFishBucketConfig(), entity));
 		}
 		return Optional.empty();
 	}
