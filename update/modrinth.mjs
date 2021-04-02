@@ -17,8 +17,8 @@ const ARCHIVES_BASE_NAME_REGEX = /archives_base_name=([a-z_-]+)/g;
 
 function parse_readme() {
   let readme = fs.readFileSync('README.md', {encoding: 'utf8'});
-  readme = readme.replaceAll(EXCLUDE_REGEX, '');
-  readme = readme.replaceAll(LINK_REGEX, '![$1](https://raw.githubusercontent.com/Queerbric/Inspecio/1.17/$2)');
+  readme = readme.replace(EXCLUDE_REGEX, '');
+  readme = readme.replace(LINK_REGEX, '![$1](https://raw.githubusercontent.com/Queerbric/Inspecio/1.17/$2)');
   return readme;
 }
 
