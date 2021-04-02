@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -49,7 +50,7 @@ public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipCom
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
-		textureManager.bindTexture(InGameHud.GUI_ICONS_TEXTURE);
+		RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
 		for (int i = 0; i < this.prot / 2; i++) {
 			DrawableHelper.drawTexture(matrices, x + i * 9, y, 34, 9, 9, 9, 256, 256);
 		}

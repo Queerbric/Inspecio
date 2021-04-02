@@ -58,7 +58,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
-		textureManager.bindTexture(InGameHud.GUI_ICONS_TEXTURE);
+		RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
 		int saturationY = y;
 		if (this.foodConfig.getSaturationMode() == SaturationTooltipMode.SEPARATED && this.foodConfig.hasHunger()) saturationY += 11;
 
@@ -70,7 +70,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		}
 
 		// Draw saturation outline.
-		RenderSystem.color4f(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
+		RenderSystem.setShaderColor(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
 		float saturation = this.component.getHunger() * this.component.getSaturationModifier();
 		for (int i = 0; i < saturation; i++) {
 			int width = 9;
@@ -81,7 +81,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		}
 
 		// Draw hunger bars.
-		RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
+		RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);
 		if (this.foodConfig.hasHunger()) {
 			for (int i = 0; i < this.component.getHunger() / 2; i++) {
 				DrawableHelper.drawTexture(matrices, x + i * 9, y, 52, 27, 9, 9, 256, 256);
@@ -93,7 +93,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 		// Draw saturation bar if separate (or alone).
 		if (this.foodConfig.getSaturationMode() == SaturationTooltipMode.SEPARATED || !this.foodConfig.hasHunger()) {
-			RenderSystem.color4f(229 / 255.f, 204 / 255.f, 209 / 255.f, 1.f);
+			RenderSystem.setShaderColor(229 / 255.f, 204 / 255.f, 209 / 255.f, 1.f);
 			int intSaturation = Math.max(1, this.getSaturation());
 			if (saturation * 2 - intSaturation > 0.2)
 				intSaturation++;
@@ -103,7 +103,7 @@ public class FoodTooltipComponent implements ConvertibleTooltipData, TooltipComp
 			if (intSaturation % 2 == 1) {
 				DrawableHelper.drawTexture(matrices, x + this.getSaturation() / 2 * 9, saturationY, 61, 27, 9, 9, 256, 256);
 			}
-			RenderSystem.color4f(1.f, 1.f, 1.f, 1.f);
+			RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);
 		}
 	}
 

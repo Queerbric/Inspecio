@@ -24,7 +24,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
@@ -122,10 +122,10 @@ public class Inspecio implements ClientModInitializer {
 	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
 		InspecioConfig.StorageContainerConfig config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
 		if (config != null && config.hasLootTable()) {
-			CompoundTag blockEntityTag = stack.getOrCreateSubTag("BlockEntityTag");
-			if (blockEntityTag.contains("LootTable")) {
+			NbtCompound blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
+			if (blockEntityNbt.contains("LootTable")) {
 				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
-						new LiteralText(blockEntityTag.getString("LootTable"))
+						new LiteralText(blockEntityNbt.getString("LootTable"))
 								.formatted(Formatting.GOLD))
 						.formatted(Formatting.GRAY));
 			}

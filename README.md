@@ -1,10 +1,10 @@
 # Inspecio
-
-![Java 8](https://img.shields.io/badge/language-Java%208-9B599A.svg?style=flat-square)
-[![GitHub license](https://img.shields.io/github/license/Queerbric/Inspecio?style=flat-square)](https://raw.githubusercontent.com/Queerbric/Inspecio/master/LICENSE)
+<!-- modrinth_exclude.start -->
+![Java 8](https://img.shields.io/badge/language-Java%208-9B599A.svg?style=flat-square) <!-- modrinth_exclude.end -->
+[![GitHub license](https://img.shields.io/github/license/Queerbric/Inspecio?style=flat-square)](https://raw.githubusercontent.com/Queerbric/Inspecio/1.17/LICENSE)
 ![Environment: Client](https://img.shields.io/badge/environment-client-1976d2?style=flat-square)
-[![Mod loader: Fabric]][fabric]
-![Version](https://img.shields.io/github/v/tag/Queerbric/Inspecio?label=version&style=flat-square)
+[![Mod loader: Fabric]][fabric] <!-- modrinth_exclude.start -->
+![Version](https://img.shields.io/github/v/tag/Queerbric/Inspecio?label=version&style=flat-square) <!-- modrinth_exclude.end -->
 
 Better and more tooltips on items!
 

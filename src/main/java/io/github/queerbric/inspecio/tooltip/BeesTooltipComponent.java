@@ -28,8 +28,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,16 +46,16 @@ import java.util.function.Function;
 public class BeesTooltipComponent extends EntityTooltipComponent {
 	private final List<Bee> bees = new ArrayList<>();
 
-	public BeesTooltipComponent(InspecioConfig.EntityConfig config, ListTag bees) {
+	public BeesTooltipComponent(InspecioConfig.EntityConfig config, NbtList bees) {
 		super(config);
-		bees.stream().map(tag -> (CompoundTag) tag).forEach(tag -> {
-			CompoundTag bee = tag.getCompound("EntityData");
+		bees.stream().map(nbt -> (NbtCompound) nbt).forEach(nbt -> {
+			NbtCompound bee = nbt.getCompound("EntityData");
 			bee.remove("UUID");
 			bee.remove("Passengers");
 			bee.remove("Leash");
 			Entity entity = EntityType.loadEntityWithPassengers(bee, this.client.world, Function.identity());
 			if (entity != null) {
-				this.bees.add(new Bee(tag.getInt("TicksInHive"), entity));
+				this.bees.add(new Bee(nbt.getInt("TicksInHive"), entity));
 			}
 		});
 	}
@@ -64,8 +64,8 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 		InspecioConfig.EntityConfig config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
 		if (!config.isEnabled())
 			return Optional.empty();
-		CompoundTag blockEntityTag = stack.getOrCreateSubTag("BlockEntityTag");
-		ListTag bees = blockEntityTag.getList("Bees", 10);
+		NbtCompound blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
+		NbtList bees = blockEntityNbt.getList("Bees", 10);
 		if (!bees.isEmpty())
 			return Optional.of(new BeesTooltipComponent(config, bees));
 		return Optional.empty();

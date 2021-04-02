@@ -18,6 +18,7 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import io.github.queerbric.inspecio.Inspecio;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
@@ -108,7 +109,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		if (this.hidden) {
-			textureManager.bindTexture(MYSTERY_TEXTURE);
+			RenderSystem.setShaderTexture(0, MYSTERY_TEXTURE);
 			DrawableHelper.drawTexture(matrices, x, y, 0, 0, 18, 18, 18, 18);
 		} else {
 			MinecraftClient client = MinecraftClient.getInstance();
@@ -117,7 +118,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				StatusEffectInstance statusEffectInstance = list.get(i);
 				StatusEffect statusEffect = statusEffectInstance.getEffectType();
 				Sprite sprite = statusEffectSpriteManager.getSprite(statusEffect);
-				client.getTextureManager().bindTexture(sprite.getAtlas().getId());
+				RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
 				DrawableHelper.drawSprite(matrices, x, y + i * 20, z, 18, 18, sprite);
 			}
 		}

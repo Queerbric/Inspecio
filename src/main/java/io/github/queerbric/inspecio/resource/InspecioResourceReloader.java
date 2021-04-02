@@ -49,10 +49,10 @@ public class InspecioResourceReloader implements SimpleSynchronousResourceReload
 	}
 
 	@Override
-	public void apply(ResourceManager manager) {
+	public void reload(ResourceManager manager) {
 		manager = this.getGoodResourceManager(manager);
-		Map<Identifier, Tag.Builder> map = this.loader.method_33174(manager);
-		this.currentGroup = this.loader.applyReload(map);
+		Map<Identifier, Tag.Builder> map = this.loader.loadTags(manager);
+		this.currentGroup = this.loader.buildGroup(map);
 	}
 
 	/**

@@ -29,7 +29,7 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Matrix4f;
 
@@ -53,9 +53,9 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 
 	public static Optional<TooltipData> of(ItemStack stack) {
 		if (!Inspecio.get().getConfig().getJukeboxTooltipMode().isEnabled()) return Optional.empty();
-		CompoundTag tag = stack.getSubTag("BlockEntityTag");
-		if (tag != null && tag.contains("RecordItem")) {
-			ItemStack discStack = ItemStack.fromTag(tag.getCompound("RecordItem"));
+		NbtCompound nbt = stack.getSubTag("BlockEntityTag");
+		if (nbt != null && nbt.contains("RecordItem")) {
+			ItemStack discStack = ItemStack.fromNbt(nbt.getCompound("RecordItem"));
 			if (discStack.getItem() instanceof MusicDiscItem)
 				return Optional.of(new JukeboxTooltipComponent(discStack));
 		}

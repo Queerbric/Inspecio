@@ -37,8 +37,8 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 
 import java.util.List;
@@ -81,9 +81,9 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		matrices.push();
 		matrices.translate(x + 8, y + 8, z);
 		ItemStack itemStack = new ItemStack(Items.GRAY_BANNER);
-		CompoundTag compoundTag = itemStack.getOrCreateSubTag("BlockEntityTag");
-		ListTag listTag = (new BannerPattern.Patterns()).add(BannerPattern.BASE, DyeColor.GRAY).add(this.pattern, DyeColor.WHITE).toTag();
-		compoundTag.put("Patterns", listTag);
+		NbtCompound nbt = itemStack.getOrCreateSubTag("BlockEntityTag");
+		NbtList listNbt = (new BannerPattern.Patterns()).add(BannerPattern.BASE, DyeColor.GRAY).add(this.pattern, DyeColor.WHITE).toNbt();
+		nbt.put("Patterns", listNbt);
 		matrices.push();
 		matrices.translate(0.5, 16, 0);
 		matrices.scale(6, -6, 1);
@@ -91,7 +91,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		VertexConsumerProvider.Immediate immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
-		List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.getPatternsFromTag(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
+		List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
 		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
 		immediate.draw();

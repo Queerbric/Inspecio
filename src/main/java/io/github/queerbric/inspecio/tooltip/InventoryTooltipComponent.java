@@ -74,7 +74,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 			return Optional.empty();
 
 		List<ItemStack> inventory = DefaultedList.ofSize(getInvSizeFor(stack), ItemStack.EMPTY);
-		Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), (DefaultedList<ItemStack>) inventory);
+		Inventories.readNbt(stack.getOrCreateSubTag("BlockEntityTag"), (DefaultedList<ItemStack>) inventory);
 		if (inventory.stream().allMatch(ItemStack::isEmpty))
 			return Optional.empty();
 
@@ -138,8 +138,8 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 
 	private void drawSlot(MatrixStack matrices, int x, int y, int z, TextureManager textureManager) {
 		float[] color = this.color != null ? this.color.getColorComponents() : new float[]{1.f, 1.f, 1.f};
-		RenderSystem.color4f(color[0], color[1], color[2], 1.f);
-		textureManager.bindTexture(DrawableHelper.STATS_ICON_TEXTURE);
+		RenderSystem.setShaderColor(color[0], color[1], color[2], 1.f);
+		RenderSystem.setShaderTexture(0, DrawableHelper.STATS_ICON_TEXTURE);
 		DrawableHelper.drawTexture(matrices, x, y, z, 0.f, 0.f, 18, 18, 128, 128);
 	}
 

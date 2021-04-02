@@ -26,12 +26,12 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Bucketable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SquidEntity;
-import net.minecraft.entity.passive.TropicalFishEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
@@ -118,11 +118,13 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 
 	protected abstract boolean shouldRenderCustomNames();
 
-	protected static void adjustEntity(Entity entity, CompoundTag itemTag, InspecioConfig.EntitiesConfig config) {
-		if (itemTag.contains("BucketVariantTag", 3) && entity instanceof TropicalFishEntity) {
-			((TropicalFishEntity) entity).setVariant(itemTag.getInt("BucketVariantTag"));
-		} else if (entity instanceof PufferfishEntity) {
-			((PufferfishEntity) entity).setPuffState(config.getPufferFishPuffState());
+	protected static void adjustEntity(Entity entity, NbtCompound itemNbt, InspecioConfig.EntitiesConfig config) {
+		if (entity instanceof Bucketable) {
+			Bucketable bucketable = (Bucketable) entity;
+			bucketable.method_35170(itemNbt);
+			if (entity instanceof PufferfishEntity) {
+				((PufferfishEntity) entity).setPuffState(config.getPufferFishPuffState());
+			}
 		}
 	}
 }

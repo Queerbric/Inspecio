@@ -32,7 +32,7 @@ import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SignItem;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.SignType;
@@ -63,18 +63,18 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 		if (stack.getItem() instanceof SignItem) {
 			Block block = ((SignItem) stack.getItem()).getBlock();
-			CompoundTag tag = stack.getSubTag("BlockEntityTag");
-			if (tag != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), tag));
+			NbtCompound nbt = stack.getSubTag("BlockEntityTag");
+			if (nbt != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), nbt));
 		}
 		return Optional.empty();
 	}
 
-	public static SignTooltipComponent fromTag(SignType type, CompoundTag tag) {
-		DyeColor color = DyeColor.byName(tag.getString("Color"), DyeColor.BLACK);
+	public static SignTooltipComponent fromTag(SignType type, NbtCompound nbt) {
+		DyeColor color = DyeColor.byName(nbt.getString("Color"), DyeColor.BLACK);
 
 		Text[] lines = new Text[4];
 		for (int i = 0; i < 4; ++i) {
-			String serialized = tag.getString("Text" + (i + 1));
+			String serialized = nbt.getString("Text" + (i + 1));
 			Text text = Text.Serializer.fromJson(serialized.isEmpty() ? "\"\"" : serialized);
 			lines[i] = text;
 		}

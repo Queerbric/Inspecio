@@ -29,7 +29,7 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,7 +42,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 		this.entity = entity;
 	}
 
-	public static Optional<TooltipData> of(EntityType<?> type, CompoundTag itemTag) {
+	public static Optional<TooltipData> of(EntityType<?> type, NbtCompound itemNbt) {
 		InspecioConfig.EntitiesConfig entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
 		if (!entitiesConfig.getSpawnEggConfig().isEnabled())
 			return Optional.empty();
@@ -50,20 +50,20 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 		MinecraftClient client = MinecraftClient.getInstance();
 		Entity entity = type.create(client.world);
 		if (entity != null) {
-			adjustEntity(entity, itemTag, entitiesConfig);
-			CompoundTag itemEntityTag = itemTag.getCompound("EntityTag").copy();
-			if (!itemEntityTag.contains("VillagerData")) {
-				CompoundTag villagerData = new CompoundTag();
+			adjustEntity(entity, itemNbt, entitiesConfig);
+			NbtCompound itemEntityNbt = itemNbt.getCompound("EntityTag").copy();
+			if (!itemEntityNbt.contains("VillagerData")) {
+				NbtCompound villagerData = new NbtCompound();
 				villagerData.putString("profession", "minecraft:none");
 				villagerData.putInt("level", 1);
 				villagerData.putString("type", "minecraft:plains");
-				itemEntityTag.put("VillagerData", villagerData);
+				itemEntityNbt.put("VillagerData", villagerData);
 			}
-			CompoundTag entityTag = entity.toTag(new CompoundTag());
+			NbtCompound entityTag = entity.writeNbt(new NbtCompound());
 			UUID uuid = entity.getUuid();
-			entityTag.copyFrom(itemEntityTag);
+			entityTag.copyFrom(itemEntityNbt);
 			entity.setUuid(uuid);
-			entity.fromTag(entityTag);
+			entity.readNbt(entityTag);
 			return Optional.of(new SpawnEntityTooltipComponent(entitiesConfig.getSpawnEggConfig(), entity));
 		}
 		return Optional.empty();

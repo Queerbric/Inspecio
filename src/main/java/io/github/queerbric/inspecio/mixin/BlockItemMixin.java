@@ -71,7 +71,7 @@ public abstract class BlockItemMixin extends Item {
 				if (this.getBlock() instanceof ShulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
 					color = ((ShulkerBoxBlock) this.getBlock()).getColor();
 				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
-				Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
+				Inventories.readNbt(stack.getOrCreateSubTag("BlockEntityTag"), inventory);
 				return InventoryTooltipComponent.of(stack, config.isCompact(), color);
 			}
 		}
