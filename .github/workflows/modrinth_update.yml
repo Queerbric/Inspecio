@@ -17,7 +17,7 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: Set up NodeJS
-        uses: actions/setup-java@v1
+        uses: actions/setup-node@v1
         with:
           node-version: 15.x
 
