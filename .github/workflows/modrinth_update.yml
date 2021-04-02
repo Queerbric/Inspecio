@@ -18,9 +18,9 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 15.x
+          node-version: '14'
 
       - name: Build with Gradle
         run: gradle build
