@@ -28,4 +28,6 @@ jobs:
       - name: Fetch Node modules
         run: cd update && npm install && cd ..
       - name: Publish to Modrinth
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         run: node update/modrinth.mjs
