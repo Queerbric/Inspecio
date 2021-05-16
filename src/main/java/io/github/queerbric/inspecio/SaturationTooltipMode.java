@@ -17,13 +17,25 @@
 
 package io.github.queerbric.inspecio;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.PrimitiveCodec;
+import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Represents the different tooltip modes for saturation.
@@ -37,7 +49,7 @@ public enum SaturationTooltipMode {
 	MERGED,
 	SEPARATED;
 
-	public static final PrimitiveCodec<SaturationTooltipMode> CODEC = new PrimitiveCodec<SaturationTooltipMode>() {
+	public static final PrimitiveCodec<SaturationTooltipMode> CODEC = new PrimitiveCodec<>() {
 		@Override
 		public <T> DataResult<SaturationTooltipMode> read(final DynamicOps<T> ops, final T input) {
 			return ops.getStringValue(input).map(id -> byId(id).orElse(DISABLED));
@@ -61,10 +73,10 @@ public enum SaturationTooltipMode {
 	/**
 	 * Returns the next saturation tooltip mode available.
 	 *
-	 * @return The next available saturation tooltip mode.
+	 * @return the next available saturation tooltip mode
 	 */
 	public SaturationTooltipMode next() {
-		SaturationTooltipMode[] v = values();
+		var v = values();
 		if (v.length == this.ordinal() + 1)
 			return v[0];
 		return v[this.ordinal() + 1];
@@ -77,10 +89,46 @@ public enum SaturationTooltipMode {
 	/**
 	 * Gets the saturation tooltip mode from its identifier.
 	 *
-	 * @param id The identifier of the saturation tooltip mode.
-	 * @return The saturation tooltip mode if found, else empty.
+	 * @param id the identifier of the saturation tooltip mode
+	 * @return the saturation tooltip mode if found, else empty
 	 */
 	public static @NotNull Optional<SaturationTooltipMode> byId(@NotNull String id) {
 		return Arrays.stream(values()).filter(mode -> mode.getName().equalsIgnoreCase(id)).findFirst();
+	}
+
+	public static class SaturationArgumentType implements ArgumentType<SaturationTooltipMode> {
+		private static final SimpleCommandExceptionType UNKNOWN_VALUE = new SimpleCommandExceptionType(
+				new TranslatableText("inspecio.command.error.unknown_saturation_tooltip_mode"));
+		private static final List<SaturationTooltipMode> VALUES = List.of(values());
+
+		private SaturationArgumentType() {
+		}
+
+		public static SaturationArgumentType saturationTooltipMode() {
+			return new SaturationArgumentType();
+		}
+
+		public static SaturationTooltipMode getSaturationTooltipMode(final CommandContext<?> context, final String name) {
+			return context.getArgument(name, SaturationTooltipMode.class);
+		}
+
+		@Override
+		public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+			VALUES.stream().map(SaturationTooltipMode::getName)
+					.filter(s -> s.startsWith(builder.getRemainingLowerCase()))
+					.forEach(builder::suggest);
+			return builder.buildFuture();
+		}
+
+		@Override
+		public Collection<String> getExamples() {
+			return VALUES.stream().map(SaturationTooltipMode::getName).collect(Collectors.toList());
+		}
+
+		@Override
+		public SaturationTooltipMode parse(StringReader reader) throws CommandSyntaxException {
+			var value = reader.readString();
+			return VALUES.stream().filter(s -> s.name().equalsIgnoreCase(value)).findFirst().orElseThrow(() -> UNKNOWN_VALUE.createWithContext(reader));
+		}
 	}
 }

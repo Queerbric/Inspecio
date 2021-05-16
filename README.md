@@ -92,6 +92,8 @@ Only shows up if Advanced Tooltip is enabled (`F3 + H`).
 
 The configuration file of the mod is located in `<minecraft directory>/config/inspecio.json`.
 
+You can use the command `/inspecio config` to manage configuration.
+
 Here's the default configuration:
 
 ```json

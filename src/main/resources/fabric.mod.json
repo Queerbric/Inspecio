@@ -26,8 +26,9 @@
     "inspecio.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.17-alpha.21.5.a",
-    "fabricloader": ">=0.10.8",
-    "fabric-resource-loader-v0": ">=0.4.0"
+    "minecraft": ">=1.17-alpha.21.19.a",
+    "fabricloader": ">=0.11.3",
+    "fabric-resource-loader-v0": ">=0.4.0",
+    "java": ">=16"
   }
 }

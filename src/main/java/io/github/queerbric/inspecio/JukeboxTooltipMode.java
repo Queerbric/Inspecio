@@ -17,13 +17,25 @@
 
 package io.github.queerbric.inspecio;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.PrimitiveCodec;
+import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Represents the different tooltip modes for jukeboxes.
@@ -61,10 +73,10 @@ public enum JukeboxTooltipMode {
 	/**
 	 * Returns the next jukebox tooltip mode available.
 	 *
-	 * @return The next available jukebox tooltip mode.
+	 * @return the next available jukebox tooltip mode
 	 */
 	public JukeboxTooltipMode next() {
-		JukeboxTooltipMode[] v = values();
+		var v = values();
 		if (v.length == this.ordinal() + 1)
 			return v[0];
 		return v[this.ordinal() + 1];
@@ -77,10 +89,46 @@ public enum JukeboxTooltipMode {
 	/**
 	 * Gets the jukebox tooltip mode from its identifier.
 	 *
-	 * @param id The identifier of the jukebox tooltip mode.
-	 * @return The jukebox tooltip mode if found, else empty.
+	 * @param id the identifier of the jukebox tooltip mode
+	 * @return the jukebox tooltip mode if found, else empty
 	 */
 	public static @NotNull Optional<JukeboxTooltipMode> byId(@NotNull String id) {
 		return Arrays.stream(values()).filter(mode -> mode.getName().equalsIgnoreCase(id)).findFirst();
+	}
+
+	public static class JukeboxArgumentType implements ArgumentType<JukeboxTooltipMode> {
+		private static final SimpleCommandExceptionType UNKNOWN_VALUE = new SimpleCommandExceptionType(
+				new TranslatableText("inspecio.command.error.unknown_jukebox_tooltip_mode"));
+		private static final List<JukeboxTooltipMode> VALUES = List.of(values());
+
+		private JukeboxArgumentType() {
+		}
+
+		public static JukeboxArgumentType jukeboxTooltipMode() {
+			return new JukeboxArgumentType();
+		}
+
+		public static JukeboxTooltipMode getJukeboxTooltipMode(final CommandContext<?> context, final String name) {
+			return context.getArgument(name, JukeboxTooltipMode.class);
+		}
+
+		@Override
+		public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+			VALUES.stream().map(JukeboxTooltipMode::getName)
+					.filter(s -> s.startsWith(builder.getRemainingLowerCase()))
+					.forEach(builder::suggest);
+			return builder.buildFuture();
+		}
+
+		@Override
+		public Collection<String> getExamples() {
+			return VALUES.stream().map(JukeboxTooltipMode::getName).collect(Collectors.toList());
+		}
+
+		@Override
+		public JukeboxTooltipMode parse(StringReader reader) throws CommandSyntaxException {
+			var value = reader.readString();
+			return VALUES.stream().filter(s -> s.name().equalsIgnoreCase(value)).findFirst().orElseThrow(() -> UNKNOWN_VALUE.createWithContext(reader));
+		}
 	}
 }

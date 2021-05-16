@@ -17,7 +17,6 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import com.mojang.datafixers.util.Pair;
 import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
@@ -28,7 +27,6 @@ import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BannerBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -37,11 +35,9 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 
-import java.util.List;
 import java.util.Optional;
 
 public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -80,18 +76,18 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		DiffuseLighting.disableGuiDepthLighting();
 		matrices.push();
 		matrices.translate(x + 8, y + 8, z);
-		ItemStack itemStack = new ItemStack(Items.GRAY_BANNER);
-		NbtCompound nbt = itemStack.getOrCreateSubTag("BlockEntityTag");
+		var itemStack = new ItemStack(Items.GRAY_BANNER);
+		var nbt = itemStack.getOrCreateSubTag("BlockEntityTag");
 		NbtList listNbt = (new BannerPattern.Patterns()).add(BannerPattern.BASE, DyeColor.GRAY).add(this.pattern, DyeColor.WHITE).toNbt();
 		nbt.put("Patterns", listNbt);
 		matrices.push();
 		matrices.translate(0.5, 16, 0);
 		matrices.scale(6, -6, 1);
 		matrices.scale(2, -2, -2);
-		VertexConsumerProvider.Immediate immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
+		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
-		List<Pair<BannerPattern, DyeColor>> list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
+		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
 		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
 		immediate.draw();

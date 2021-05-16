@@ -1,4 +1,10 @@
 {
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Mode d'info-bulle de jukebox inconnu",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Mode d'info-bulle de saturation inconnu",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Mode d'info-bulle de panneau inconnu",
+
+  "inspecio.config.reloading": "Rechargement de la configuration...",
+
   "inspecio.tooltip.loot_table": "Table de butin: %s",
   "inspecio.tooltip.repair_cost": "Coût de réparation: %d"
 }

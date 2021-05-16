@@ -1,13 +1,13 @@
 {
   "required": true,
   "package": "io.github.queerbric.inspecio.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "client": [
     "BannerPatternItemMixin",
     "BlockItemMixin",
     "EntityAccessor",
-    "FilledMapItemMixin",
     "EntityBucketItemMixin",
+    "FilledMapItemMixin",
     "ItemStackMixin",
     "LingeringPotionItemMixin",
     "PotionItemMixin",

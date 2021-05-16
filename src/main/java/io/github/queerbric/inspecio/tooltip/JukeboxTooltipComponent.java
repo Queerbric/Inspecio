@@ -53,9 +53,9 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 
 	public static Optional<TooltipData> of(ItemStack stack) {
 		if (!Inspecio.get().getConfig().getJukeboxTooltipMode().isEnabled()) return Optional.empty();
-		NbtCompound nbt = stack.getSubTag("BlockEntityTag");
+		var nbt = stack.getSubTag("BlockEntityTag");
 		if (nbt != null && nbt.contains("RecordItem")) {
-			ItemStack discStack = ItemStack.fromNbt(nbt.getCompound("RecordItem"));
+			var discStack = ItemStack.fromNbt(nbt.getCompound("RecordItem"));
 			if (discStack.getItem() instanceof MusicDiscItem)
 				return Optional.of(new JukeboxTooltipComponent(discStack));
 		}

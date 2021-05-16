@@ -42,25 +42,25 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 		this.entity = entity;
 	}
 
-	public static Optional<TooltipData> of(EntityType<?> type, NbtCompound itemNbt) {
-		InspecioConfig.EntitiesConfig entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+	public static Optional<TooltipData> of(EntityType<?> entityType, NbtCompound itemNbt) {
+		var entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
 		if (!entitiesConfig.getSpawnEggConfig().isEnabled())
 			return Optional.empty();
 
-		MinecraftClient client = MinecraftClient.getInstance();
-		Entity entity = type.create(client.world);
+		var client = MinecraftClient.getInstance();
+		var entity = entityType.create(client.world);
 		if (entity != null) {
 			adjustEntity(entity, itemNbt, entitiesConfig);
-			NbtCompound itemEntityNbt = itemNbt.getCompound("EntityTag").copy();
+			var itemEntityNbt = itemNbt.getCompound("EntityTag").copy();
 			if (!itemEntityNbt.contains("VillagerData")) {
-				NbtCompound villagerData = new NbtCompound();
+				var villagerData = new NbtCompound();
 				villagerData.putString("profession", "minecraft:none");
 				villagerData.putInt("level", 1);
 				villagerData.putString("type", "minecraft:plains");
 				itemEntityNbt.put("VillagerData", villagerData);
 			}
-			NbtCompound entityTag = entity.writeNbt(new NbtCompound());
-			UUID uuid = entity.getUuid();
+			var entityTag = entity.writeNbt(new NbtCompound());
+			var uuid = entity.getUuid();
 			entityTag.copyFrom(itemEntityNbt);
 			entity.setUuid(uuid);
 			entity.readNbt(entityTag);

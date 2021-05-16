@@ -43,7 +43,7 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 
 	public static Optional<TooltipData> of(ItemStack stack) {
 		if (!Inspecio.get().getConfig().getFilledMapConfig().isEnabled()) return Optional.empty();
-		Integer map = FilledMapItem.getMapId(stack);
+		var map = FilledMapItem.getMapId(stack);
 		return map == null ? Optional.empty() : Optional.of(new MapTooltipComponent(map));
 	}
 
@@ -64,9 +64,9 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
-		VertexConsumerProvider.Immediate vertices = this.client.getBufferBuilders().getEntityVertexConsumers();
-		MapRenderer map = this.client.gameRenderer.getMapRenderer();
-		MapState state = FilledMapItem.getMapState(this.map, this.client.world);
+		var vertices = this.client.getBufferBuilders().getEntityVertexConsumers();
+		var map = this.client.gameRenderer.getMapRenderer();
+		var state = FilledMapItem.getMapState(this.map, this.client.world);
 		if (state == null) return;
 		matrices.push();
 		matrices.translate(x, y, z);

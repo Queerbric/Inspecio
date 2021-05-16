@@ -48,12 +48,12 @@ public class EntityBucketTooltipComponent extends EntityTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(EntityType<?> type, NbtCompound itemNbt) {
-		InspecioConfig.EntitiesConfig entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+		var entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
 		if (!entitiesConfig.getFishBucketConfig().isEnabled())
 			return Optional.empty();
 
-		MinecraftClient client = MinecraftClient.getInstance();
-		Entity entity = type.create(client.world);
+		var client = MinecraftClient.getInstance();
+		var entity = type.create(client.world);
 		if (entity != null) {
 			EntityType.loadFromEntityNbt(client.world, null, entity, itemNbt);
 			adjustEntity(entity, itemNbt, entitiesConfig);

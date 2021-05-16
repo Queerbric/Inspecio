@@ -23,14 +23,11 @@ import net.minecraft.item.Item;
 import net.minecraft.resource.NamespaceResourceManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagGroup;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * Represents a cursed item tag loader to load client-side tags.
@@ -51,8 +48,7 @@ public class InspecioResourceReloader implements SimpleSynchronousResourceReload
 	@Override
 	public void reload(ResourceManager manager) {
 		manager = this.getGoodResourceManager(manager);
-		Map<Identifier, Tag.Builder> map = this.loader.loadTags(manager);
-		this.currentGroup = this.loader.buildGroup(map);
+		this.currentGroup = this.loader.buildGroup(this.loader.loadTags(manager));
 	}
 
 	/**
@@ -64,7 +60,7 @@ public class InspecioResourceReloader implements SimpleSynchronousResourceReload
 	 * @return the modified resource manager
 	 */
 	private ResourceManager getGoodResourceManager(ResourceManager base) {
-		NamespaceResourceManager good = new NamespaceResourceManager(ResourceType.SERVER_DATA, Inspecio.NAMESPACE);
+		var good = new NamespaceResourceManager(ResourceType.SERVER_DATA, Inspecio.NAMESPACE);
 		base.streamResourcePacks()
 				.filter(resourcePack -> resourcePack.getNamespaces(ResourceType.SERVER_DATA).contains(Inspecio.NAMESPACE))
 				.forEach(good::addPack);

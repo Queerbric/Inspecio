@@ -41,8 +41,6 @@ public abstract class EntityBucketItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		Optional<TooltipData> data = EntityBucketTooltipComponent.of(this.entityType, stack.getOrCreateTag());
-		if (data.isPresent()) return data;
-		return super.getTooltipData(stack);
+		return EntityBucketTooltipComponent.of(this.entityType, stack.getOrCreateTag()).or(() -> super.getTooltipData(stack));
 	}
 }

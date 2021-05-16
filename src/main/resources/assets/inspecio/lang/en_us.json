@@ -1,4 +1,10 @@
 {
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Unknown jukebox tooltip mode",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Unknown saturation tooltip mode",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Unknown sign tooltip mode",
+
+  "inspecio.config.reloading": "Reloading configuration...",
+
   "inspecio.tooltip.loot_table": "Loot Table: %s",
   "inspecio.tooltip.repair_cost": "Repair Cost: %d"
 }

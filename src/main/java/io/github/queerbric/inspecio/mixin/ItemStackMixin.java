@@ -17,18 +17,13 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import com.google.common.collect.Lists;
 import io.github.queerbric.inspecio.Inspecio;
-import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.Tag;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -39,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +65,7 @@ public abstract class ItemStackMixin {
 		if (!context.isAdvanced())
 			return;
 
-		List<Text> tooltip = this.inspecio$tooltipList.get();
+		var tooltip = this.inspecio$tooltipList.get();
 
 		int repairCost;
 		if ((repairCost = this.getRepairCost()) != 0) {
@@ -81,19 +77,19 @@ public abstract class ItemStackMixin {
 	@Inject(method = "getTooltipData", at = @At("RETURN"), cancellable = true)
 	private void getTooltipData(CallbackInfoReturnable<Optional<TooltipData>> info) {
 		// Data is the plural and datum is the singular actually, but no one cares
-		List<TooltipData> datas = Lists.newArrayList();
+		var datas = new ArrayList<TooltipData>();
 		info.getReturnValue().ifPresent(datas::add);
 		if ((datas.size() > 0 && datas.get(0) instanceof ConvertibleTooltipData)) {
 			// We can't wrap arbitrary TooltipDatas until ConvertibleTooltipData is merged
 			return;
 		}
-		InspecioConfig config = Inspecio.get().getConfig();
+		var config = Inspecio.get().getConfig();
 
-		ItemStack stack = (ItemStack) (Object) this;
+		var stack = (ItemStack) (Object) this;
 		if (stack.isFood() && config.getFoodConfig().isEnabled()) {
-			FoodComponent comp = stack.getItem().getFoodComponent();
+			var comp = stack.getItem().getFoodComponent();
 			datas.add(new FoodTooltipComponent(comp));
-			Tag<Item> tag = Inspecio.getHiddenEffectsTag();
+			var tag = Inspecio.getHiddenEffectsTag();
 			if (tag != null && tag.contains(stack.getItem())) {
 				datas.add(new StatusEffectTooltipComponent());
 			} else {
@@ -102,8 +98,7 @@ public abstract class ItemStackMixin {
 				}
 			}
 		}
-		if (stack.getItem() instanceof ArmorItem && config.hasArmor()) {
-			ArmorItem armor = (ArmorItem) stack.getItem();
+		if (stack.getItem() instanceof ArmorItem armor && config.hasArmor()) {
 			int prot = armor.getMaterial().getProtectionAmount(armor.getSlotType());
 			datas.add(new ArmorTooltipComponent(prot));
 		}
@@ -111,8 +106,8 @@ public abstract class ItemStackMixin {
 		if (datas.size() == 1) {
 			info.setReturnValue(Optional.of(datas.get(0)));
 		} else if (datas.size() > 1) {
-			CompoundTooltipComponent comp = new CompoundTooltipComponent();
-			for (TooltipData data : datas) {
+			var comp = new CompoundTooltipComponent();
+			for (var data : datas) {
 				comp.addComponent(((ConvertibleTooltipData) data).getComponent());
 			}
 			info.setReturnValue(Optional.of(comp));

@@ -29,7 +29,7 @@ import net.minecraft.util.math.Matrix4f;
 import java.util.List;
 
 public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTooltipData {
-	private List<TooltipComponent> components = Lists.newArrayList();
+	private final List<TooltipComponent> components = Lists.newArrayList();
 
 	public void addComponent(TooltipComponent component) {
 		components.add(component);
@@ -43,7 +43,7 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	@Override
 	public int getHeight() {
 		int height = 0;
-		for (TooltipComponent comp : components) {
+		for (var comp : components) {
 			height += comp.getHeight();
 		}
 		return height;
@@ -52,7 +52,7 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
 		int width = 0;
-		for (TooltipComponent comp : components) {
+		for (var comp : components) {
 			if (comp.getWidth(textRenderer) > width) {
 				width = comp.getWidth(textRenderer);
 			}
@@ -63,7 +63,7 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
 		int yOff = 0;
-		for (TooltipComponent comp : components) {
+		for (var comp : components) {
 			comp.drawItems(textRenderer, x, y + yOff, matrices, itemRenderer, z, textureManager);
 			yOff += comp.getHeight();
 		}
@@ -72,7 +72,7 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, Immediate immediate) {
 		int yOff = 0;
-		for (TooltipComponent comp : components) {
+		for (var comp : components) {
 			comp.drawText(textRenderer, x, y + yOff, matrix4f, immediate);
 			yOff += comp.getHeight();
 		}

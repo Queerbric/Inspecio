@@ -22,3 +22,8 @@
 
  - Added config error logging.
  - Fixed map tooltip rendering.
+
+### 1.0.2
+
+ - Added the inspecio command to configure the mod.
+ - Updated to Java 16

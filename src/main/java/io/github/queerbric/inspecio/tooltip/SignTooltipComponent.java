@@ -48,7 +48,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	private final SignType type;
 	private final Text[] text;
 	private final DyeColor color;
-	private SignBlockEntityRenderer.SignModel model;
+	private final SignBlockEntityRenderer.SignModel model;
 
 	public SignTooltipComponent(SignType type, Text[] text, DyeColor color) {
 		this.type = type;
@@ -61,21 +61,21 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		if (!Inspecio.get().getConfig().getSignTooltipMode().isEnabled())
 			return Optional.empty();
 
-		if (stack.getItem() instanceof SignItem) {
-			Block block = ((SignItem) stack.getItem()).getBlock();
-			NbtCompound nbt = stack.getSubTag("BlockEntityTag");
+		if (stack.getItem() instanceof SignItem signItem) {
+			var block = signItem.getBlock();
+			var nbt = stack.getSubTag("BlockEntityTag");
 			if (nbt != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), nbt));
 		}
 		return Optional.empty();
 	}
 
 	public static SignTooltipComponent fromTag(SignType type, NbtCompound nbt) {
-		DyeColor color = DyeColor.byName(nbt.getString("Color"), DyeColor.BLACK);
+		var color = DyeColor.byName(nbt.getString("Color"), DyeColor.BLACK);
 
-		Text[] lines = new Text[4];
+		var lines = new Text[4];
 		for (int i = 0; i < 4; ++i) {
-			String serialized = nbt.getString("Text" + (i + 1));
-			Text text = Text.Serializer.fromJson(serialized.isEmpty() ? "\"\"" : serialized);
+			var serialized = nbt.getString("Text" + (i + 1));
+			var text = Text.Serializer.fromJson(serialized.isEmpty() ? "\"\"" : serialized);
 			lines[i] = text;
 		}
 
@@ -106,7 +106,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		if (this.tooltipMode != SignTooltipMode.FAST)
 			return;
 
-		for (Text text : this.text) {
+		for (var text : this.text) {
 			textRenderer.draw(text, x, y, this.color.getSignColor(), true, matrix4f, immediate, false, 0, 15728880);
 			y += 10;
 		}
@@ -124,9 +124,9 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		matrices.push();
 		matrices.translate(45, 56, 0);
 		matrices.scale(65, 65, -65);
-		VertexConsumerProvider.Immediate immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
-		SpriteIdentifier spriteIdentifier = TexturedRenderLayers.getSignTextureId(this.type);
-		VertexConsumer vertexConsumer = spriteIdentifier.getVertexConsumer(immediate, this.model::getLayer);
+		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
+		var spriteIdentifier = TexturedRenderLayers.getSignTextureId(this.type);
+		var vertexConsumer = spriteIdentifier.getVertexConsumer(immediate, this.model::getLayer);
 		this.model.stick.visible = false;
 		this.model.root.visible = true;
 		this.model.root.render(matrices, vertexConsumer, 15728880, OverlayTexture.DEFAULT_UV);
@@ -136,7 +136,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		matrices.translate(0, 4, 10);
 
 		for (int i = 0; i < this.text.length; i++) {
-			Text text = this.text[i];
+			var text = this.text[i];
 			textRenderer.draw(matrices, text, 45 - textRenderer.getWidth(text) / 2.f, i * 10, this.color.getSignColor());
 			y += textRenderer.fontHeight + 2;
 		}

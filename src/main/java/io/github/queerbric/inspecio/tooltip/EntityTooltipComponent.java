@@ -85,16 +85,16 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		matrices.scale(1f, 1f, -1);
 		matrices.translate(0, 0, 1000);
 		matrices.scale(size, size, size);
-		Quaternion quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.f);
-		Quaternion quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(-10.f);
+		var quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.f);
+		var quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(-10.f);
 		quaternion.hamiltonProduct(quaternion2);
 		matrices.multiply(quaternion);
 		this.setupAngles(entity, ageOffset, spin, defaultYaw);
-		EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+		var entityRenderDispatcher = this.client.getEntityRenderDispatcher();
 		quaternion2.conjugate();
 		entityRenderDispatcher.setRotation(quaternion2);
 		entityRenderDispatcher.setRenderShadows(false);
-		VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		entity.age = this.client.player.age + ageOffset;
 		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown()));
 		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, 15728880);
@@ -106,11 +106,11 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 
 	protected void setupAngles(Entity entity, int ageOffset, boolean spin, float defaultYaw) {
 		float yaw = spin ? (float) (((System.currentTimeMillis() / 10) + ageOffset) % 360) : defaultYaw;
-		entity.yaw = yaw;
+		entity.setYaw(yaw);
 		entity.setHeadYaw(yaw);
-		entity.pitch = 0.f;
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).bodyYaw = yaw;
+		entity.setPitch(0.f);
+		if (entity instanceof LivingEntity living) {
+			living.bodyYaw = yaw;
 		}
 	}
 
@@ -119,11 +119,10 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 	protected abstract boolean shouldRenderCustomNames();
 
 	protected static void adjustEntity(Entity entity, NbtCompound itemNbt, InspecioConfig.EntitiesConfig config) {
-		if (entity instanceof Bucketable) {
-			Bucketable bucketable = (Bucketable) entity;
-			bucketable.method_35170(itemNbt);
-			if (entity instanceof PufferfishEntity) {
-				((PufferfishEntity) entity).setPuffState(config.getPufferFishPuffState());
+		if (entity instanceof Bucketable bucketable) {
+			bucketable.copyDataFromNbt(itemNbt);
+			if (entity instanceof PufferfishEntity pufferfish) {
+				pufferfish.setPuffState(config.getPufferFishPuffState());
 			}
 		}
 	}

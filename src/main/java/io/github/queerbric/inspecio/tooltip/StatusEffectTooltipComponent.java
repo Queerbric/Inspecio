@@ -55,7 +55,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	public StatusEffectTooltipComponent(List<Pair<StatusEffectInstance, Float>> list) {
-		for (Pair<StatusEffectInstance, Float> pair : list) {
+		for (var pair : list) {
 			this.list.add(pair.getFirst());
 			this.chances.add(pair.getSecond().floatValue());
 		}
@@ -117,7 +117,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 			for (int i = 0; i < list.size(); i++) {
 				StatusEffectInstance statusEffectInstance = list.get(i);
 				StatusEffect statusEffect = statusEffectInstance.getEffectType();
-				Sprite sprite = statusEffectSpriteManager.getSprite(statusEffect);
+				var sprite = statusEffectSpriteManager.getSprite(statusEffect);
 				RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
 				DrawableHelper.drawSprite(matrices, x, y + i * 20, z, 18, 18, sprite);
 			}

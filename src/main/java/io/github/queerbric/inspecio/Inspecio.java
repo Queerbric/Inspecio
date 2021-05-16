@@ -20,11 +20,11 @@ package io.github.queerbric.inspecio;
 import io.github.queerbric.inspecio.resource.InspecioResourceReloader;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
@@ -58,8 +58,10 @@ public class Inspecio implements ClientModInitializer {
 	public void onInitializeClient() {
 		INSTANCE = this;
 
-		this.config = InspecioConfig.load(this);
+		this.reloadConfig();
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.resourceReloader);
+
+		InspecioCommand.init();
 	}
 
 	/**
@@ -104,12 +106,26 @@ public class Inspecio implements ClientModInitializer {
 		return this.config;
 	}
 
+	public void reloadConfig() {
+		this.config = InspecioConfig.load(this);
+	}
+
 	public static Inspecio get() {
 		return INSTANCE;
 	}
 
 	static Consumer<String> onConfigError(String path) {
 		return error -> get().warn("Configuration error at \"" + path + "\", error: " + error);
+	}
+
+	static String getVersion() {
+		return FabricLoader.getInstance().getModContainer(NAMESPACE)
+				.map(container -> {
+					var version = container.getMetadata().getVersion().getFriendlyString();
+					if (version.equals("${version}"))
+						return "dev";
+					return version;
+				}).orElse("unknown");
 	}
 
 	/**
@@ -120,9 +136,9 @@ public class Inspecio implements ClientModInitializer {
 	 * @param tooltip the tooltip
 	 */
 	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
-		InspecioConfig.StorageContainerConfig config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
+		var config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
 		if (config != null && config.hasLootTable()) {
-			NbtCompound blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
+			var blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
 			if (blockEntityNbt.contains("LootTable")) {
 				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
 						new LiteralText(blockEntityNbt.getString("LootTable"))
@@ -133,7 +149,7 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static @Nullable Tag<Item> getHiddenEffectsTag() {
-		Tag<Item> tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
+		var tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
 		if (tag == null) {
 			tag = get().resourceReloader.getCurrentGroup().getTag(HIDDEN_EFFECTS_TAG);
 		}

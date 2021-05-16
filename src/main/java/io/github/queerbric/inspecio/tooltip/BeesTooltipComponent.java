@@ -49,11 +49,11 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 	public BeesTooltipComponent(InspecioConfig.EntityConfig config, NbtList bees) {
 		super(config);
 		bees.stream().map(nbt -> (NbtCompound) nbt).forEach(nbt -> {
-			NbtCompound bee = nbt.getCompound("EntityData");
+			var bee = nbt.getCompound("EntityData");
 			bee.remove("UUID");
 			bee.remove("Passengers");
 			bee.remove("Leash");
-			Entity entity = EntityType.loadEntityWithPassengers(bee, this.client.world, Function.identity());
+			var entity = EntityType.loadEntityWithPassengers(bee, this.client.world, Function.identity());
 			if (entity != null) {
 				this.bees.add(new Bee(nbt.getInt("TicksInHive"), entity));
 			}
@@ -61,11 +61,11 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack) {
-		InspecioConfig.EntityConfig config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
+		var config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
 		if (!config.isEnabled())
 			return Optional.empty();
-		NbtCompound blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
-		NbtList bees = blockEntityNbt.getList("Bees", 10);
+		var blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
+		var bees = blockEntityNbt.getList("Bees", 10);
 		if (!bees.isEmpty())
 			return Optional.of(new BeesTooltipComponent(config, bees));
 		return Optional.empty();
@@ -86,8 +86,8 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 		matrices.push();
 		matrices.translate(2, 4, z);
 		int xOffset = x;
-		for (Bee bee : this.bees) {
-			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee, bee.ticksInHive,
+		for (var bee : this.bees) {
+			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee(), bee.ticksInHive(),
 					this.config.shouldSpin(), true);
 			xOffset += 26;
 		}
@@ -101,17 +101,9 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 
 	@Override
 	protected boolean shouldRenderCustomNames() {
-		return this.bees.stream().map(bee -> bee.bee.hasCustomName()).reduce(false, (first, second) -> first || second)
+		return this.bees.stream().map(bee -> bee.bee().hasCustomName()).reduce(false, (first, second) -> first || second)
 				&& (this.config.shouldAlwaysShowName() || Screen.hasControlDown());
 	}
 
-	static class Bee {
-		final int ticksInHive;
-		final Entity bee;
-
-		Bee(int ticksInHive, Entity bee) {
-			this.ticksInHive = ticksInHive;
-			this.bee = bee;
-		}
-	}
+	record Bee(int ticksInHive, Entity bee) {}
 }

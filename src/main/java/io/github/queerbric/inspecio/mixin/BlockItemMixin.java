@@ -57,7 +57,7 @@ public abstract class BlockItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		InspecioConfig.ContainersConfig containersConfig = Inspecio.get().getConfig().getContainersConfig();
+		var containersConfig = Inspecio.get().getConfig().getContainersConfig();
 		if (this.getBlock() instanceof BeehiveBlock) {
 			Optional<TooltipData> data = BeesTooltipComponent.of(stack);
 			if (data.isPresent()) return data;

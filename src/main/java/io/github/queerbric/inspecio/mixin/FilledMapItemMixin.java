@@ -35,8 +35,6 @@ public abstract class FilledMapItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		Optional<TooltipData> data = MapTooltipComponent.of(stack);
-		if (data.isPresent()) return data;
-		return super.getTooltipData(stack);
+		return MapTooltipComponent.of(stack).or(() -> super.getTooltipData(stack));
 	}
 }

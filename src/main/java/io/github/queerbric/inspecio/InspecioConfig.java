@@ -61,7 +61,7 @@ public class InspecioConfig {
 
 	public static final Codec<InspecioConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			configEntry("armor", DEFAULT_ARMOR, InspecioConfig::hasArmor),
-			configEntry("banner_pattern", DEFAULT_BANNER_PATTERN, InspecioConfig::hasArmor),
+			configEntry("banner_pattern", DEFAULT_BANNER_PATTERN, InspecioConfig::hasBannerPattern),
 			configEntry(ContainersConfig.CODEC, "containers", ContainersConfig::defaultConfig, InspecioConfig::getContainersConfig),
 			configEntry(EffectsConfig.CODEC, "effects", EffectsConfig::defaultConfig, InspecioConfig::getEffectsConfig),
 			configEntry(EntitiesConfig.CODEC, "entities", EntitiesConfig::defaultConfig, InspecioConfig::getEntitiesConfig),
@@ -175,13 +175,13 @@ public class InspecioConfig {
 		if (!createConfigDirectoryIfNeeded())
 			return this;
 
-		Optional<JsonElement> config = CODEC.encode(this, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
-		if (!config.isPresent()) {
+		var config = CODEC.encode(this, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
+		if (config.isEmpty()) {
 			Inspecio.get().warn("Failed to serialize configuration.");
 			return this;
 		}
-		try (BufferedWriter writer = Files.newBufferedWriter(CONFIG_PATH, StandardOpenOption.CREATE)) {
-			JsonWriter jsonWriter = GSON.newJsonWriter(writer);
+		try (var writer = Files.newBufferedWriter(CONFIG_PATH, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+			var jsonWriter = GSON.newJsonWriter(writer);
 			GSON.toJson(config.get().getAsJsonObject(), jsonWriter);
 		} catch (IOException e) {
 			Inspecio.get().warn("Failed to save configuration.", e);
@@ -600,8 +600,8 @@ public class InspecioConfig {
 			return defaultConfig().save();
 		}
 
-		try (BufferedReader reader = Files.newBufferedReader(CONFIG_PATH)) {
-			DataResult<InspecioConfig> result = CODEC.decode(JsonOps.INSTANCE, JSON_PARSER.parse(reader)).map(Pair::getFirst);
+		try (var reader = Files.newBufferedReader(CONFIG_PATH)) {
+			var result = CODEC.decode(JsonOps.INSTANCE, JSON_PARSER.parse(reader)).map(Pair::getFirst);
 			return result.result().orElseGet(() -> {
 				mod.warn("Could not load configuration, using default configuration instead.");
 				return defaultConfig();

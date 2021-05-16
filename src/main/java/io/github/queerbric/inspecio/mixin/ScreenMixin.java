@@ -33,8 +33,8 @@ import java.util.List;
 public class ScreenMixin {
 	@Inject(method = "method_32635", at = @At("HEAD"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void onComponentConstruct(List<TooltipComponent> list, TooltipData data, CallbackInfo info) {
-		if (data instanceof ConvertibleTooltipData) {
-			list.add(((ConvertibleTooltipData) data).getComponent());
+		if (data instanceof ConvertibleTooltipData convertible) {
+			list.add(convertible.getComponent());
 			info.cancel();
 		}
 	}

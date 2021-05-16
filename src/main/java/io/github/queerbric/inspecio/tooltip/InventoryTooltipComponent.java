@@ -18,7 +18,6 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.Block;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.client.font.TextRenderer;
@@ -58,8 +57,8 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	private static int getInvSizeFor(ItemStack stack) {
-		if (stack.getItem() instanceof BlockItem) {
-			Block block = ((BlockItem) stack.getItem()).getBlock();
+		if (stack.getItem() instanceof BlockItem blockItem) {
+			var block = blockItem.getBlock();
 			if (block instanceof DispenserBlock)
 				return 9;
 			else if (block instanceof HopperBlock)
@@ -81,16 +80,16 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		int columns = inventory.size() % 3 == 0 ? inventory.size() / 3 : inventory.size();
 
 		if (compact) {
-			List<ItemStack> compactedInventory = new ArrayList<>();
+			var compactedInventory = new ArrayList<ItemStack>();
 			inventory.forEach(invStack -> {
 				if (invStack.isEmpty())
 					return;
-				Optional<ItemStack> compactStack = compactedInventory.stream().filter(other -> ItemStack.canCombine(other, invStack))
-						.findFirst();
-				if (compactStack.isPresent())
-					compactStack.get().increment(invStack.getCount());
-				else
-					compactedInventory.add(invStack);
+				compactedInventory.stream().filter(other -> ItemStack.canCombine(other, invStack))
+						.findFirst()
+						.ifPresentOrElse(
+								s -> s.increment(invStack.getCount()),
+								() -> compactedInventory.add(invStack)
+						);
 			});
 
 			inventory = compactedInventory;
@@ -124,7 +123,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		int y = 1;
 		int lines = this.getColumns();
 
-		for (ItemStack stack : this.inventory) {
+		for (var stack : this.inventory) {
 			this.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, z, textureManager);
 			itemRenderer.renderInGuiWithOverrides(stack, xOffset + x, yOffset + y);
 			itemRenderer.renderGuiItemOverlay(textRenderer, stack, xOffset + x, yOffset + y);
@@ -137,7 +136,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	private void drawSlot(MatrixStack matrices, int x, int y, int z, TextureManager textureManager) {
-		float[] color = this.color != null ? this.color.getColorComponents() : new float[]{1.f, 1.f, 1.f};
+		var color = this.color != null ? this.color.getColorComponents() : new float[]{1.f, 1.f, 1.f};
 		RenderSystem.setShaderColor(color[0], color[1], color[2], 1.f);
 		RenderSystem.setShaderTexture(0, DrawableHelper.STATS_ICON_TEXTURE);
 		DrawableHelper.drawTexture(matrices, x, y, z, 0.f, 0.f, 18, 18, 128, 128);
