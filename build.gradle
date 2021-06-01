@@ -11,8 +11,9 @@ archivesBaseName = project.archives_base_name
 
 def targetJavaVersion = 16
 
-def getMCVersionString() {
-	if (project.minecraft_version.matches("\\d\\dw\\d\\d[a-z]")) {
+String getMCVersionString() {
+	if (project.minecraft_version.matches('^\\d\\dw\\d\\d[a-z]$')
+			|| project.minecraft_version.matches('\\d+\\.\\d+-(pre|rc)(\\d+)')) {
 		return project.minecraft_version
 	}
 	int lastDot = project.minecraft_version.lastIndexOf('.')
@@ -42,7 +43,7 @@ java {
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 
-	it.options.release = targetJavaVersion
+	it.options.release.set(targetJavaVersion)
 }
 
 processResources {

@@ -51,7 +51,8 @@ let mod_version = MOD_VERSION_REGEX.exec(properties)[1];
 let archives_base_name = ARCHIVES_BASE_NAME_REGEX.exec(properties)[1];
 
 function get_mc_version_string() {
-  if (mc_version.match(/^\d\dw\d\d[a-z]$/)) {
+  if (mc_version.match(/^\d\dw\d\d[a-z]$/) ||
+      mc_version.match(/^\d+\.\d+-(pre|rc)(\d+)$/)) {
     return mc_version;
   }
   let last_dot = mc_version.lastIndexOf('.');
