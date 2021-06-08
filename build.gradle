@@ -126,7 +126,7 @@ task publishModrinth(type: TaskModrinthUpload) {
 		var json = new JsonObject()
 		json.addProperty("body", parseReadme())
 		patch.setEntity(EntityBuilder.create()
-				.text(json.toString())
+				.setText(json.toString())
 				.contentType(ContentType.APPLICATION_JSON)
 				.build())
 
