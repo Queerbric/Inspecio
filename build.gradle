@@ -127,7 +127,7 @@ task publishModrinth(type: TaskModrinthUpload) {
 		json.addProperty("body", parseReadme())
 		patch.setEntity(EntityBuilder.create()
 				.setText(json.toString())
-				.contentType(ContentType.APPLICATION_JSON)
+				.setContentType(ContentType.APPLICATION_JSON)
 				.build())
 
 		final def response = client.execute(patch)
