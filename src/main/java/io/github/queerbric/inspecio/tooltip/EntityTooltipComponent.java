@@ -29,6 +29,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Bucketable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -39,7 +40,7 @@ import net.minecraft.util.math.Vec3f;
  * Represents a tooltip component for entities.
  *
  * @author LambdAurora
- * @version 1.0.0
+ * @version 1.0.3
  * @since 1.0.0
  */
 public abstract class EntityTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -110,6 +111,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		entity.setHeadYaw(yaw);
 		entity.setPitch(0.f);
 		if (entity instanceof LivingEntity living) {
+			if (living instanceof GoatEntity) living.headYaw = yaw;
 			living.bodyYaw = yaw;
 		}
 	}

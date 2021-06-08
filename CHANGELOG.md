@@ -27,3 +27,7 @@
 
  - Added the inspecio command to configure the mod.
  - Updated to Java 16
+
+### 1.0.3
+
+ - Fixed broken rotations in goat entity tooltip.
