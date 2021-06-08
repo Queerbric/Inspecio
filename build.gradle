@@ -69,22 +69,22 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
+	it.options.encoding = 'UTF-8'
 
 	it.options.release.set(targetJavaVersion)
 }
 
 processResources {
-	inputs.property "version", project.version
+	inputs.property 'version', project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+	filesMatching('fabric.mod.json') {
+		expand 'version': project.version
 	}
 }
 
 jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+	from('LICENSE') {
+		rename { "${it}_${project.archivesBaseName}" }
 	}
 }
 
@@ -134,10 +134,10 @@ task publishModrinth(type: TaskModrinthUpload) {
 
 		final def gson = new GsonBuilder().create()
 		if (status == 200) {
-			project.getLogger().lifecycle("Successfully updated readme to {}.", this.projectId, this.uploadInfo.getId())
+			project.getLogger().lifecycle("Successfully updated readme to ${projectId}.")
 		} else {
-			this.errorInfo = gson.fromJson(EntityUtils.toString(response.getEntity()), ResponseError.class)
-			project.getLogger().error("Upload failed! Status: {} Error: {} Reason: {}", status, this.errorInfo.getError(), this.errorInfo.getDescription())
+			errorInfo = gson.fromJson(EntityUtils.toString(response.getEntity()), ResponseError.class)
+			project.getLogger().error("Upload failed! Status: ${status} Error: ${errorInfo.getError()} Reason: ${errorInfo.getDescription()}")
 			throw new GradleException("Upload failed! Status: ${status} Reason: ${errorInfo.getDescription()}")
 		}
 	}
@@ -160,9 +160,6 @@ publishing {
 		}
 	}
 
-	// select the repositories you want to publish to
 	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
 	}
 }
