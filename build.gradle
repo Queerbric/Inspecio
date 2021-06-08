@@ -34,8 +34,8 @@ String getMCVersionString() {
 	if (isMCVersionNonRelease()) {
 		return project.minecraft_version
 	}
-	int lastDot = project.minecraft_version.lastIndexOf('.')
-	return project.minecraft_version.substring(0, lastDot)
+	def version = project.minecraft_version.split('\\.')
+	return version[0] + '.' + version[1]
 }
 
 String parseReadme() {
@@ -102,6 +102,7 @@ task publishModrinth(type: TaskModrinthUpload) {
 	token = System.getenv('MODRINTH_TOKEN')
 	projectId = project.modrinth_id
 	versionNumber = version
+	versionName = "Inspecio ${project.mod_version} (${getMCVersionString()})"
 	uploadFile = remapJar
 	addGameVersion((String) project.minecraft_version)
 	addLoader('fabric')

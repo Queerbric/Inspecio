@@ -30,4 +30,5 @@
 
 ### 1.0.3
 
+ - First stable release.
  - Fixed broken rotations in goat entity tooltip.
