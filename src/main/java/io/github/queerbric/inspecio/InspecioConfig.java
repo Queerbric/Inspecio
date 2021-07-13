@@ -317,24 +317,28 @@ public class InspecioConfig {
 		public static boolean DEFAULT_TIPPED_ARROWS = true;
 		public static boolean DEFAULT_SPECTRAL_ARROW = true;
 		public static boolean DEFAULT_FOOD = true;
+		public static boolean DEFAULT_HIDDEN_MOTION = true;
 
 		public static final Codec<EffectsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				configEntry("effects/potions", DEFAULT_POTIONS, EffectsConfig::hasPotions),
 				configEntry("effects/tipped_arrows", DEFAULT_TIPPED_ARROWS, EffectsConfig::hasTippedArrows),
 				configEntry("effects/spectral_arrow", DEFAULT_SPECTRAL_ARROW, EffectsConfig::hasSpectralArrow),
-				configEntry("effects/food", DEFAULT_FOOD, EffectsConfig::hasFood)
+				configEntry("effects/food", DEFAULT_FOOD, EffectsConfig::hasFood),
+				configEntry("effects/hidden_motion", DEFAULT_HIDDEN_MOTION, EffectsConfig::hasHiddenMotion)
 		).apply(instance, EffectsConfig::new));
 
 		private boolean potions;
 		private boolean tippedArrows;
 		private boolean spectralArrow;
 		private boolean food;
+		private boolean hiddenMotion;
 
-		public EffectsConfig(boolean potions, boolean tippedArrows, boolean spectralArrow, boolean food) {
+		public EffectsConfig(boolean potions, boolean tippedArrows, boolean spectralArrow, boolean food, boolean hiddenMotion) {
 			this.potions = potions;
 			this.tippedArrows = tippedArrows;
 			this.spectralArrow = spectralArrow;
 			this.food = food;
+			this.hiddenMotion = hiddenMotion;
 		}
 
 		public boolean hasPotions() {
@@ -369,8 +373,16 @@ public class InspecioConfig {
 			this.food = food;
 		}
 
+		public boolean hasHiddenMotion() {
+			return this.hiddenMotion;
+		}
+
+		public void setHiddenMotion(boolean hiddenMotion) {
+			this.hiddenMotion = hiddenMotion;
+		}
+
 		public static EffectsConfig defaultConfig() {
-			return new EffectsConfig(DEFAULT_POTIONS, DEFAULT_TIPPED_ARROWS, DEFAULT_SPECTRAL_ARROW, DEFAULT_FOOD);
+			return new EffectsConfig(DEFAULT_POTIONS, DEFAULT_TIPPED_ARROWS, DEFAULT_SPECTRAL_ARROW, DEFAULT_FOOD, DEFAULT_HIDDEN_MOTION);
 		}
 	}
 

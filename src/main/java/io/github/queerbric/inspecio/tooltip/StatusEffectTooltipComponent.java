@@ -66,6 +66,15 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 		this.hidden = true;
 	}
 
+	private String getHiddenText(int length) {
+		var effectsConfig = Inspecio.get().getConfig().getEffectsConfig();
+		if (effectsConfig.hasHiddenMotion()) {
+			return "§k" + "f".repeat(length);
+		} else {
+			return "?".repeat(length);
+		}
+	}
+
 	@Override
 	public TooltipComponent getComponent() {
 		return this;
@@ -82,7 +91,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
 		if (this.hidden) {
-			return 26 + textRenderer.getWidth("§kffffffff§r");
+			return 26 + textRenderer.getWidth(this.getHiddenText(8));
 		}
 		int max = 64;
 		for (int i = 0; i < list.size(); i++) {
@@ -127,8 +136,8 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, Immediate immediate) {
 		if (this.hidden) {
-			textRenderer.draw("§kffffffff§r", x + 24, y, 8355711, true, matrix4f, immediate, false, 0, 15728880);
-			textRenderer.draw("§kf§r:§kff§r", x + 24, y + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+			textRenderer.draw(this.getHiddenText(8) + "§r", x + 24, y, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+			textRenderer.draw(this.getHiddenText(1) + "§r:" + this.getHiddenText(2) + "§r", x + 24, y + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
 		} else {
 			for (int i = 0; i < list.size(); i++) {
 				StatusEffectInstance statusEffectInstance = list.get(i);
