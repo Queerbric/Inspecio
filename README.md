@@ -169,6 +169,7 @@ Here's a list of each configuration entries and what they do:
    - `tipped_arrows` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on tipped arrows, else `false`.
    - `spectral_arrow` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on spectral arrow item, else `false`.
    - `food` (`bool`) - if `true` then adds effect tooltips on food items, else `false`.
+   - `hidden_motion` (`bool`) - if `true` then uses obfuscated text for hidden effect tooltips, else `false`.
  - `entities`
    - `bee`
      - `enabled` (`bool`) - if `true` then displays bees if present in the beehive tooltip, else `false`.
