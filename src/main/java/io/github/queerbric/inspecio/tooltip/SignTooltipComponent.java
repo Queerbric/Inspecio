@@ -27,12 +27,14 @@ import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.SignBlockEntityRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SignItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.SignType;
@@ -46,14 +48,16 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	private final MinecraftClient client = MinecraftClient.getInstance();
 	private final SignTooltipMode tooltipMode = Inspecio.get().getConfig().getSignTooltipMode();
 	private final SignType type;
-	private final Text[] text;
+	private final OrderedText[] text;
 	private final DyeColor color;
+	private final boolean glowingText;
 	private final SignBlockEntityRenderer.SignModel model;
 
-	public SignTooltipComponent(SignType type, Text[] text, DyeColor color) {
+	public SignTooltipComponent(SignType type, OrderedText[] text, DyeColor color, boolean glowingText) {
 		this.type = type;
 		this.text = text;
 		this.color = color;
+		this.glowingText = glowingText;
 		this.model = SignBlockEntityRenderer.createSignModel(this.client.getEntityModelLoader(), this.type);
 	}
 
@@ -72,14 +76,16 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	public static SignTooltipComponent fromTag(SignType type, NbtCompound nbt) {
 		var color = DyeColor.byName(nbt.getString("Color"), DyeColor.BLACK);
 
-		var lines = new Text[4];
+		var lines = new OrderedText[4];
 		for (int i = 0; i < 4; ++i) {
 			var serialized = nbt.getString("Text" + (i + 1));
-			var text = Text.Serializer.fromJson(serialized.isEmpty() ? "\"\"" : serialized);
+			var text = Text.Serializer.fromJson(serialized.isEmpty() ? "\"\"" : serialized).asOrderedText();
 			lines[i] = text;
 		}
 
-		return new SignTooltipComponent(type, lines, color);
+		boolean glowingText = nbt.getBoolean("GlowingText");
+
+		return new SignTooltipComponent(type, lines, color, glowingText);
 	}
 
 	@Override
@@ -105,10 +111,30 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
 		if (this.tooltipMode != SignTooltipMode.FAST)
 			return;
+		
+		int signColor = this.color.getSignColor();
 
-		for (var text : this.text) {
-			textRenderer.draw(text, x, y, this.color.getSignColor(), true, matrix4f, immediate, false, 0, 15728880);
-			y += 10;
+		if (glowingText) {
+			int outlineColor;
+			if (this.color == DyeColor.BLACK) {
+				outlineColor = -988212;
+			} else {
+				int r = (int) (NativeImage.getRed(signColor) * 0.4);
+				int g = (int) (NativeImage.getGreen(signColor) * 0.4);
+				int b = (int) (NativeImage.getBlue(signColor) * 0.4);
+
+				outlineColor = NativeImage.getAbgrColor(0, b, g, r);
+			}
+
+			for (var text : this.text) {
+				textRenderer.method_37296(text, x, y, signColor, outlineColor, matrix4f, immediate, 15728880);
+				y += 10;
+			}
+		} else {
+			for (var text : this.text) {
+				textRenderer.draw(text, x, y, signColor, true, matrix4f, immediate, false, 0, 15728880);
+				y += 10;
+			}
 		}
 	}
 
