@@ -26,6 +26,7 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.block.entity.BannerBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
@@ -77,7 +78,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		matrices.push();
 		matrices.translate(x + 8, y + 8, z);
 		var itemStack = new ItemStack(Items.GRAY_BANNER);
-		var nbt = itemStack.getOrCreateSubTag("BlockEntityTag");
+		var nbt = itemStack.getOrCreateSubNbt("BlockEntityTag");
 		NbtList listNbt = (new BannerPattern.Patterns()).add(BannerPattern.BASE, DyeColor.GRAY).add(this.pattern, DyeColor.WHITE).toNbt();
 		nbt.put("Patterns", listNbt);
 		matrices.push();
@@ -88,7 +89,8 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
 		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
-		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, 15728880, OverlayTexture.DEFAULT_UV, this.bannerField, ModelLoader.BANNER_BASE, true, list);
+		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, LightmapTextureManager.field_32767, OverlayTexture.DEFAULT_UV,
+				this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
 		immediate.draw();
 		matrices.pop();

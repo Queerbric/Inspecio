@@ -64,7 +64,7 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 		var config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
 		if (!config.isEnabled())
 			return Optional.empty();
-		var blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
+		var blockEntityNbt = stack.getOrCreateSubNbt("BlockEntityTag");
 		var bees = blockEntityNbt.getList("Bees", 10);
 		if (!bees.isEmpty())
 			return Optional.of(new BeesTooltipComponent(config, bees));
@@ -105,5 +105,6 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 				&& (this.config.shouldAlwaysShowName() || Screen.hasControlDown());
 	}
 
-	record Bee(int ticksInHive, Entity bee) {}
+	record Bee(int ticksInHive, Entity bee) {
+	}
 }

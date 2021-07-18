@@ -19,7 +19,6 @@ package io.github.queerbric.inspecio.tooltip;
 
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.SignTooltipMode;
-import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
@@ -29,7 +28,6 @@ import net.minecraft.client.render.block.entity.SignBlockEntityRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SignItem;
@@ -67,7 +65,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 		if (stack.getItem() instanceof SignItem signItem) {
 			var block = signItem.getBlock();
-			var nbt = stack.getSubTag("BlockEntityTag");
+			var nbt = stack.getSubNbt("BlockEntityTag");
 			if (nbt != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), nbt));
 		}
 		return Optional.empty();
@@ -111,7 +109,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
 		if (this.tooltipMode != SignTooltipMode.FAST)
 			return;
-		
+
 		int signColor = this.color.getSignColor();
 
 		if (glowingText) {
@@ -127,12 +125,12 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 			}
 
 			for (var text : this.text) {
-				textRenderer.method_37296(text, x, y, signColor, outlineColor, matrix4f, immediate, 15728880);
+				textRenderer.drawWithOutline(text, x, y, signColor, outlineColor, matrix4f, immediate, LightmapTextureManager.field_32767);
 				y += 10;
 			}
 		} else {
 			for (var text : this.text) {
-				textRenderer.draw(text, x, y, signColor, true, matrix4f, immediate, false, 0, 15728880);
+				textRenderer.draw(text, x, y, signColor, true, matrix4f, immediate, false, 0, LightmapTextureManager.field_32767);
 				y += 10;
 			}
 		}
@@ -155,7 +153,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		var vertexConsumer = spriteIdentifier.getVertexConsumer(immediate, this.model::getLayer);
 		this.model.stick.visible = false;
 		this.model.root.visible = true;
-		this.model.root.render(matrices, vertexConsumer, 15728880, OverlayTexture.DEFAULT_UV);
+		this.model.root.render(matrices, vertexConsumer, LightmapTextureManager.field_32767, OverlayTexture.DEFAULT_UV);
 		immediate.draw();
 		matrices.pop();
 

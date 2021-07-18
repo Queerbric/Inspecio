@@ -138,8 +138,8 @@ public class Inspecio implements ClientModInitializer {
 	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
 		var config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
 		if (config != null && config.hasLootTable()) {
-			var blockEntityNbt = stack.getOrCreateSubTag("BlockEntityTag");
-			if (blockEntityNbt.contains("LootTable")) {
+			var blockEntityNbt = stack.getSubNbt("BlockEntityTag");
+			if (blockEntityNbt != null && blockEntityNbt.contains("LootTable")) {
 				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
 						new LiteralText(blockEntityNbt.getString("LootTable"))
 								.formatted(Formatting.GOLD))

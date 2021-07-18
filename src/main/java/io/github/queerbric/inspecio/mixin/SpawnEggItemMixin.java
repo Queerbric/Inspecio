@@ -41,6 +41,6 @@ public class SpawnEggItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		return SpawnEntityTooltipComponent.of(this.type, stack.getOrCreateTag()).or(() -> super.getTooltipData(stack));
+		return SpawnEntityTooltipComponent.of(this.type, stack.getOrCreateNbt()).or(() -> super.getTooltipData(stack));
 	}
 }

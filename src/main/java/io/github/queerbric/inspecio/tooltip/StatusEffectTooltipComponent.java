@@ -27,10 +27,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
@@ -134,10 +134,12 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	@Override
-	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, Immediate immediate) {
+	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f model, Immediate immediate) {
 		if (this.hidden) {
-			textRenderer.draw(this.getHiddenText(8) + "§r", x + 24, y, 8355711, true, matrix4f, immediate, false, 0, 15728880);
-			textRenderer.draw(this.getHiddenText(1) + "§r:" + this.getHiddenText(2) + "§r", x + 24, y + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+			textRenderer.draw(this.getHiddenText(8) + "§r", x + 24, y, 8355711, true,
+					model, immediate, false, 0, LightmapTextureManager.field_32767);
+			textRenderer.draw(this.getHiddenText(1) + "§r:" + this.getHiddenText(2) + "§r", x + 24, y + 10, 8355711, true,
+					model, immediate, false, 0, LightmapTextureManager.field_32767);
 		} else {
 			for (int i = 0; i < list.size(); i++) {
 				StatusEffectInstance statusEffectInstance = list.get(i);
@@ -151,16 +153,18 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				}
 				Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
 				textRenderer.draw(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
-						true, matrix4f, immediate, false, 0, 15728880);
+						true, model, immediate, false, 0, LightmapTextureManager.field_32767);
 				if (statusEffectInstance.getDuration() > 1) {
 					String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
 					if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 						duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
 					}
-					textRenderer.draw(duration, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+					textRenderer.draw(duration, x + 24, y + i * 20 + 10, 8355711, true,
+							model, immediate, false, 0, LightmapTextureManager.field_32767);
 				} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 					String chance = (int) (this.chances.getFloat(i) * 100f) + "%";
-					textRenderer.draw(chance, x + 24, y + i * 20 + 10, 8355711, true, matrix4f, immediate, false, 0, 15728880);
+					textRenderer.draw(chance, x + 24, y + i * 20 + 10, 8355711, true,
+							model, immediate, false, 0, LightmapTextureManager.field_32767);
 				}
 			}
 		}

@@ -69,11 +69,12 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack, boolean compact, @Nullable DyeColor color) {
-		if (!stack.getOrCreateTag().contains("BlockEntityTag"))
+		var blockEntityNbt = stack.getSubNbt("BlockEntityTag");
+		if (blockEntityNbt == null)
 			return Optional.empty();
 
 		List<ItemStack> inventory = DefaultedList.ofSize(getInvSizeFor(stack), ItemStack.EMPTY);
-		Inventories.readNbt(stack.getOrCreateSubTag("BlockEntityTag"), (DefaultedList<ItemStack>) inventory);
+		Inventories.readNbt(blockEntityNbt, (DefaultedList<ItemStack>) inventory);
 		if (inventory.stream().allMatch(ItemStack::isEmpty))
 			return Optional.empty();
 

@@ -22,14 +22,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.client.render.MapRenderer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.map.MapState;
 
 import java.util.Optional;
 
@@ -71,7 +69,7 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 		matrices.push();
 		matrices.translate(x, y, z);
 		matrices.scale(1, 1, 0);
-		map.draw(matrices, vertices, this.map, state, !Inspecio.get().getConfig().getFilledMapConfig().shouldShowPlayerIcon(), 0xf000f0);
+		map.draw(matrices, vertices, this.map, state, !Inspecio.get().getConfig().getFilledMapConfig().shouldShowPlayerIcon(), LightmapTextureManager.field_32767);
 		vertices.draw();
 		matrices.pop();
 	}

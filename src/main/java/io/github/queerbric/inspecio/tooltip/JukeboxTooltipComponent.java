@@ -23,13 +23,13 @@ import io.github.queerbric.inspecio.JukeboxTooltipMode;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Matrix4f;
 
@@ -53,7 +53,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 
 	public static Optional<TooltipData> of(ItemStack stack) {
 		if (!Inspecio.get().getConfig().getJukeboxTooltipMode().isEnabled()) return Optional.empty();
-		var nbt = stack.getSubTag("BlockEntityTag");
+		var nbt = stack.getSubNbt("BlockEntityTag");
 		if (nbt != null && nbt.contains("RecordItem")) {
 			var discStack = ItemStack.fromNbt(nbt.getCompound("RecordItem"));
 			if (discStack.getItem() instanceof MusicDiscItem)
@@ -83,7 +83,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
 		textRenderer.draw(this.disc.getDescription(),
-				x, y, 11184810, true, matrix4f, immediate, false, 0, 15728880);
+				x, y, 11184810, true, matrix4f, immediate, false, 0, LightmapTextureManager.field_32767);
 	}
 
 	@Override

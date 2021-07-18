@@ -23,8 +23,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Bucketable;
 import net.minecraft.entity.Entity;
@@ -33,7 +32,6 @@ import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
 /**
@@ -98,7 +96,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		entity.age = this.client.player.age + ageOffset;
 		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown()));
-		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, 15728880);
+		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, LightmapTextureManager.field_32767);
 		immediate.draw();
 		entityRenderDispatcher.setRenderShadows(true);
 		matrices.pop();
