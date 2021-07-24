@@ -137,9 +137,9 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f model, Immediate immediate) {
 		if (this.hidden) {
 			textRenderer.draw(this.getHiddenText(8) + "§r", x + 24, y, 8355711, true,
-					model, immediate, false, 0, LightmapTextureManager.field_32767);
+					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 			textRenderer.draw(this.getHiddenText(1) + "§r:" + this.getHiddenText(2) + "§r", x + 24, y + 10, 8355711, true,
-					model, immediate, false, 0, LightmapTextureManager.field_32767);
+					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		} else {
 			for (int i = 0; i < list.size(); i++) {
 				StatusEffectInstance statusEffectInstance = list.get(i);
@@ -153,18 +153,18 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				}
 				Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
 				textRenderer.draw(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
-						true, model, immediate, false, 0, LightmapTextureManager.field_32767);
+						true, model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				if (statusEffectInstance.getDuration() > 1) {
 					String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
 					if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 						duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
 					}
 					textRenderer.draw(duration, x + 24, y + i * 20 + 10, 8355711, true,
-							model, immediate, false, 0, LightmapTextureManager.field_32767);
+							model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 					String chance = (int) (this.chances.getFloat(i) * 100f) + "%";
 					textRenderer.draw(chance, x + 24, y + i * 20 + 10, 8355711, true,
-							model, immediate, false, 0, LightmapTextureManager.field_32767);
+							model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				}
 			}
 		}

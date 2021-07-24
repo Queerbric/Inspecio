@@ -69,7 +69,8 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 		matrices.push();
 		matrices.translate(x, y, z);
 		matrices.scale(1, 1, 0);
-		map.draw(matrices, vertices, this.map, state, !Inspecio.get().getConfig().getFilledMapConfig().shouldShowPlayerIcon(), LightmapTextureManager.field_32767);
+		map.draw(matrices, vertices, this.map, state, !Inspecio.get().getConfig().getFilledMapConfig().shouldShowPlayerIcon(),
+				LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		vertices.draw();
 		matrices.pop();
 	}

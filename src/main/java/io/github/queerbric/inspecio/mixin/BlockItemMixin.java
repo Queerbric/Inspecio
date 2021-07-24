@@ -66,7 +66,7 @@ public abstract class BlockItemMixin extends Item {
 			if (data.isPresent()) return data;
 		} else {
 			InspecioConfig.StorageContainerConfig config = containersConfig.forBlock(this.getBlock());
-			if (config != null) {
+			if (config != null && config.isEnabled()) {
 				DyeColor color = null;
 				if (this.getBlock() instanceof ShulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
 					color = ((ShulkerBoxBlock) this.getBlock()).getColor();

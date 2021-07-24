@@ -125,12 +125,13 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 			}
 
 			for (var text : this.text) {
-				textRenderer.drawWithOutline(text, x, y, signColor, outlineColor, matrix4f, immediate, LightmapTextureManager.field_32767);
+				textRenderer.drawWithOutline(text, x, y, signColor, outlineColor, matrix4f, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				y += 10;
 			}
 		} else {
 			for (var text : this.text) {
-				textRenderer.draw(text, x, y, signColor, true, matrix4f, immediate, false, 0, LightmapTextureManager.field_32767);
+				textRenderer.draw(text, x, y, signColor, true, matrix4f, immediate, false,
+						0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				y += 10;
 			}
 		}
@@ -153,7 +154,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 		var vertexConsumer = spriteIdentifier.getVertexConsumer(immediate, this.model::getLayer);
 		this.model.stick.visible = false;
 		this.model.root.visible = true;
-		this.model.root.render(matrices, vertexConsumer, LightmapTextureManager.field_32767, OverlayTexture.DEFAULT_UV);
+		this.model.root.render(matrices, vertexConsumer, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV);
 		immediate.draw();
 		matrices.pop();
 

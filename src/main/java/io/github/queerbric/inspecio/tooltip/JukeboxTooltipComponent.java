@@ -83,7 +83,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
 		textRenderer.draw(this.disc.getDescription(),
-				x, y, 11184810, true, matrix4f, immediate, false, 0, LightmapTextureManager.field_32767);
+				x, y, 11184810, true, matrix4f, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 	}
 
 	@Override

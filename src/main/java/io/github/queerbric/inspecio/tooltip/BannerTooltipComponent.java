@@ -89,7 +89,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
 		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
-		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, LightmapTextureManager.field_32767, OverlayTexture.DEFAULT_UV,
+		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
 				this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
 		immediate.draw();

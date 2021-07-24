@@ -31,7 +31,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.Vec3f;
 
 /**
@@ -96,7 +98,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		entity.age = this.client.player.age + ageOffset;
 		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown()));
-		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, LightmapTextureManager.field_32767);
+		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		immediate.draw();
 		entityRenderDispatcher.setRenderShadows(true);
 		matrices.pop();
@@ -123,6 +125,10 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 			bucketable.copyDataFromNbt(itemNbt);
 			if (entity instanceof PufferfishEntity pufferfish) {
 				pufferfish.setPuffState(config.getPufferFishPuffState());
+			} else if (entity instanceof TropicalFishEntity tropicalFish) {
+				if (itemNbt.contains("BucketVariantTag", NbtElement.INT_TYPE)) {
+					tropicalFish.setVariant(itemNbt.getInt("BucketVariantTag"));
+				}
 			}
 		}
 	}
