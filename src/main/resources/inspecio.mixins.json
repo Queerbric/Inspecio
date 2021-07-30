@@ -8,6 +8,7 @@
     "EntityAccessor",
     "EntityBucketItemMixin",
     "FilledMapItemMixin",
+    "ItemEntityAccessor",
     "ItemStackMixin",
     "LingeringPotionItemMixin",
     "PotionItemMixin",
@@ -15,7 +16,8 @@
     "SignItemMixin",
     "SpawnEggItemMixin",
     "SpectralArrowItemMixin",
-    "TippedArrowItemMixin"
+    "TippedArrowItemMixin",
+    "WitherEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

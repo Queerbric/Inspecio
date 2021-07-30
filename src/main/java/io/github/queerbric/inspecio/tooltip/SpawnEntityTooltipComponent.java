@@ -44,7 +44,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 
 	public static Optional<TooltipData> of(EntityType<?> entityType, NbtCompound itemNbt) {
 		var entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
-		if (!entitiesConfig.getSpawnEggConfig().isEnabled())
+		if (!entitiesConfig.getSpawnEggConfig().isEnabled() || entityType == null)
 			return Optional.empty();
 
 		var client = MinecraftClient.getInstance();
@@ -59,15 +59,15 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 				villagerData.putString("type", "minecraft:plains");
 				itemEntityNbt.put("VillagerData", villagerData);
 			}
-			if (itemEntityNbt.contains("id", NbtElement.STRING_TYPE)) {
+			if (itemEntityNbt.contains("id", NbtElement.STRING_TYPE)) { // The spawn egg specifies its own entity type.
 				var id = itemEntityNbt.getString("id");
 				id = id.replaceAll("[^a-z0-9/._-]", "");
 				itemEntityNbt.putString("id", id);
-				Optional<EntityType<?>> entityTypeOptional = EntityType.fromNbt(itemEntityNbt);
-				if (entityTypeOptional.isPresent()) {
-					var entity2 = entityTypeOptional.get().create(client.world);
-					if (entity2 != null) {
-						entity = entity2;
+				Optional<EntityType<?>> specifiedEntityType = EntityType.fromNbt(itemEntityNbt);
+				if (specifiedEntityType.isPresent()) {
+					var actualEntity = specifiedEntityType.get().create(client.world);
+					if (actualEntity != null) {
+						entity = actualEntity;
 						adjustEntity(entity, itemNbt, entitiesConfig);
 					}
 				}

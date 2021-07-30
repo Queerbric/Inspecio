@@ -18,6 +18,8 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import io.github.queerbric.inspecio.InspecioConfig;
+import io.github.queerbric.inspecio.mixin.ItemEntityAccessor;
+import io.github.queerbric.inspecio.mixin.WitherEntityAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -27,7 +29,9 @@ import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Bucketable;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SquidEntity;
@@ -81,6 +85,9 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		if (entity instanceof SquidEntity) {
 			size = 16;
 			yOffset = 2;
+		} else if (entity instanceof ItemEntity) {
+			size = 48;
+			yOffset = 28;
 		}
 		matrices.translate(x + 10, y + yOffset, 1050);
 		matrices.scale(1f, 1f, -1);
@@ -90,13 +97,12 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		var quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(-10.f);
 		quaternion.hamiltonProduct(quaternion2);
 		matrices.multiply(quaternion);
-		this.setupAngles(entity, ageOffset, spin, defaultYaw);
+		this.setupAngles(entity, this.client.player.age, ageOffset, spin, defaultYaw);
 		var entityRenderDispatcher = this.client.getEntityRenderDispatcher();
 		quaternion2.conjugate();
 		entityRenderDispatcher.setRotation(quaternion2);
 		entityRenderDispatcher.setRenderShadows(false);
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
-		entity.age = this.client.player.age + ageOffset;
 		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown()));
 		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		immediate.draw();
@@ -105,14 +111,24 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		DiffuseLighting.enableGuiDepthLighting();
 	}
 
-	protected void setupAngles(Entity entity, int ageOffset, boolean spin, float defaultYaw) {
+	protected void setupAngles(Entity entity, int age, int ageOffset, boolean spin, float defaultYaw) {
+		entity.age = age + ageOffset;
+
 		float yaw = spin ? (float) (((System.currentTimeMillis() / 10) + ageOffset) % 360) : defaultYaw;
 		entity.setYaw(yaw);
 		entity.setHeadYaw(yaw);
 		entity.setPitch(0.f);
 		if (entity instanceof LivingEntity living) {
 			if (living instanceof GoatEntity) living.headYaw = yaw;
+			else if (living instanceof WitherEntityAccessor wither) {
+				wither.getSideHeadYaws()[0] = wither.getSideHeadYaws()[1] = yaw;
+			}
 			living.bodyYaw = yaw;
+		} else if (entity instanceof ItemEntityAccessor itemEntity) {
+			itemEntity.setItemAge(entity.age);
+			itemEntity.setUniqueOffset(0.f);
+		} else if (entity instanceof EndCrystalEntity endCrystal) {
+			endCrystal.endCrystalAge = endCrystal.age;
 		}
 	}
 
