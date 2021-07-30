@@ -21,9 +21,14 @@ import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SuspiciousStewItem;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.potion.PotionUtil;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -89,12 +94,37 @@ public abstract class ItemStackMixin {
 		if (stack.isFood() && config.getFoodConfig().isEnabled()) {
 			var comp = stack.getItem().getFoodComponent();
 			datas.add(new FoodTooltipComponent(comp));
-			var tag = Inspecio.getHiddenEffectsTag();
-			if (tag != null && tag.contains(stack.getItem())) {
-				datas.add(new StatusEffectTooltipComponent());
-			} else {
-				if (comp.getStatusEffects().size() > 0) {
-					datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
+			if (config.getEffectsConfig().hasPotions()) {
+				var tag = Inspecio.getHiddenEffectsTag();
+				if (tag != null && tag.contains(stack.getItem())) {
+					datas.add(new StatusEffectTooltipComponent());
+				} else {
+					if (comp.getStatusEffects().size() > 0) {
+						datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
+					} else if (stack.getItem() instanceof SuspiciousStewItem) {
+						var nbt = stack.getNbt();
+						if (nbt != null && nbt.contains(SuspiciousStewItem.EFFECTS_KEY, NbtElement.LIST_TYPE)) {
+							var effects = new ArrayList<StatusEffectInstance>();
+							var effectsNbt = nbt.getList(SuspiciousStewItem.EFFECTS_KEY, NbtElement.COMPOUND_TYPE);
+
+							for (int i = 0; i < effectsNbt.size(); ++i) {
+								int duration = 160;
+								var effectNbt = effectsNbt.getCompound(i);
+								if (effectNbt.contains(SuspiciousStewItem.EFFECT_DURATION_KEY, NbtElement.INT_TYPE)) {
+									duration = effectNbt.getInt(SuspiciousStewItem.EFFECT_DURATION_KEY);
+								}
+
+								var statusEffect = StatusEffect.byRawId(effectNbt.getByte(SuspiciousStewItem.EFFECT_ID_KEY));
+								if (statusEffect != null) {
+									effects.add(new StatusEffectInstance(statusEffect, duration));
+								}
+							}
+
+							datas.add(new StatusEffectTooltipComponent(effects, 1.f));
+						}
+					} else {
+						datas.add(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 1.f));
+					}
 				}
 			}
 		}
