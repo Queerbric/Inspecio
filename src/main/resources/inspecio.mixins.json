@@ -3,6 +3,7 @@
   "package": "io.github.queerbric.inspecio.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
+    "ArmorStandItemMixin",
     "BannerPatternItemMixin",
     "BlockItemMixin",
     "EntityAccessor",
