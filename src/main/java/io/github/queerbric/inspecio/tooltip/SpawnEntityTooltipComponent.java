@@ -30,9 +30,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 	private final Entity entity;
@@ -58,6 +58,19 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 				villagerData.putInt("level", 1);
 				villagerData.putString("type", "minecraft:plains");
 				itemEntityNbt.put("VillagerData", villagerData);
+			}
+			if (itemEntityNbt.contains("id", NbtElement.STRING_TYPE)) {
+				var id = itemEntityNbt.getString("id");
+				id = id.replaceAll("[^a-z0-9/._-]", "");
+				itemEntityNbt.putString("id", id);
+				Optional<EntityType<?>> entityTypeOptional = EntityType.fromNbt(itemEntityNbt);
+				if (entityTypeOptional.isPresent()) {
+					var entity2 = entityTypeOptional.get().create(client.world);
+					if (entity2 != null) {
+						entity = entity2;
+						adjustEntity(entity, itemNbt, entitiesConfig);
+					}
+				}
 			}
 			var entityTag = entity.writeNbt(new NbtCompound());
 			var uuid = entity.getUuid();
