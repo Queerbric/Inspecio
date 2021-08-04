@@ -28,13 +28,12 @@ import java.util.Optional;
 
 @Mixin(ArmorStandItem.class)
 public class ArmorStandItemMixin extends Item {
+	public ArmorStandItemMixin(Item.Settings settings) {
+		super(settings);
+	}
 
-    public ArmorStandItemMixin(Item.Settings settings) {
-        super(settings);
-    }
-
-    @Override
-    public Optional<TooltipData> getTooltipData(ItemStack stack) {
-        return ArmorStandTooltipComponent.of(stack.getOrCreateNbt()).or(() -> super.getTooltipData(stack));
-    }
+	@Override
+	public Optional<TooltipData> getTooltipData(ItemStack stack) {
+		return ArmorStandTooltipComponent.of(stack.getOrCreateNbt()).or(() -> super.getTooltipData(stack));
+	}
 }

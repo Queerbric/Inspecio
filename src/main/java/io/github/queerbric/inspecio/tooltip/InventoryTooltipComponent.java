@@ -42,7 +42,7 @@ import java.util.Optional;
  * Represents the inventory tooltip component.
  *
  * @author LambdAurora
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -69,7 +69,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack, boolean compact, @Nullable DyeColor color) {
-		var blockEntityNbt = stack.getSubNbt("BlockEntityTag");
+		var blockEntityNbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
 		if (blockEntityNbt == null)
 			return Optional.empty();
 
@@ -125,7 +125,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		int lines = this.getColumns();
 
 		for (var stack : this.inventory) {
-			this.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, z, textureManager);
+			drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, z, this.color == null ? null : color.getColorComponents());
 			itemRenderer.renderInGuiWithOverrides(stack, xOffset + x, yOffset + y);
 			itemRenderer.renderGuiItemOverlay(textRenderer, stack, xOffset + x, yOffset + y);
 			x += 18;
@@ -136,8 +136,9 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		}
 	}
 
-	private void drawSlot(MatrixStack matrices, int x, int y, int z, TextureManager textureManager) {
-		var color = this.color != null ? this.color.getColorComponents() : new float[]{1.f, 1.f, 1.f};
+	public static void drawSlot(MatrixStack matrices, int x, int y, int z, float[] color) {
+		if (color == null)
+			color = new float[]{1.f, 1.f, 1.f};
 		RenderSystem.setShaderColor(color[0], color[1], color[2], 1.f);
 		RenderSystem.setShaderTexture(0, DrawableHelper.STATS_ICON_TEXTURE);
 		DrawableHelper.drawTexture(matrices, x, y, z, 0.f, 0.f, 18, 18, 128, 128);

@@ -28,6 +28,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.util.collection.DefaultedList;
@@ -39,7 +40,7 @@ import java.util.Optional;
  * Represents a jukebox tooltip component. Displays the inserted disc description and an inventory slot with the disc in fancy mode.
  *
  * @author LambdAurora
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class JukeboxTooltipComponent extends InventoryTooltipComponent {
@@ -53,7 +54,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 
 	public static Optional<TooltipData> of(ItemStack stack) {
 		if (!Inspecio.get().getConfig().getJukeboxTooltipMode().isEnabled()) return Optional.empty();
-		var nbt = stack.getSubNbt("BlockEntityTag");
+		var nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
 		if (nbt != null && nbt.contains("RecordItem")) {
 			var discStack = ItemStack.fromNbt(nbt.getCompound("RecordItem"));
 			if (discStack.getItem() instanceof MusicDiscItem)

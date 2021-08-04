@@ -5,6 +5,8 @@
 
   "inspecio.config.reloading": "Reloading configuration...",
 
+  "inspecio.tooltip.lodestone_compass.dimension": "Dimension: %s",
+  "inspecio.tooltip.lodestone_compass.target": "Target: %s",
   "inspecio.tooltip.loot_table": "Loot Table: %s",
   "inspecio.tooltip.repair_cost": "Repair Cost: %d"
 }

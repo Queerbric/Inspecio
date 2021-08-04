@@ -30,6 +30,7 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,6 +40,7 @@ import java.util.Optional;
 
 @Mixin(PotionItem.class)
 public abstract class PotionItemMixin extends Item {
+	@Unique
 	private final ThreadLocal<Integer> inspecio$oldTooltipLength = new ThreadLocal<>();
 
 	public PotionItemMixin(Settings settings) {
@@ -66,6 +68,6 @@ public abstract class PotionItemMixin extends Item {
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
 		if (!Inspecio.get().getConfig().getEffectsConfig().hasPotions()) return super.getTooltipData(stack);
-		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 1.0F));
+		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 1.f));
 	}
 }

@@ -65,6 +65,10 @@ Compact:
 
 ![banner_pattern](images/banner_pattern.png)
 
+#### Campfire
+
+![campfire](images/campfire.png)
+
 #### Filled Map
 
 ![map](images/filled_map.png)
@@ -86,6 +90,11 @@ Compact:
 ##### Spawn Eggs
 
 ![fox_spawn_egg](images/fox_spawn_egg.png)
+
+#### Lodestone Compass
+
+Only shows up if Advanced Tooltip is enabled (`F3 + H`).
+![lodestone_compass](images/lodestone_compass.png)
 
 #### Repair Cost
 
@@ -138,6 +147,7 @@ Here's the default configuration:
   "armor": true,
   "banner_pattern": true,
   "containers": {
+    "campfire": true,
     "storage": {
       "enabled": true,
       "compact": false,
@@ -154,7 +164,8 @@ Here's the default configuration:
     "potions": true,
     "tipped_arrows": true,
     "spectral_arrow": true,
-    "food": true
+    "food": true,
+    "hidden_motion": true
   }
 }
 ```

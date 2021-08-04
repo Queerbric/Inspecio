@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourceType;
@@ -43,7 +44,7 @@ import java.util.function.Consumer;
 /**
  * Represents the Inspecio mod.
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class Inspecio implements ClientModInitializer {
@@ -138,7 +139,7 @@ public class Inspecio implements ClientModInitializer {
 	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
 		var config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
 		if (config != null && config.hasLootTable()) {
-			var blockEntityNbt = stack.getSubNbt("BlockEntityTag");
+			var blockEntityNbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
 			if (blockEntityNbt != null && blockEntityNbt.contains("LootTable")) {
 				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
 						new LiteralText(blockEntityNbt.getString("LootTable"))
