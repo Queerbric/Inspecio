@@ -19,6 +19,7 @@ package io.github.queerbric.inspecio.tooltip;
 
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
+import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipData;
@@ -27,8 +28,10 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ import java.util.function.Function;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class BeesTooltipComponent extends EntityTooltipComponent {
@@ -64,8 +67,10 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 		var config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
 		if (!config.isEnabled())
 			return Optional.empty();
-		var blockEntityNbt = stack.getOrCreateSubNbt("BlockEntityTag");
-		var bees = blockEntityNbt.getList("Bees", 10);
+		var nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+		if (nbt == null || !nbt.contains(BeehiveBlockEntity.BEES_KEY, NbtElement.LIST_TYPE))
+			return Optional.empty();
+		var bees = nbt.getList(BeehiveBlockEntity.BEES_KEY, NbtElement.COMPOUND_TYPE);
 		if (!bees.isEmpty())
 			return Optional.of(new BeesTooltipComponent(config, bees));
 		return Optional.empty();

@@ -44,7 +44,7 @@ import net.minecraft.util.math.Vec3f;
  * Represents a tooltip component for entities.
  *
  * @author LambdAurora
- * @version 1.0.3
+ * @version 1.1.0
  * @since 1.0.0
  */
 public abstract class EntityTooltipComponent implements ConvertibleTooltipData, TooltipComponent {

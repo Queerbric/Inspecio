@@ -30,6 +30,7 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,6 +40,7 @@ import java.util.Optional;
 
 @Mixin(TippedArrowItem.class)
 public abstract class TippedArrowItemMixin extends Item {
+	@Unique
 	private final ThreadLocal<Integer> inspecio$oldTooltipLength = new ThreadLocal<>();
 
 	public TippedArrowItemMixin(Settings settings) {

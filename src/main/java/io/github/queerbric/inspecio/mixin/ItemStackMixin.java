@@ -24,16 +24,19 @@ import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SuspiciousStewItem;
+import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -48,6 +51,13 @@ public abstract class ItemStackMixin {
 	@Shadow
 	public abstract int getRepairCost();
 
+	@Shadow public abstract Item getItem();
+
+	@Shadow @Nullable public abstract NbtCompound getSubNbt(String key);
+
+	@Shadow @Nullable public abstract NbtCompound getNbt();
+
+	@Unique
 	private final ThreadLocal<List<Text>> inspecio$tooltipList = new ThreadLocal<>();
 
 	@Inject(
@@ -71,6 +81,20 @@ public abstract class ItemStackMixin {
 			return;
 
 		var tooltip = this.inspecio$tooltipList.get();
+
+		if (this.getItem() instanceof CompassItem && CompassItem.hasLodestone((ItemStack) (Object) this)) {
+			var nbt = this.getNbt();
+			assert nbt != null; // Should not be null since hasLodestone returns true.
+			var pos = NbtHelper.toBlockPos(nbt.getCompound(CompassItem.LODESTONE_POS_KEY));
+			var posText = new LiteralText(String.format("X: %d, Y: %d, Z: %d", pos.getX(), pos.getY(), pos.getZ()))
+					.formatted(Formatting.GOLD);
+
+			tooltip.add(new TranslatableText("inspecio.tooltip.lodestone_compass.target", posText).formatted(Formatting.GRAY));
+			CompassItem.getLodestoneDimension(nbt)
+					.ifPresent(dimension -> tooltip.add(new TranslatableText("inspecio.tooltip.lodestone_compass.dimension",
+							new LiteralText(dimension.getValue().toString()).formatted(Formatting.GOLD))
+							.formatted(Formatting.GRAY)));
+		}
 
 		int repairCost;
 		if ((repairCost = this.getRepairCost()) != 0) {

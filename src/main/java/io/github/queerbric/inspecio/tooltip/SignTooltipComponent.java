@@ -29,6 +29,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SignItem;
 import net.minecraft.nbt.NbtCompound;
@@ -65,7 +66,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 		if (stack.getItem() instanceof SignItem signItem) {
 			var block = signItem.getBlock();
-			var nbt = stack.getSubNbt("BlockEntityTag");
+			var nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
 			if (nbt != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), nbt));
 		}
 		return Optional.empty();

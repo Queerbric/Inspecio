@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.0.1
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class InspecioConfig {
@@ -184,17 +184,30 @@ public class InspecioConfig {
 	}
 
 	public static class ContainersConfig {
+		public static final boolean DEFAULT_CAMPFIRE = true;
+
 		public static final Codec<ContainersConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				configEntry("containers/campfire", DEFAULT_CAMPFIRE, ContainersConfig::isCampfireEnabled),
 				configEntry(StorageContainerConfig.CODEC, "containers/storage", StorageContainerConfig::defaultConfig, ContainersConfig::getStorageConfig),
 				configEntry(ShulkerBoxConfig.CODEC, "containers/shulker_box", ShulkerBoxConfig::defaultConfig, ContainersConfig::getShulkerBoxConfig)
 		).apply(instance, ContainersConfig::new));
 
+		private boolean campfire;
 		private final StorageContainerConfig storageContainerConfig;
 		private final ShulkerBoxConfig shulkerBoxConfig;
 
-		public ContainersConfig(StorageContainerConfig storageContainerConfig, ShulkerBoxConfig shulkerBoxConfig) {
+		public ContainersConfig(boolean campfire, StorageContainerConfig storageContainerConfig, ShulkerBoxConfig shulkerBoxConfig) {
+			this.campfire = campfire;
 			this.storageContainerConfig = storageContainerConfig;
 			this.shulkerBoxConfig = shulkerBoxConfig;
+		}
+
+		public boolean isCampfireEnabled() {
+			return this.campfire;
+		}
+
+		public void setCampfire(boolean enabled) {
+			this.campfire = enabled;
 		}
 
 		public StorageContainerConfig getStorageConfig() {
@@ -216,7 +229,7 @@ public class InspecioConfig {
 		}
 
 		public static ContainersConfig defaultConfig() {
-			return new ContainersConfig(StorageContainerConfig.defaultConfig(), ShulkerBoxConfig.defaultConfig());
+			return new ContainersConfig(DEFAULT_CAMPFIRE, StorageContainerConfig.defaultConfig(), ShulkerBoxConfig.defaultConfig());
 		}
 	}
 
@@ -303,7 +316,7 @@ public class InspecioConfig {
 	/**
 	 * Represents effects configuration.
 	 *
-	 * @version 1.0.0
+	 * @version 1.1.0
 	 * @since 1.0.0
 	 */
 	public static class EffectsConfig {
@@ -383,7 +396,7 @@ public class InspecioConfig {
 	/**
 	 * Represents entities configuration.
 	 *
-	 * @version 1.0.0
+	 * @version 1.1.0
 	 * @since 1.0.0
 	 */
 	public static class EntitiesConfig {

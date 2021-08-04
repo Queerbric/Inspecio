@@ -20,12 +20,10 @@ package io.github.queerbric.inspecio.mixin;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.tooltip.BeesTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.CampfireTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.InventoryTooltipComponent;
 import io.github.queerbric.inspecio.tooltip.JukeboxTooltipComponent;
-import net.minecraft.block.BeehiveBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.JukeboxBlock;
-import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -59,19 +57,24 @@ public abstract class BlockItemMixin extends Item {
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
 		var containersConfig = Inspecio.get().getConfig().getContainersConfig();
 		if (this.getBlock() instanceof BeehiveBlock) {
-			Optional<TooltipData> data = BeesTooltipComponent.of(stack);
+			var data = BeesTooltipComponent.of(stack);
+			if (data.isPresent()) return data;
+		} else if (this.getBlock() instanceof CampfireBlock) {
+			var data = CampfireTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
 		} else if (this.getBlock() instanceof JukeboxBlock) {
-			Optional<TooltipData> data = JukeboxTooltipComponent.of(stack);
+			var data = JukeboxTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
 		} else {
 			InspecioConfig.StorageContainerConfig config = containersConfig.forBlock(this.getBlock());
 			if (config != null && config.isEnabled()) {
 				DyeColor color = null;
-				if (this.getBlock() instanceof ShulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
-					color = ((ShulkerBoxBlock) this.getBlock()).getColor();
+				if (this.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
+					color = shulkerBoxBlock.getColor();
+				var nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+				if (nbt == null) return Optional.empty();
 				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
-				Inventories.readNbt(stack.getOrCreateSubNbt("BlockEntityTag"), inventory);
+				Inventories.readNbt(nbt, inventory);
 				return InventoryTooltipComponent.of(stack, config.isCompact(), color);
 			}
 		}

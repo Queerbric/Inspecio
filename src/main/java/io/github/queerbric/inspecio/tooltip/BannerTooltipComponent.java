@@ -34,8 +34,10 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 
@@ -78,9 +80,11 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		matrices.push();
 		matrices.translate(x + 8, y + 8, z);
 		var itemStack = new ItemStack(Items.GRAY_BANNER);
-		var nbt = itemStack.getOrCreateSubNbt("BlockEntityTag");
+		var nbt = itemStack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+		if (nbt == null) nbt = new NbtCompound();
+		else nbt = nbt.copy();
 		NbtList listNbt = (new BannerPattern.Patterns()).add(BannerPattern.BASE, DyeColor.GRAY).add(this.pattern, DyeColor.WHITE).toNbt();
-		nbt.put("Patterns", listNbt);
+		nbt.put(BannerBlockEntity.PATTERNS_KEY, listNbt);
 		matrices.push();
 		matrices.translate(0.5, 16, 0);
 		matrices.scale(6, -6, 1);
