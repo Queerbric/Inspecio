@@ -92,6 +92,7 @@ public final class InspecioCommand {
 									.executes(onBooleanSetter("effects/hidden_motion", setter((cfg, val) -> cfg.getEffectsConfig().setHiddenMotion(val)))))
 					)
 			).then(literal("entities")
+					.then(initEntity("armor_stand", cfg -> cfg.getEntitiesConfig().getArmorStandConfig()))
 					.then(initEntity("bee", cfg -> cfg.getEntitiesConfig().getBeeConfig()))
 					.then(initEntity("fish_bucket", cfg -> cfg.getEntitiesConfig().getFishBucketConfig()))
 					.then(initEntity("spawn_egg", cfg -> cfg.getEntitiesConfig().getSpawnEggConfig()))

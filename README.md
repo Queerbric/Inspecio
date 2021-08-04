@@ -71,6 +71,10 @@ Compact:
 
 #### Entities
 
+##### Armor Stand
+
+![armor_stand](images/armor_stand.png)
+
 ##### Bucket of Fish
 
 ![tropical_fish_bucket](images/bucket_of_tropical_fish.png)
@@ -105,6 +109,11 @@ Here's the default configuration:
   "jukebox": "fancy",
   "sign": "fancy",
   "entities": {
+    "armor_stand": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
     "bee": {
       "enabled": true,
       "always_show_name": false,
@@ -171,6 +180,10 @@ Here's a list of each configuration entries and what they do:
    - `food` (`bool`) - if `true` then adds effect tooltips on food items, else `false`.
    - `hidden_motion` (`bool`) - if `true` then uses obfuscated text for hidden effect tooltips, else `false`.
  - `entities`
+   - `armor_stand`
+      - `enabled` (`bool`) - if `true` if armor stand tooltip should be displayed, else `false`.
+      - `always_show_name` (`bool`) - if `true` then always show name of armor stand, else `false` and use the CTRL key instead.
+      - `spin` (`bool`) - `true` if the armor stand spin in the tooltip, else `false`
    - `bee`
      - `enabled` (`bool`) - if `true` then displays bees if present in the beehive tooltip, else `false`.
      - `always_show_name` (`bool`) - if `true` then always show name of bees, else `false` and use the CTRL key instead.

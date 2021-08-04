@@ -19,26 +19,20 @@ package io.github.queerbric.inspecio;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonWriter;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.*;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -396,6 +390,7 @@ public class InspecioConfig {
 		public static final int DEFAULT_PUFF_STATE = 2;
 
 		public static final Codec<EntitiesConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				configEntry(EntityConfig.CODEC, "entities/armor_stand", EntityConfig::defaultConfig, EntitiesConfig::getArmorStandConfig),
 				configEntry(EntityConfig.CODEC, "entities/bee", EntityConfig::defaultConfig, EntitiesConfig::getBeeConfig),
 				configEntry(EntityConfig.CODEC, "entities/fish_bucket", EntityConfig::defaultConfig, EntitiesConfig::getFishBucketConfig),
 				configEntry(EntityConfig.CODEC, "entities/spawn_egg", EntityConfig::defaultConfig, EntitiesConfig::getSpawnEggConfig),
@@ -403,16 +398,22 @@ public class InspecioConfig {
 						.forGetter(EntitiesConfig::getPufferFishPuffState)
 		).apply(instance, EntitiesConfig::new));
 
+		private final EntityConfig armorStandConfig;
 		private final EntityConfig beeConfig;
 		private final EntityConfig fishBucketConfig;
 		private final EntityConfig spawnEggConfig;
 		private int pufferFishPuffState;
 
-		public EntitiesConfig(EntityConfig beeConfig, EntityConfig fishBucketConfig, EntityConfig spawnEggConfig, int pufferFishPuffState) {
+		public EntitiesConfig(EntityConfig armorStandConfig, EntityConfig beeConfig, EntityConfig fishBucketConfig, EntityConfig spawnEggConfig, int pufferFishPuffState) {
+			this.armorStandConfig = armorStandConfig;
 			this.beeConfig = beeConfig;
 			this.fishBucketConfig = fishBucketConfig;
 			this.spawnEggConfig = spawnEggConfig;
 			this.setPufferFishPuffState(pufferFishPuffState);
+		}
+
+		public EntityConfig getArmorStandConfig() {
+			return this.armorStandConfig;
 		}
 
 		public EntityConfig getBeeConfig() {
@@ -436,7 +437,7 @@ public class InspecioConfig {
 		}
 
 		public static EntitiesConfig defaultConfig() {
-			return new EntitiesConfig(EntityConfig.defaultConfig(), EntityConfig.defaultConfig(), EntityConfig.defaultConfig(),
+			return new EntitiesConfig(EntityConfig.defaultConfig(), EntityConfig.defaultConfig(), EntityConfig.defaultConfig(), EntityConfig.defaultConfig(),
 					DEFAULT_PUFF_STATE);
 		}
 	}
