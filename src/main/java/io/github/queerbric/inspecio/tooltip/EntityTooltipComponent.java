@@ -89,7 +89,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 			size = 48;
 			yOffset = 28;
 		}
-		if (entity instanceof  LivingEntity && ((LivingEntity) entity).isBaby()) {
+		if (entity instanceof LivingEntity living && living.isBaby()) {
 			size /= 1.7;
 		}
 		matrices.translate(x + 10, y + yOffset, 1050);
