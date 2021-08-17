@@ -19,14 +19,12 @@ package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
-import io.github.queerbric.inspecio.tooltip.BeesTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.CampfireTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.InventoryTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.JukeboxTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.block.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -41,6 +39,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,8 +54,27 @@ public abstract class BlockItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		var containersConfig = Inspecio.get().getConfig().getContainersConfig();
-		if (this.getBlock() instanceof BeehiveBlock) {
+		var inspecioConfig = Inspecio.get().getConfig();
+		var containersConfig = inspecioConfig.getContainersConfig();
+		var effectsConfig = inspecioConfig.getEffectsConfig();
+		 if (effectsConfig.hasBeacon() && this.getBlock() instanceof BeaconBlock) {
+			var blockEntityTag = stack.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+			var effectsList = new ArrayList<StatusEffectInstance>();
+			var primary = Inspecio.getRawEffectFromTag(blockEntityTag, "Primary");
+			var secondary = Inspecio.getRawEffectFromTag(blockEntityTag, "Secondary");
+
+
+			if (primary != null && primary.equals(secondary)) {
+				primary = new StatusEffectInstance(primary.getEffectType(), 200, 1);
+				secondary = null;
+			}
+			if (primary != null)
+				effectsList.add(primary);
+			if (secondary != null)
+				effectsList.add(secondary);
+
+			return Optional.of(new StatusEffectTooltipComponent(effectsList, 1F));
+		} else if (this.getBlock() instanceof BeehiveBlock) {
 			var data = BeesTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
 		} else if (this.getBlock() instanceof CampfireBlock) {

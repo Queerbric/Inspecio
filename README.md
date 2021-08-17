@@ -26,10 +26,11 @@ Most of the mod is configurable, some parts can be enabled/disabled to your hear
 
 ![food](images/golden_carrot.png)
 
-#### Potion tooltips
+#### Effects tooltips
 
 ![potion](images/potion.png)
 ![suspicious stew](images/suspicious_stew.png)
+![beacon](images/beacon.png)
 
 #### Shulker Box tooltips (and other storage blocks)
 
@@ -165,7 +166,8 @@ Here's the default configuration:
     "tipped_arrows": true,
     "spectral_arrow": true,
     "food": true,
-    "hidden_motion": true
+    "hidden_motion": true,
+    "beacon": true
   }
 }
 ```
@@ -190,6 +192,7 @@ Here's a list of each configuration entries and what they do:
    - `spectral_arrow` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on spectral arrow item, else `false`.
    - `food` (`bool`) - if `true` then adds effect tooltips on food items, else `false`.
    - `hidden_motion` (`bool`) - if `true` then uses obfuscated text for hidden effect tooltips, else `false`.
+   - `beacon` (`bool`) - if `true` then add a tooltip with the primary and secondary effects (if they exist), otherwise it does nothing.
  - `entities`
    - `armor_stand`
       - `enabled` (`bool`) - if `true` if armor stand tooltip should be displayed, else `false`.

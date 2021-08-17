@@ -23,9 +23,13 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
@@ -155,5 +159,14 @@ public class Inspecio implements ClientModInitializer {
 			tag = get().resourceReloader.getCurrentGroup().getTag(HIDDEN_EFFECTS_TAG);
 		}
 		return tag;
+	}
+
+	public static @Nullable StatusEffectInstance getRawEffectFromTag(NbtCompound tag, String tagKey) {
+		if (tag.contains(tagKey, NbtElement.INT_TYPE)) {
+			var effect = StatusEffect.byRawId(tag.getInt(tagKey));
+			if (effect != null)
+				return new StatusEffectInstance(effect, 200, 0);
+		}
+		return null;
 	}
 }
