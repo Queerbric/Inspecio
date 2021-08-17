@@ -29,7 +29,9 @@ Most of the mod is configurable, some parts can be enabled/disabled to your hear
 #### Effects tooltips
 
 ![potion](images/potion.png)
+
 ![suspicious stew](images/suspicious_stew.png)
+
 ![beacon](images/beacon.png)
 
 #### Shulker Box tooltips (and other storage blocks)
