@@ -59,17 +59,21 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 				villagerData.putString("type", "minecraft:plains");
 				itemEntityNbt.put("VillagerData", villagerData);
 			}
-			if (itemEntityNbt.contains("id", NbtElement.STRING_TYPE)) { // The spawn egg specifies its own entity type.
-				var id = itemEntityNbt.getString("id");
-				id = id.replaceAll("[^a-z0-9/._-]", "");
-				itemEntityNbt.putString("id", id);
-				Optional<EntityType<?>> specifiedEntityType = EntityType.fromNbt(itemEntityNbt);
-				if (specifiedEntityType.isPresent()) {
-					var actualEntity = specifiedEntityType.get().create(client.world);
-					if (actualEntity != null) {
-						entity = actualEntity;
-						adjustEntity(entity, itemNbt, entitiesConfig);
-					}
+			if (itemEntityNbt.contains(Entity.ID_KEY, NbtElement.STRING_TYPE)) { // The spawn egg specifies its own entity type.
+				var id = itemEntityNbt.getString(Entity.ID_KEY);
+				if (id.startsWith("minecraft:")) {
+					id = id.substring(10);
+				}
+				if (id.replaceAll("[^a-z0-9/._-]", "").matches(id)) {
+                    itemEntityNbt.putString(Entity.ID_KEY, id);
+                    Optional<EntityType<?>> specifiedEntityType = EntityType.fromNbt(itemEntityNbt);
+                    if (specifiedEntityType.isPresent()) {
+                        var actualEntity = specifiedEntityType.get().create(client.world);
+                        if (actualEntity != null) {
+                            entity = actualEntity;
+                            adjustEntity(entity, itemNbt, entitiesConfig);
+                        }
+                    }
 				}
 			}
 			var entityTag = entity.writeNbt(new NbtCompound());
