@@ -18,6 +18,8 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import io.github.queerbric.inspecio.InspecioConfig;
+import io.github.queerbric.inspecio.mixin.CameraAccessor;
+import io.github.queerbric.inspecio.mixin.EntityAccessor;
 import io.github.queerbric.inspecio.mixin.ItemEntityAccessor;
 import io.github.queerbric.inspecio.mixin.WitherEntityAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -103,6 +105,8 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		this.setupAngles(entity, this.client.player.age, ageOffset, spin, defaultYaw);
 		var entityRenderDispatcher = this.client.getEntityRenderDispatcher();
 		quaternion2.conjugate();
+		((CameraAccessor) entityRenderDispatcher.camera).setYaw(0f);
+		entity.setFireTicks(((EntityAccessor) entity).getHasVisualFire() ? 1 : entity.getFireTicks());
 		entityRenderDispatcher.setRotation(quaternion2);
 		entityRenderDispatcher.setRenderShadows(false);
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
