@@ -17,15 +17,13 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.client.render.Camera;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(Entity.class)
-public interface EntityAccessor {
-	@Accessor("touchingWater")
-	void setTouchingWater(boolean touchingWater);
+@Mixin(Camera.class)
+public interface CameraAccessor {
+    @Accessor("yaw")
+    void setYaw(float yaw);
 
-	@Accessor
-	boolean getHasVisualFire();
 }

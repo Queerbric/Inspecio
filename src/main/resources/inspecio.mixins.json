@@ -6,6 +6,7 @@
     "ArmorStandItemMixin",
     "BannerPatternItemMixin",
     "BlockItemMixin",
+    "CameraAccessor",
     "EntityAccessor",
     "EntityBucketItemMixin",
     "FilledMapItemMixin",
