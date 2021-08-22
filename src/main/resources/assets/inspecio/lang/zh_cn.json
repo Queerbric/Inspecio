@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "未知的唱片机提示框模式",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "未知的饱和度提示框模式",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "未知的告示牌提示框模式",
+
+  "inspecio.config.reloading": "重载配置中……",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "维度: %s",
+  "inspecio.tooltip.lodestone_compass.target": "目标: %s",
+  "inspecio.tooltip.loot_table": "战利品表: %s",
+  "inspecio.tooltip.repair_cost": "修复消耗: %d"
+}
