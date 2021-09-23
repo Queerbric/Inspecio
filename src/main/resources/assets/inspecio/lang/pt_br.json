@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Modo para descrição de toca-discos desconhecido",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Modo para descrição de saturação desconhecido",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Modo para descrição de placa desconhecido",
+
+  "inspecio.config.reloading": "Recarregando definições...",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "Dimensão: %s",
+  "inspecio.tooltip.lodestone_compass.target": "Posição: %s",
+  "inspecio.tooltip.loot_table": "Tabela de itens: %s",
+  "inspecio.tooltip.repair_cost": "Custo de reparo: %d"
+}
