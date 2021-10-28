@@ -154,15 +154,25 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static void removeVanillaTooltips(List<Text> tooltips, int fromIndex) {
-		// TODO: currently O(n²)
-		while (tooltips.size() > fromIndex) {
-			Text removed = tooltips.remove(fromIndex);
+		if (fromIndex >= tooltips.size()) return;
 
-			// TODO: what is this for?
-			if (removed == LiteralText.EMPTY) {
-				break;
+		int keepIndex = tooltips.indexOf(LiteralText.EMPTY);
+		if (keepIndex != -1) {
+			// we wanna keep tooltips that come after a line break
+			keepIndex++;
+
+			int tooltipsToKeep = tooltips.size() - keepIndex;
+
+			// shift tooltips to keep to the front
+			for (int i = 0; i < tooltipsToKeep; i++) {
+				tooltips.set(fromIndex + i, tooltips.get(keepIndex + i));
 			}
+
+			// don't remove them
+			fromIndex += tooltipsToKeep;
 		}
+
+		tooltips.subList(fromIndex, tooltips.size()).clear();
 	}
 
 	public static @Nullable Tag<Item> getHiddenEffectsTag() {
