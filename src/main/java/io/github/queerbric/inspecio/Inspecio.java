@@ -153,6 +153,18 @@ public class Inspecio implements ClientModInitializer {
 		}
 	}
 
+	public static void removeVanillaTooltips(List<Text> tooltips, int fromIndex) {
+		// TODO: currently O(n²)
+		while (tooltips.size() > fromIndex) {
+			Text removed = tooltips.remove(fromIndex);
+
+			// TODO: what is this for?
+			if (removed == LiteralText.EMPTY) {
+				break;
+			}
+		}
+	}
+
 	public static @Nullable Tag<Item> getHiddenEffectsTag() {
 		var tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
 		if (tag == null) {
