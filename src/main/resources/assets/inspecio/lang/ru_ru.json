@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Неизвестный режим подсказки проигрывателя",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Неизвестный режим подсказки насыщения",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Неизвестный режим подсказки таблички",
+
+  "inspecio.config.reloading": "Перезагрузка конфигурации...",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "Измерение: %s",
+  "inspecio.tooltip.lodestone_compass.target": "Цель: %s",
+  "inspecio.tooltip.loot_table": "Таблица добычи: %s",
+  "inspecio.tooltip.repair_cost": "Стоимость починки: %d"
+}
