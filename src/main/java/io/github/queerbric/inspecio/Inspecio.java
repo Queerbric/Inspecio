@@ -153,6 +153,28 @@ public class Inspecio implements ClientModInitializer {
 		}
 	}
 
+	public static void removeVanillaTooltips(List<Text> tooltips, int fromIndex) {
+		if (fromIndex >= tooltips.size()) return;
+
+		int keepIndex = tooltips.indexOf(LiteralText.EMPTY);
+		if (keepIndex != -1) {
+			// we wanna keep tooltips that come after a line break
+			keepIndex++;
+
+			int tooltipsToKeep = tooltips.size() - keepIndex;
+
+			// shift tooltips to keep to the front
+			for (int i = 0; i < tooltipsToKeep; i++) {
+				tooltips.set(fromIndex + i, tooltips.get(keepIndex + i));
+			}
+
+			// don't remove them
+			fromIndex += tooltipsToKeep;
+		}
+
+		tooltips.subList(fromIndex, tooltips.size()).clear();
+	}
+
 	public static @Nullable Tag<Item> getHiddenEffectsTag() {
 		var tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
 		if (tag == null) {

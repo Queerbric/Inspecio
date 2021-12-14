@@ -41,7 +41,7 @@ import java.util.Optional;
 @Mixin(TippedArrowItem.class)
 public abstract class TippedArrowItemMixin extends Item {
 	@Unique
-	private final ThreadLocal<Integer> inspecio$oldTooltipLength = new ThreadLocal<>();
+	private final ThreadLocal<Integer> inspecio$oldTooltipLength = new ThreadLocal<>(); // ThreadLocal as REI workaround
 
 	public TippedArrowItemMixin(Settings settings) {
 		super(settings);
@@ -54,14 +54,8 @@ public abstract class TippedArrowItemMixin extends Item {
 
 	@Inject(method = "appendTooltip", at = @At("RETURN"))
 	private void onAppendTooltipPost(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo info) {
-		if (tooltip.size() > this.inspecio$oldTooltipLength.get() && Inspecio.get().getConfig().getEffectsConfig().hasTippedArrows()) {
-			while (tooltip.size() > 1) {
-				if (tooltip.get(this.inspecio$oldTooltipLength.get()) == LiteralText.EMPTY) {
-					tooltip.remove(this.inspecio$oldTooltipLength.get().intValue());
-					break;
-				}
-				tooltip.remove(this.inspecio$oldTooltipLength.get().intValue());
-			}
+		if (Inspecio.get().getConfig().getEffectsConfig().hasTippedArrows()) {
+			Inspecio.removeVanillaTooltips(tooltip, this.inspecio$oldTooltipLength.get());
 		}
 	}
 
