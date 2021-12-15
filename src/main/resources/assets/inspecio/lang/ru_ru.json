@@ -3,7 +3,7 @@
   "inspecio.command.error.unknown_saturation_tooltip_mode": "Неизвестный режим подсказки насыщения",
   "inspecio.command.error.unknown_sign_tooltip_mode": "Неизвестный режим подсказки таблички",
 
-  "inspecio.config.reloading": "Перезагрузка конфигурации...",
+  "inspecio.config.reloading": "Обновление настроек...",
 
   "inspecio.tooltip.lodestone_compass.dimension": "Измерение: %s",
   "inspecio.tooltip.lodestone_compass.target": "Цель: %s",
