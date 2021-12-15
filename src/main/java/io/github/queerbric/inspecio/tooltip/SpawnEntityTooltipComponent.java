@@ -25,7 +25,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -65,15 +64,15 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 					id = id.substring(10);
 				}
 				if (id.replaceAll("[^a-z0-9/._-]", "").matches(id)) {
-                    itemEntityNbt.putString(Entity.ID_KEY, id);
-                    Optional<EntityType<?>> specifiedEntityType = EntityType.fromNbt(itemEntityNbt);
-                    if (specifiedEntityType.isPresent()) {
-                        var actualEntity = specifiedEntityType.get().create(client.world);
-                        if (actualEntity != null) {
-                            entity = actualEntity;
-                            adjustEntity(entity, itemNbt, entitiesConfig);
-                        }
-                    }
+					itemEntityNbt.putString(Entity.ID_KEY, id);
+					Optional<EntityType<?>> specifiedEntityType = EntityType.fromNbt(itemEntityNbt);
+					if (specifiedEntityType.isPresent()) {
+						var actualEntity = specifiedEntityType.get().create(client.world);
+						if (actualEntity != null) {
+							entity = actualEntity;
+							adjustEntity(entity, itemNbt, entitiesConfig);
+						}
+					}
 				}
 			}
 			var entityTag = entity.writeNbt(new NbtCompound());
@@ -97,7 +96,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
 		if (this.shouldRender()) {
 			matrices.push();
 			matrices.translate(30, 0, z);

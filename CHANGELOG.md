@@ -45,3 +45,8 @@
  - Fixed tropical fish tooltip ([#14](https://github.com/Queerbric/Inspecio/issues/14)).
  - Fixed missing null-check on spawn egg tooltips ([#18](https://github.com/Queerbric/Inspecio/issues/18)).
  - Fixed crafted chests having NBT in singleplayer ([#20](https://github.com/Queerbric/Inspecio/issues/20)).
+
+## 1.2.0
+
+ - Added Russian translations ([#45](https://github.com/Queerbric/Inspecio/pull/45)).
+ - Fixed OutOfBoundsException in Potion/TippedArrowMixin ([#38](https://github.com/Queerbric/Inspecio/pull/38)).

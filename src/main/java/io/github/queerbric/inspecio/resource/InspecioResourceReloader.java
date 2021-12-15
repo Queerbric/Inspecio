@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
  * @version 1.0.0
  * @since 1.0.0
  */
+// FIXME: Use Quilt Tags API instead.
 public class InspecioResourceReloader implements SimpleSynchronousResourceReloadListener {
 	private final TagGroupLoader<Item> loader = new TagGroupLoader<>(Registry.ITEM::getOrEmpty, "tags/items");
 	private TagGroup<Item> currentGroup;

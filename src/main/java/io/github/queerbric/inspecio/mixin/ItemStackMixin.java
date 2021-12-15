@@ -51,11 +51,16 @@ public abstract class ItemStackMixin {
 	@Shadow
 	public abstract int getRepairCost();
 
-	@Shadow public abstract Item getItem();
+	@Shadow
+	public abstract Item getItem();
 
-	@Shadow @Nullable public abstract NbtCompound getSubNbt(String key);
+	@Shadow
+	@Nullable
+	public abstract NbtCompound getSubNbt(String key);
 
-	@Shadow @Nullable public abstract NbtCompound getNbt();
+	@Shadow
+	@Nullable
+	public abstract NbtCompound getNbt();
 
 	@Unique
 	private final ThreadLocal<List<Text>> inspecio$tooltipList = new ThreadLocal<>();
@@ -115,9 +120,13 @@ public abstract class ItemStackMixin {
 		var config = Inspecio.get().getConfig();
 
 		var stack = (ItemStack) (Object) this;
-		if (stack.isFood() && config.getFoodConfig().isEnabled()) {
+		if (stack.isFood()) {
 			var comp = stack.getItem().getFoodComponent();
-			datas.add(new FoodTooltipComponent(comp));
+
+			if (config.getFoodConfig().isEnabled()) {
+				datas.add(new FoodTooltipComponent(comp));
+			}
+
 			if (config.getEffectsConfig().hasPotions()) {
 				var tag = Inspecio.getHiddenEffectsTag();
 				if (tag != null && tag.contains(stack.getItem())) {
@@ -152,6 +161,7 @@ public abstract class ItemStackMixin {
 				}
 			}
 		}
+
 		if (stack.getItem() instanceof ArmorItem armor && config.hasArmor()) {
 			int prot = armor.getMaterial().getProtectionAmount(armor.getSlotType());
 			datas.add(new ArmorTooltipComponent(prot));

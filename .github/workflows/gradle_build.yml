@@ -1,9 +1,6 @@
-name: Modrinth Publish
+name: Gradle Build
 
-on:
-  release:
-    types:
-      - published
+on: [ push, pull_request ]
 
 jobs:
   build:
@@ -17,6 +14,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-        run: ./gradlew publishModrinth
+        run: ./gradlew build
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: ./build/libs/

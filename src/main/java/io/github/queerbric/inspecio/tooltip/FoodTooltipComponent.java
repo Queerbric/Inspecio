@@ -25,7 +25,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FoodComponent;
 
@@ -51,7 +50,7 @@ public record FoodTooltipComponent(FoodComponent component) implements Convertib
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
 		var foodConfig = Inspecio.get().getConfig().getFoodConfig();
 
 		RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);

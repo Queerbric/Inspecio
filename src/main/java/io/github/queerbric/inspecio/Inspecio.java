@@ -18,7 +18,9 @@
 package io.github.queerbric.inspecio;
 
 import io.github.queerbric.inspecio.resource.InspecioResourceReloader;
+import io.github.queerbric.inspecio.tooltip.ConvertibleTooltipData;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
@@ -65,6 +67,13 @@ public class Inspecio implements ClientModInitializer {
 
 		this.reloadConfig();
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.resourceReloader);
+
+		TooltipComponentCallback.EVENT.register(data -> {
+			if (data instanceof ConvertibleTooltipData convertible) {
+				return convertible.getComponent();
+			}
+			return null;
+		});
 
 		InspecioCommand.init();
 	}
@@ -143,7 +152,7 @@ public class Inspecio implements ClientModInitializer {
 	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
 		var config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
 		if (config != null && config.hasLootTable()) {
-			var blockEntityNbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+			var blockEntityNbt = BlockItem.getBlockEntityNbtFromStack(stack);
 			if (blockEntityNbt != null && blockEntityNbt.contains("LootTable")) {
 				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
 						new LiteralText(blockEntityNbt.getString("LootTable"))
