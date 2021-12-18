@@ -58,7 +58,7 @@ public abstract class BlockItemMixin extends Item {
 		var containersConfig = inspecioConfig.getContainersConfig();
 		var effectsConfig = inspecioConfig.getEffectsConfig();
 		if (effectsConfig.hasBeacon() && this.getBlock() instanceof BeaconBlock) {
-			var blockEntityTag = stack.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+			var blockEntityTag = stack.getOrCreateSubNbt("BlockEntityTag");
 			var effectsList = new ArrayList<StatusEffectInstance>();
 			var primary = Inspecio.getRawEffectFromTag(blockEntityTag, "Primary");
 			var secondary = Inspecio.getRawEffectFromTag(blockEntityTag, "Secondary");
@@ -89,7 +89,7 @@ public abstract class BlockItemMixin extends Item {
 				DyeColor color = null;
 				if (this.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
 					color = shulkerBoxBlock.getColor();
-				var nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+				var nbt = stack.getSubNbt("BlockEntityTag");
 				if (nbt == null) return Optional.empty();
 				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 				Inventories.readNbt(nbt, inventory);

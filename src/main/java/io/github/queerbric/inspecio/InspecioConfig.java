@@ -19,20 +19,26 @@ package io.github.queerbric.inspecio;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.*;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -169,13 +175,13 @@ public class InspecioConfig {
 		if (!createConfigDirectoryIfNeeded())
 			return this;
 
-		var config = CODEC.encode(this, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
+		Optional<JsonElement> config = CODEC.encode(this, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
 		if (config.isEmpty()) {
 			Inspecio.get().warn("Failed to serialize configuration.");
 			return this;
 		}
-		try (var writer = Files.newBufferedWriter(CONFIG_PATH, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-			var jsonWriter = GSON.newJsonWriter(writer);
+		try (BufferedWriter writer = Files.newBufferedWriter(CONFIG_PATH, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+			JsonWriter jsonWriter = GSON.newJsonWriter(writer);
 			GSON.toJson(config.get().getAsJsonObject(), jsonWriter);
 		} catch (IOException e) {
 			Inspecio.get().warn("Failed to save configuration.", e);
@@ -636,9 +642,9 @@ public class InspecioConfig {
 			return defaultConfig().save();
 		}
 
-		try (var reader = Files.newBufferedReader(CONFIG_PATH)) {
-			var result = CODEC.decode(JsonOps.INSTANCE, JSON_PARSER.parse(reader)).map(Pair::getFirst);
-			return result.result().orElseGet(() -> {
+		try (BufferedReader reader = Files.newBufferedReader(CONFIG_PATH)) {
+			DataResult result = CODEC.decode(JsonOps.INSTANCE, JSON_PARSER.parse(reader)).map(Pair::getFirst);
+			return (InspecioConfig) result.result().orElseGet(() -> {
 				mod.warn("Could not load configuration, using default configuration instead.");
 				return defaultConfig();
 			});

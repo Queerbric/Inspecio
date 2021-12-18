@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio;
 
+import io.github.queerbric.inspecio.InspecioConfig.StorageContainerConfig;
 import io.github.queerbric.inspecio.resource.InspecioResourceReloader;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -25,7 +26,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -126,7 +126,7 @@ public class Inspecio implements ClientModInitializer {
 	static String getVersion() {
 		return FabricLoader.getInstance().getModContainer(NAMESPACE)
 				.map(container -> {
-					var version = container.getMetadata().getVersion().getFriendlyString();
+					String version = container.getMetadata().getVersion().getFriendlyString();
 					if (version.equals("${version}"))
 						return "dev";
 					return version;
@@ -141,9 +141,9 @@ public class Inspecio implements ClientModInitializer {
 	 * @param tooltip the tooltip
 	 */
 	public static void appendBlockItemTooltip(ItemStack stack, Block block, List<Text> tooltip) {
-		var config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
+		StorageContainerConfig config = Inspecio.get().getConfig().getContainersConfig().forBlock(block);
 		if (config != null && config.hasLootTable()) {
-			var blockEntityNbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+			NbtCompound blockEntityNbt = stack.getSubNbt("BlockEntityTag");
 			if (blockEntityNbt != null && blockEntityNbt.contains("LootTable")) {
 				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
 						new LiteralText(blockEntityNbt.getString("LootTable"))
@@ -176,7 +176,7 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static @Nullable Tag<Item> getHiddenEffectsTag() {
-		var tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
+		Tag tag = MinecraftClient.getInstance().world.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(HIDDEN_EFFECTS_TAG);
 		if (tag == null) {
 			tag = get().resourceReloader.getCurrentGroup().getTag(HIDDEN_EFFECTS_TAG);
 		}
@@ -185,7 +185,7 @@ public class Inspecio implements ClientModInitializer {
 
 	public static @Nullable StatusEffectInstance getRawEffectFromTag(NbtCompound tag, String tagKey) {
 		if (tag.contains(tagKey, NbtElement.INT_TYPE)) {
-			var effect = StatusEffect.byRawId(tag.getInt(tagKey));
+			StatusEffect effect = StatusEffect.byRawId(tag.getInt(tagKey));
 			if (effect != null)
 				return new StatusEffectInstance(effect, 200, 0);
 		}

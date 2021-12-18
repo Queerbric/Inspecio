@@ -27,9 +27,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.SignBlockEntityRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SignItem;
 import net.minecraft.nbt.NbtCompound;
@@ -66,7 +64,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 
 		if (stack.getItem() instanceof SignItem signItem) {
 			var block = signItem.getBlock();
-			var nbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+			var nbt = stack.getSubNbt("BlockEntityTag");
 			if (nbt != null) return Optional.of(fromTag(SignBlockEntityRenderer.getSignType(block), nbt));
 		}
 		return Optional.empty();
@@ -122,7 +120,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 				int g = (int) (NativeImage.getGreen(signColor) * 0.4);
 				int b = (int) (NativeImage.getBlue(signColor) * 0.4);
 
-				outlineColor = NativeImage.getAbgrColor(0, b, g, r);
+				outlineColor = NativeImage.packColor(0, b, g, r);
 			}
 
 			for (var text : this.text) {
@@ -139,7 +137,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
 		if (this.tooltipMode != SignTooltipMode.FANCY)
 			return;
 

@@ -22,6 +22,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -45,7 +46,7 @@ public final class InspecioCommand {
 	}
 
 	static void init() {
-		var literalSubCommand = literal("config");
+		LiteralArgumentBuilder<FabricClientCommandSource> literalSubCommand = literal("config");
 		{
 			literalSubCommand.then(literal("reload")
 					.executes(ctx -> {
@@ -145,7 +146,7 @@ public final class InspecioCommand {
 
 	private static LiteralArgumentBuilder<FabricClientCommandSource> initContainer(String name,
 																				   Function<InspecioConfig, InspecioConfig.StorageContainerConfig> containerGetter) {
-		var prefix = "containers/" + name;
+		String prefix = "containers/" + name;
 		return literal(name)
 				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.get().getConfig()).isEnabled()))
 				.then(argument("value", BoolArgumentType.bool())
@@ -162,7 +163,7 @@ public final class InspecioCommand {
 
 	private static LiteralArgumentBuilder<FabricClientCommandSource> initEntity(String name,
 																				Function<InspecioConfig, InspecioConfig.EntityConfig> containerGetter) {
-		var prefix = "entities/" + name;
+		String prefix = "entities/" + name;
 		return literal(name)
 				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.get().getConfig()).isEnabled()))
 				.then(argument("value", BoolArgumentType.bool())
@@ -182,7 +183,7 @@ public final class InspecioCommand {
 	}
 
 	private static Command<FabricClientCommandSource> onInspecioCommand(LiteralCommandNode<FabricClientCommandSource> config) {
-		var msg = new LiteralText("Inspecio").formatted(Formatting.GOLD)
+		MutableText msg = new LiteralText("Inspecio").formatted(Formatting.GOLD)
 				.append(new LiteralText(" v" + Inspecio.getVersion() + "\n").formatted(Formatting.GRAY));
 		buildHelpCommand(config, 0, msg);
 		return ctx -> {
@@ -195,7 +196,7 @@ public final class InspecioCommand {
 		text.append(new LiteralText('\n' + " ".repeat(step * 2) + "- ").formatted(Formatting.GRAY)
 				.append(new LiteralText(node.getLiteral()).formatted(Formatting.GOLD)));
 
-		for (var child : node.getChildren()) {
+		for (CommandNode child : node.getChildren()) {
 			if (child instanceof LiteralCommandNode) {
 				buildHelpCommand((LiteralCommandNode<FabricClientCommandSource>) child, step + 1, text);
 			}
@@ -203,8 +204,8 @@ public final class InspecioCommand {
 	}
 
 	private static int onSetJukebox(CommandContext<FabricClientCommandSource> context) {
-		var value = JukeboxTooltipMode.JukeboxArgumentType.getJukeboxTooltipMode(context, "value");
-		var config = Inspecio.get().getConfig();
+		JukeboxTooltipMode value = JukeboxTooltipMode.JukeboxArgumentType.getJukeboxTooltipMode(context, "value");
+		InspecioConfig config = Inspecio.get().getConfig();
 		config.setJukeboxTooltipMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("jukebox").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
@@ -212,8 +213,8 @@ public final class InspecioCommand {
 	}
 
 	private static int onSetSaturation(CommandContext<FabricClientCommandSource> context) {
-		var value = SaturationTooltipMode.SaturationArgumentType.getSaturationTooltipMode(context, "value");
-		var config = Inspecio.get().getConfig();
+		SaturationTooltipMode value = SaturationTooltipMode.SaturationArgumentType.getSaturationTooltipMode(context, "value");
+		InspecioConfig config = Inspecio.get().getConfig();
 		config.getFoodConfig().setSaturationMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("food/saturation").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
@@ -221,8 +222,8 @@ public final class InspecioCommand {
 	}
 
 	private static int onSetSign(CommandContext<FabricClientCommandSource> context) {
-		var value = SignTooltipMode.SignArgumentType.getSignTooltipMode(context, "value");
-		var config = Inspecio.get().getConfig();
+		SignTooltipMode value = SignTooltipMode.SignArgumentType.getSignTooltipMode(context, "value");
+		InspecioConfig config = Inspecio.get().getConfig();
 		config.setSignTooltipMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("sign").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
@@ -258,7 +259,7 @@ public final class InspecioCommand {
 
 	private static Command<FabricClientCommandSource> onBooleanSetter(String path, Consumer<Boolean> setter) {
 		return context -> {
-			var value = BoolArgumentType.getBool(context, "value");
+			boolean value = BoolArgumentType.getBool(context, "value");
 
 			setter.accept(value);
 
@@ -272,7 +273,7 @@ public final class InspecioCommand {
 
 	private static Command<FabricClientCommandSource> onIntegerSetter(String path, Consumer<Integer> setter) {
 		return context -> {
-			var value = IntegerArgumentType.getInteger(context, "value");
+			Integer value = IntegerArgumentType.getInteger(context, "value");
 
 			setter.accept(value);
 

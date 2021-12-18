@@ -23,7 +23,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -49,7 +48,7 @@ public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipCom
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
 		RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
 		for (int i = 0; i < this.prot / 2; i++) {
 			DrawableHelper.drawTexture(matrices, x + i * 9, y, 34, 9, 9, 9, 256, 256);

@@ -25,7 +25,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
@@ -69,7 +68,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack, boolean compact, @Nullable DyeColor color) {
-		var blockEntityNbt = stack.getSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+		var blockEntityNbt = stack.getSubNbt("BlockEntityTag");
 		if (blockEntityNbt == null)
 			return Optional.empty();
 
@@ -119,7 +118,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager) {
+	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
 		int x = 1;
 		int y = 1;
 		int lines = this.getColumns();

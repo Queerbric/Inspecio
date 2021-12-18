@@ -28,6 +28,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Bucketable;
 import net.minecraft.entity.Entity;
@@ -61,6 +62,8 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 	public TooltipComponent getComponent() {
 		return this;
 	}
+
+	public abstract void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z);
 
 	@Override
 	public int getHeight() {

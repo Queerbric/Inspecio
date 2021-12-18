@@ -1,6 +1,6 @@
 plugins {
-	id 'fabric-loom' version '0.9.25'
-	id 'io.github.juuxel.loom-quiltflower' version '1.1.1'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id 'io.github.juuxel.loom-quiltflower-mini' version '1.2.1'
 	id 'java-library'
 	id 'maven-publish'
 	id 'org.cadixdev.licenser' version '0.6.1'
@@ -24,7 +24,7 @@ group = project.maven_group
 version = "${project.mod_version}+${getMCVersionString()}"
 archivesBaseName = project.archives_base_name
 
-def targetJavaVersion = 16
+def targetJavaVersion = 17
 
 boolean isMCVersionNonRelease() {
 	return project.minecraft_version.matches('^\\d\\dw\\d\\d[a-z]$')
