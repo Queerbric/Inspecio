@@ -78,12 +78,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		DiffuseLighting.disableGuiDepthLighting();
 		matrices.push();
 		matrices.translate(x + 8, y + 8, z);
-		var itemStack = new ItemStack(Items.GRAY_BANNER);
-		var nbt = BlockItem.getBlockEntityNbtFromStack(itemStack);
-		if (nbt == null) nbt = new NbtCompound();
-		else nbt = nbt.copy();
-		NbtList listNbt = (new BannerPattern.Patterns()).add(BannerPattern.BASE, DyeColor.GRAY).add(this.pattern, DyeColor.WHITE).toNbt();
-		nbt.put(BannerBlockEntity.PATTERNS_KEY, listNbt);
+		NbtList listNbt = (new BannerPattern.Patterns()).add(this.pattern, DyeColor.WHITE).toNbt();
 		matrices.push();
 		matrices.translate(0.5, 16, 0);
 		matrices.scale(6, -6, 1);
@@ -91,7 +86,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
-		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, BannerBlockEntity.getPatternListTag(itemStack));
+		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, listNbt);
 		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
 				this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
