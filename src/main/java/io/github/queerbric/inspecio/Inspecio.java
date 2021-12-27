@@ -193,6 +193,9 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static @Nullable StatusEffectInstance getRawEffectFromTag(NbtCompound tag, String tagKey) {
+		if(tag == null) {
+			return null;
+		}
 		if (tag.contains(tagKey, NbtElement.INT_TYPE)) {
 			var effect = StatusEffect.byRawId(tag.getInt(tagKey));
 			if (effect != null)
