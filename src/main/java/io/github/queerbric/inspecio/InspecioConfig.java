@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -42,11 +42,13 @@ import java.util.function.Supplier;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
+// @TODO rework this to be more expandable?
 public class InspecioConfig {
 	public static final Path CONFIG_PATH = FileSystems.getDefault().getPath("config", "inspecio.json");
+	public static final Path CONFIG_BACKUP_PATH = FileSystems.getDefault().getPath("config/backup", "inspecio.json");
 
 	public static final boolean DEFAULT_ARMOR = true;
 	public static final boolean DEFAULT_BANNER_PATTERN = true;
@@ -62,8 +64,11 @@ public class InspecioConfig {
 			configEntry(FilledMapConfig.CODEC, "filled_map", FilledMapConfig::defaultConfig, InspecioConfig::getFilledMapConfig),
 			configEntry(FoodConfig.CODEC, "food", FoodConfig::defaultConfig, InspecioConfig::getFoodConfig),
 			configEntry(JukeboxTooltipMode.CODEC, "jukebox", () -> DEFAULT_JUKEBOX_TOOLTIP_MODE, InspecioConfig::getJukeboxTooltipMode),
-			configEntry(SignTooltipMode.CODEC, "sign", () -> DEFAULT_SIGN_TOOLTIP_MODE, InspecioConfig::getSignTooltipMode)
+			configEntry(SignTooltipMode.CODEC, "sign", () -> DEFAULT_SIGN_TOOLTIP_MODE, InspecioConfig::getSignTooltipMode),
+			configEntry(AdvancedTooltipsConfig.CODEC, "advanced_tooltips", AdvancedTooltipsConfig::defaultConfig, InspecioConfig::getAdvancedTooltipsConfig)
 	).apply(instance, InspecioConfig::new));
+
+	static boolean shouldSaveConfigAfterLoad = false;
 
 	private static <C> RecordCodecBuilder<C, Boolean> configEntry(String path, boolean defaultValue, Function<C, Boolean> getter) {
 		String[] parts = path.split("/");
@@ -76,7 +81,6 @@ public class InspecioConfig {
 	}
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	private static final JsonParser JSON_PARSER = new JsonParser();
 
 	private boolean armor;
 	private boolean bannerPattern;
@@ -87,15 +91,17 @@ public class InspecioConfig {
 	private final FoodConfig foodConfig;
 	private JukeboxTooltipMode jukeboxTooltipMode;
 	private SignTooltipMode signTooltipMode;
+	private final AdvancedTooltipsConfig advancedTooltipsConfig;
 
 	public InspecioConfig(boolean armor, boolean bannerPattern,
-						  ContainersConfig containersConfig,
-						  EffectsConfig effectsConfig,
-						  EntitiesConfig entitiesConfig,
-						  FilledMapConfig filledMapConfig,
-						  FoodConfig foodConfig,
-						  JukeboxTooltipMode jukeboxTooltipMode,
-						  SignTooltipMode signTooltipMode) {
+	                      ContainersConfig containersConfig,
+	                      EffectsConfig effectsConfig,
+	                      EntitiesConfig entitiesConfig,
+	                      FilledMapConfig filledMapConfig,
+	                      FoodConfig foodConfig,
+	                      JukeboxTooltipMode jukeboxTooltipMode,
+	                      SignTooltipMode signTooltipMode,
+	                      AdvancedTooltipsConfig advancedTooltipsConfig) {
 		this.armor = armor;
 		this.bannerPattern = bannerPattern;
 		this.containersConfig = containersConfig;
@@ -105,6 +111,7 @@ public class InspecioConfig {
 		this.foodConfig = foodConfig;
 		this.jukeboxTooltipMode = jukeboxTooltipMode;
 		this.signTooltipMode = signTooltipMode;
+		this.advancedTooltipsConfig = advancedTooltipsConfig;
 	}
 
 	public boolean hasArmor() {
@@ -157,6 +164,10 @@ public class InspecioConfig {
 
 	public void setSignTooltipMode(SignTooltipMode signTooltipMode) {
 		this.signTooltipMode = signTooltipMode;
+	}
+
+	public AdvancedTooltipsConfig getAdvancedTooltipsConfig() {
+		return this.advancedTooltipsConfig;
 	}
 
 	/**
@@ -396,7 +407,9 @@ public class InspecioConfig {
 			return this.beacon;
 		}
 
-		public void setBeacon(boolean beacon) { this.beacon = beacon;}
+		public void setBeacon(boolean beacon) {
+			this.beacon = beacon;
+		}
 
 		public static EffectsConfig defaultConfig() {
 			return new EffectsConfig(DEFAULT_POTIONS, DEFAULT_TIPPED_ARROWS, DEFAULT_SPECTRAL_ARROW, DEFAULT_FOOD, DEFAULT_HIDDEN_MOTION, DEFAULT_BEACON);
@@ -615,6 +628,44 @@ public class InspecioConfig {
 		}
 	}
 
+	public static class AdvancedTooltipsConfig {
+		public static boolean DEFAULT_REPAIR_COST = true;
+		public static boolean DEFAULT_LODESTONE_COORDS = false;
+
+		public static final Codec<AdvancedTooltipsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				configEntry("advanced_tooltips/repair_cost", DEFAULT_REPAIR_COST, AdvancedTooltipsConfig::hasRepairCost),
+				configEntry("advanced_tooltips/lodestone_coords", DEFAULT_LODESTONE_COORDS, AdvancedTooltipsConfig::hasLodestoneCoords)
+		).apply(instance, AdvancedTooltipsConfig::new));
+
+		private boolean repairCost;
+		private boolean lodestoneCoords;
+
+		public AdvancedTooltipsConfig(boolean repairCost, boolean lodestoneCoords) {
+			this.repairCost = repairCost;
+			this.lodestoneCoords = lodestoneCoords;
+		}
+
+		public boolean hasRepairCost() {
+			return this.repairCost;
+		}
+
+		public void setRepairCost(boolean repairCost) {
+			this.repairCost = repairCost;
+		}
+
+		public boolean hasLodestoneCoords() {
+			return this.lodestoneCoords;
+		}
+
+		public void setLodestoneCoords(boolean lodestoneCoords) {
+			this.lodestoneCoords = lodestoneCoords;
+		}
+
+		public static AdvancedTooltipsConfig defaultConfig() {
+			return new AdvancedTooltipsConfig(DEFAULT_REPAIR_COST, DEFAULT_LODESTONE_COORDS);
+		}
+	}
+
 	private static boolean createConfigDirectoryIfNeeded() {
 		try {
 			if (!Files.exists(CONFIG_PATH.getParent()))
@@ -624,6 +675,30 @@ public class InspecioConfig {
 			Inspecio.get().warn("Could not create missing \"config\" directory.", e);
 			return false;
 		}
+	}
+
+	private static boolean createConfigBackupDirectoryIfNeeded() {
+		try {
+			if (!Files.exists(CONFIG_BACKUP_PATH.getParent()))
+				Files.createDirectory(CONFIG_BACKUP_PATH.getParent());
+			return true;
+		} catch (IOException e) {
+			Inspecio.get().warn("Could not create missing \"config/backup\" directory.", e);
+			return false;
+		}
+	}
+
+	private static InspecioConfig backupAndRestore(Inspecio mod, InspecioConfig config) {
+		try {
+			if (createConfigBackupDirectoryIfNeeded())
+				Files.copy(CONFIG_PATH, CONFIG_BACKUP_PATH);
+
+			config.save();
+		} catch (IOException e) {
+			mod.warn("Could not backup existing configuration.", e);
+		}
+
+		return config;
 	}
 
 	public static InspecioConfig load(Inspecio mod) {
@@ -637,15 +712,24 @@ public class InspecioConfig {
 		}
 
 		try (var reader = Files.newBufferedReader(CONFIG_PATH)) {
-			var result = CODEC.decode(JsonOps.INSTANCE, JSON_PARSER.parse(reader)).map(Pair::getFirst);
-			return result.result().orElseGet(() -> {
+			var result = CODEC.decode(JsonOps.INSTANCE, JsonParser.parseReader(reader)).map(Pair::getFirst);
+
+			var config = result.result().orElseGet(() -> {
 				mod.warn("Could not load configuration, using default configuration instead.");
-				return defaultConfig();
+				shouldSaveConfigAfterLoad = false;
+				return backupAndRestore(mod, defaultConfig());
 			});
+
+			if (shouldSaveConfigAfterLoad) {
+				backupAndRestore(mod, config);
+
+				shouldSaveConfigAfterLoad = false;
+			}
+
+			return config;
 		} catch (IOException e) {
-			mod.warn("Could not load configuration file.");
-			e.printStackTrace();
-			return defaultConfig();
+			mod.warn("Could not load configuration file.", e);
+			return backupAndRestore(mod, defaultConfig());
 		}
 	}
 
@@ -655,13 +739,16 @@ public class InspecioConfig {
 	 * @return the default configuration
 	 */
 	public static InspecioConfig defaultConfig() {
-		return new InspecioConfig(DEFAULT_ARMOR, DEFAULT_BANNER_PATTERN,
+		return new InspecioConfig(
+				DEFAULT_ARMOR, DEFAULT_BANNER_PATTERN,
 				ContainersConfig.defaultConfig(),
 				EffectsConfig.defaultConfig(),
 				EntitiesConfig.defaultConfig(),
 				FilledMapConfig.defaultConfig(),
 				FoodConfig.defaultConfig(),
 				DEFAULT_JUKEBOX_TOOLTIP_MODE,
-				DEFAULT_SIGN_TOOLTIP_MODE);
+				DEFAULT_SIGN_TOOLTIP_MODE,
+				AdvancedTooltipsConfig.defaultConfig()
+		);
 	}
 }

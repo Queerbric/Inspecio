@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -46,6 +46,7 @@ public final class InspecioCommand {
 
 	static void init() {
 		var literalSubCommand = literal("config");
+
 		{
 			literalSubCommand.then(literal("reload")
 					.executes(ctx -> {
@@ -133,6 +134,15 @@ public final class InspecioCommand {
 					.executes(onGetter("sign", getter(InspecioConfig::getSignTooltipMode)))
 					.then(argument("value", SignTooltipMode.SignArgumentType.signTooltipMode())
 							.executes(InspecioCommand::onSetSign))
+			).then(literal("advanced_tooltips")
+					.then(literal("repair_cost")
+							.executes(onGetter("advanced_tooltips/repair_cost", getter(cfg -> cfg.getAdvancedTooltipsConfig().hasRepairCost())))
+							.then(argument("value", BoolArgumentType.bool())
+									.executes(onBooleanSetter("advanced_tooltips/repair_cost", setter((cfg, val) -> cfg.getAdvancedTooltipsConfig().setRepairCost(val))))))
+					.then(literal("lodestone_coords")
+							.executes(onGetter("advanced_tooltips/lodestone_coords", getter(cfg -> cfg.getAdvancedTooltipsConfig().hasLodestoneCoords())))
+							.then(argument("value", BoolArgumentType.bool())
+									.executes(onBooleanSetter("advanced_tooltips/lodestone_coords", setter((cfg, val) -> cfg.getAdvancedTooltipsConfig().setLodestoneCoords(val))))))
 			);
 		}
 
@@ -144,7 +154,7 @@ public final class InspecioCommand {
 	}
 
 	private static LiteralArgumentBuilder<FabricClientCommandSource> initContainer(String name,
-																				   Function<InspecioConfig, InspecioConfig.StorageContainerConfig> containerGetter) {
+	                                                                               Function<InspecioConfig, InspecioConfig.StorageContainerConfig> containerGetter) {
 		var prefix = "containers/" + name;
 		return literal(name)
 				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.get().getConfig()).isEnabled()))
@@ -161,7 +171,7 @@ public final class InspecioCommand {
 	}
 
 	private static LiteralArgumentBuilder<FabricClientCommandSource> initEntity(String name,
-																				Function<InspecioConfig, InspecioConfig.EntityConfig> containerGetter) {
+	                                                                            Function<InspecioConfig, InspecioConfig.EntityConfig> containerGetter) {
 		var prefix = "entities/" + name;
 		return literal(name)
 				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.get().getConfig()).isEnabled()))

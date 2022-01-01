@@ -96,12 +96,12 @@ Compact:
 
 #### Lodestone Compass
 
-Only shows up if Advanced Tooltip is enabled (`F3 + H`).
+Only shows up if Advanced Tooltip is enabled (`F3 + H`) and if the config option is enabled.
 ![lodestone_compass](images/lodestone_compass.png)
 
 #### Repair Cost
 
-Only shows up if Advanced Tooltip is enabled (`F3 + H`).
+Only shows up if Advanced Tooltip is enabled (`F3 + H`) and if the config option is enabled.
 ![repair_cost](images/repair_cost.png)
 
 ## Configuration
@@ -114,41 +114,20 @@ Here's the default configuration:
 
 ```json
 {
-  "food": {
-    "hunger": true,
-    "saturation": "merged"
-  },
   "jukebox": "fancy",
   "sign": "fancy",
-  "entities": {
-    "armor_stand": {
-      "enabled": true,
-      "always_show_name": false,
-      "spin": true
-    },
-    "bee": {
-      "enabled": true,
-      "always_show_name": false,
-      "spin": true
-    },
-    "fish_bucket": {
-      "enabled": true,
-      "always_show_name": false,
-      "spin": true
-    },
-    "spawn_egg": {
-      "enabled": true,
-      "always_show_name": false,
-      "spin": true
-    },
-    "pufferfish_puff_state": 2
+  "advanced_tooltips": {
+    "repair_cost": true,
+    "lodestone_coords": false
   },
   "filled_map": {
     "enabled": true,
     "show_player_icon": false
   },
-  "armor": true,
-  "banner_pattern": true,
+  "food": {
+    "hunger": true,
+    "saturation": "merged"
+  },
   "containers": {
     "campfire": true,
     "storage": {
@@ -164,13 +143,38 @@ Here's the default configuration:
     }
   },
   "effects": {
-    "potions": true,
-    "tipped_arrows": true,
-    "spectral_arrow": true,
     "food": true,
     "hidden_motion": true,
-    "beacon": true
-  }
+    "beacon": true,
+    "potions": true,
+    "tipped_arrows": true,
+    "spectral_arrow": true
+  },
+  "entities": {
+    "fish_bucket": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "spawn_egg": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "pufferfish_puff_state": 2,
+    "armor_stand": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    },
+    "bee": {
+      "enabled": true,
+      "always_show_name": false,
+      "spin": true
+    }
+  },
+  "armor": true,
+  "banner_pattern": true
 }
 ```
 
@@ -178,7 +182,11 @@ Here's a list of each configuration entries and what they do:
 
  - `armor` (`bool`) - if `true` then displays the armor bar on armor items, else `false`.
  - `banner_pattern` (`bool`) - if `true` then displays the pattern in the tooltip of banner patterns, else `false`.
+ - `advanced_tooltips`
+   - `repair_cost` (`bool`) - if `true`, will display the repair cost value if the game has advanced tooltips enabled (F3 + H).
+   - `lodestone_coords` (`bool`) - if `true`, will display the lodestone coordinates on lodestone compass if the game has advanced tooltips enabled (F3 + H).
  - `containers`
+   - `campfire` (`bool`) - if `true` then displays a special tooltip on campfires which hold custom NBT.
    - `storage`
      - `enabled` (`bool`) - `true` if the inventory of storage items like chests, barrels, etc. should be shown in the tooltip, else `false`.
      - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, else `false`.

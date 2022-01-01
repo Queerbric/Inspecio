@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,19 +18,16 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.HopperBlock;
+import io.github.queerbric.inspecio.api.InventoryProvider;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -41,7 +38,7 @@ import java.util.Optional;
  * Represents the inventory tooltip component.
  *
  * @author LambdAurora
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -55,29 +52,20 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		this.color = color;
 	}
 
-	private static int getInvSizeFor(ItemStack stack) {
-		if (stack.getItem() instanceof BlockItem blockItem) {
-			var block = blockItem.getBlock();
-			if (block instanceof DispenserBlock)
-				return 9;
-			else if (block instanceof HopperBlock)
-				return 5;
-			return 27;
+	public static Optional<TooltipData> of(ItemStack stack, boolean compact, @Nullable InventoryProvider.Context context) {
+		if (context == null) {
+			return Optional.empty();
 		}
-		return 0;
-	}
 
-	public static Optional<TooltipData> of(ItemStack stack, boolean compact, @Nullable DyeColor color) {
+		List<ItemStack> inventory = context.inventory();
 		var blockEntityNbt = BlockItem.getBlockEntityNbtFromStack(stack);
 		if (blockEntityNbt == null)
 			return Optional.empty();
 
-		List<ItemStack> inventory = DefaultedList.ofSize(getInvSizeFor(stack), ItemStack.EMPTY);
-		Inventories.readNbt(blockEntityNbt, (DefaultedList<ItemStack>) inventory);
 		if (inventory.stream().allMatch(ItemStack::isEmpty))
 			return Optional.empty();
 
-		int columns = inventory.size() % 3 == 0 ? inventory.size() / 3 : inventory.size();
+		int columns = Math.min(inventory.size() % 3 == 0 ? inventory.size() / 3 : inventory.size(), 9);
 
 		if (compact) {
 			var compactedInventory = new ArrayList<ItemStack>();
@@ -96,7 +84,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 			columns = 9;
 		}
 
-		return Optional.of(new InventoryTooltipComponent(inventory, columns, color));
+		return Optional.of(new InventoryTooltipComponent(inventory, columns, context.color()));
 	}
 
 	@Override

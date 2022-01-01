@@ -15,11 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io.github.queerbric.inspecio.tooltip;
+package io.github.queerbric.inspecio.api;
 
-import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.item.TooltipData;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-public interface ConvertibleTooltipData extends TooltipData {
-	TooltipComponent getComponent();
+/**
+ * Represents the Inspecio entrypoint, useful to use the API stuff of Inspecio.
+ */
+@Environment(EnvType.CLIENT)
+public interface InspecioEntrypoint {
+	void onInspecioInitialized();
 }

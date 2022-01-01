@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,8 @@
 
 package io.github.queerbric.inspecio;
 
+import io.github.queerbric.inspecio.api.InspecioEntrypoint;
+import io.github.queerbric.inspecio.api.InventoryProvider;
 import io.github.queerbric.inspecio.resource.InspecioResourceReloader;
 import io.github.queerbric.inspecio.tooltip.ConvertibleTooltipData;
 import net.fabricmc.api.ClientModInitializer;
@@ -24,9 +26,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.HopperBlock;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,8 +43,10 @@ import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +58,7 @@ import java.util.function.Consumer;
 /**
  * Represents the Inspecio mod.
  *
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class Inspecio implements ClientModInitializer {
@@ -68,6 +76,26 @@ public class Inspecio implements ClientModInitializer {
 		this.reloadConfig();
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this.resourceReloader);
 
+		InventoryProvider.register((stack, config) -> {
+			if (config != null && config.isEnabled() && stack.getItem() instanceof BlockItem blockItem) {
+				DyeColor color = null;
+				if (blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock && ((InspecioConfig.ShulkerBoxConfig) config).hasColor())
+					color = shulkerBoxBlock.getColor();
+
+				var nbt = BlockItem.getBlockEntityNbtFromStack(stack);
+				if (nbt == null) return null;
+
+				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(getInvSizeFor(stack), ItemStack.EMPTY);
+				Inventories.readNbt(nbt, inventory);
+				if (inventory.stream().allMatch(ItemStack::isEmpty))
+					return null;
+
+				return new InventoryProvider.Context(inventory, color);
+			}
+
+			return null;
+		});
+
 		TooltipComponentCallback.EVENT.register(data -> {
 			if (data instanceof ConvertibleTooltipData convertible) {
 				return convertible.getComponent();
@@ -76,6 +104,11 @@ public class Inspecio implements ClientModInitializer {
 		});
 
 		InspecioCommand.init();
+
+		var entrypoints = FabricLoader.getInstance().getEntrypoints("inspecio", InspecioEntrypoint.class);
+		for (var entrypoint : entrypoints) {
+			entrypoint.onInspecioInitialized();
+		}
 	}
 
 	/**
@@ -129,7 +162,10 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	static Consumer<String> onConfigError(String path) {
-		return error -> get().warn("Configuration error at \"" + path + "\", error: " + error);
+		return error -> {
+			InspecioConfig.shouldSaveConfigAfterLoad = true;
+			get().warn("Configuration error at \"" + path + "\", error: " + error);
+		};
 	}
 
 	static String getVersion() {
@@ -140,6 +176,18 @@ public class Inspecio implements ClientModInitializer {
 						return "dev";
 					return version;
 				}).orElse("unknown");
+	}
+
+	private static int getInvSizeFor(ItemStack stack) {
+		if (stack.getItem() instanceof BlockItem blockItem) {
+			var block = blockItem.getBlock();
+			if (block instanceof DispenserBlock)
+				return 9;
+			else if (block instanceof HopperBlock)
+				return 5;
+			return 27;
+		}
+		return 0;
 	}
 
 	/**
@@ -193,7 +241,7 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static @Nullable StatusEffectInstance getRawEffectFromTag(NbtCompound tag, String tagKey) {
-		if(tag == null) {
+		if (tag == null) {
 			return null;
 		}
 		if (tag.contains(tagKey, NbtElement.INT_TYPE)) {

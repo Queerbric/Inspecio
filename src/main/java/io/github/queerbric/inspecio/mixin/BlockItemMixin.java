@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,19 +19,17 @@ package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
+import io.github.queerbric.inspecio.api.InventoryProvider;
 import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.block.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,6 +55,7 @@ public abstract class BlockItemMixin extends Item {
 		var inspecioConfig = Inspecio.get().getConfig();
 		var containersConfig = inspecioConfig.getContainersConfig();
 		var effectsConfig = inspecioConfig.getEffectsConfig();
+
 		if (effectsConfig.hasBeacon() && this.getBlock() instanceof BeaconBlock) {
 			var blockEntityTag = BlockItem.getBlockEntityNbtFromStack(stack);
 			var effectsList = new ArrayList<StatusEffectInstance>();
@@ -84,17 +83,17 @@ public abstract class BlockItemMixin extends Item {
 			if (data.isPresent()) return data;
 		} else {
 			InspecioConfig.StorageContainerConfig config = containersConfig.forBlock(this.getBlock());
-			if (config != null && config.isEnabled()) {
-				DyeColor color = null;
-				if (this.getBlock() instanceof ShulkerBoxBlock shulkerBoxBlock && containersConfig.getShulkerBoxConfig().hasColor())
-					color = shulkerBoxBlock.getColor();
-				var nbt = BlockItem.getBlockEntityNbtFromStack(stack);
-				if (nbt == null) return Optional.empty();
-				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
-				Inventories.readNbt(nbt, inventory);
-				return InventoryTooltipComponent.of(stack, config.isCompact(), color);
+			InventoryProvider.Context context = InventoryProvider.searchInventoryContextOf(stack, config);
+
+			if (config == null) {
+				config = containersConfig.getStorageConfig();
+			}
+
+			if (context != null) {
+				return InventoryTooltipComponent.of(stack, config.isCompact(), context);
 			}
 		}
+
 		return super.getTooltipData(stack);
 	}
 
@@ -106,7 +105,7 @@ public abstract class BlockItemMixin extends Item {
 		}
 	}
 
-	@Inject(method = "appendTooltip", at = @At("TAIL"), cancellable = true)
+	@Inject(method = "appendTooltip", at = @At("TAIL"))
 	private void onAppendTooltipEnd(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
 		Inspecio.appendBlockItemTooltip(stack, this.getBlock(), tooltip);
 	}

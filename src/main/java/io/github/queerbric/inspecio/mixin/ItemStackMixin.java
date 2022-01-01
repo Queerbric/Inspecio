@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,6 +18,7 @@
 package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -56,10 +57,6 @@ public abstract class ItemStackMixin {
 
 	@Shadow
 	@Nullable
-	public abstract NbtCompound getSubNbt(String key);
-
-	@Shadow
-	@Nullable
 	public abstract NbtCompound getNbt();
 
 	@Unique
@@ -86,8 +83,9 @@ public abstract class ItemStackMixin {
 			return;
 
 		var tooltip = this.inspecio$tooltipList.get();
+		InspecioConfig.AdvancedTooltipsConfig advancedTooltipsConfig = Inspecio.get().getConfig().getAdvancedTooltipsConfig();
 
-		if (this.getItem() instanceof CompassItem && CompassItem.hasLodestone((ItemStack) (Object) this)) {
+		if (advancedTooltipsConfig.hasLodestoneCoords() && this.getItem() instanceof CompassItem && CompassItem.hasLodestone((ItemStack) (Object) this)) {
 			var nbt = this.getNbt();
 			assert nbt != null; // Should not be null since hasLodestone returns true.
 			var pos = NbtHelper.toBlockPos(nbt.getCompound(CompassItem.LODESTONE_POS_KEY));
@@ -102,7 +100,7 @@ public abstract class ItemStackMixin {
 		}
 
 		int repairCost;
-		if ((repairCost = this.getRepairCost()) != 0) {
+		if (advancedTooltipsConfig.hasRepairCost() && (repairCost = this.getRepairCost()) != 0) {
 			tooltip.add(new TranslatableText("inspecio.tooltip.repair_cost", repairCost)
 					.formatted(Formatting.GRAY));
 		}

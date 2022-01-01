@@ -48,5 +48,12 @@
 
 ## 1.2.0
 
+ - Added configuration settings to disable lodestone coordinates, and repair cost ([#26](https://github.com/Queerbric/Inspecio/issues/26)).
+ - Added an interface for custom inventory sizes and deserialization for inventory tooltips ([#34](https://github.com/Queerbric/Inspecio/issues/34)).
  - Added Russian translations ([#45](https://github.com/Queerbric/Inspecio/pull/45)).
  - Fixed OutOfBoundsException in Potion/TippedArrowMixin ([#38](https://github.com/Queerbric/Inspecio/pull/38)).
+ - Fixed food effects not displaying when hunger tooltip is disabled ([#42](https://github.com/Queerbric/Inspecio/issues/42)).
+ - 1.18 specific changes:
+   - Fixed broken tooltips in 1.18 ([#43](https://github.com/Queerbric/Inspecio/issues/43)).
+   - Fixed broken loom patterns in 1.18 ([#49](https://github.com/Queerbric/Inspecio/issues/49)).
+   - Fixed beacon crashing the game in 1.18 ([#50](https://github.com/Queerbric/Inspecio/issues/50)).

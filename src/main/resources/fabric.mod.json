@@ -3,7 +3,7 @@
   "id": "inspecio",
   "version": "${version}",
   "name": "Inspecio",
-  "description": "More Tooltips",
+  "description": "More tooltips.",
   "authors": [
     "Emi",
     "LambdAurora"
@@ -27,7 +27,7 @@
   ],
   "depends": {
     "minecraft": ">=1.18",
-    "fabricloader": ">=0.12.11",
+    "fabricloader": ">=0.12.12",
     "fabric-command-api-v1": ">=1.1.6",
     "fabric-rendering-v1": ">=1.10.3",
     "fabric-resource-loader-v0": ">=0.4.7",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 LambdAurora <aurora42lambda@gmail.com>, Emi
+ * Copyright (c) 2020 - 2022 LambdAurora <aurora42lambda@gmail.com>, Emi
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -49,7 +49,7 @@ public enum JukeboxTooltipMode {
 	FAST,
 	FANCY;
 
-	public static final PrimitiveCodec<JukeboxTooltipMode> CODEC = new PrimitiveCodec<JukeboxTooltipMode>() {
+	public static final PrimitiveCodec<JukeboxTooltipMode> CODEC = new PrimitiveCodec<>() {
 		@Override
 		public <T> DataResult<JukeboxTooltipMode> read(final DynamicOps<T> ops, final T input) {
 			return ops.getStringValue(input).map(id -> byId(id).orElse(DISABLED));
