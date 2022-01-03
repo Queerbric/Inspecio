@@ -1,7 +1,7 @@
 {
   "inspecio.command.error.unknown_jukebox_tooltip_mode": "Bilinmeyen müzik kutusu bilgi çubuğu modu",
   "inspecio.command.error.unknown_saturation_tooltip_mode": "Bilinmeyen doygunluk bilgi çubuğu modu",
-  "inspecio.command.error.unknown_sign_tooltip_mode": "Bilinmeyen tabela bilgi çubugu modu",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Bilinmeyen tabela bilgi çubuğu modu",
 
   "inspecio.config.reloading": "Ayarlama yeniden yükleniyor...",
 
