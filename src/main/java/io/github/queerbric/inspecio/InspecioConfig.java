@@ -344,7 +344,7 @@ public class InspecioConfig {
 				configEntry("effects/spectral_arrow", DEFAULT_SPECTRAL_ARROW, EffectsConfig::hasSpectralArrow),
 				configEntry("effects/food", DEFAULT_FOOD, EffectsConfig::hasFood),
 				configEntry("effects/hidden_motion", DEFAULT_HIDDEN_MOTION, EffectsConfig::hasHiddenMotion),
-				configEntry("effects/beacon", DEFAULT_BEACON, EffectsConfig::hasHiddenMotion)
+				configEntry("effects/beacon", DEFAULT_BEACON, EffectsConfig::hasBeacon)
 		).apply(instance, EffectsConfig::new));
 
 		private boolean potions;
