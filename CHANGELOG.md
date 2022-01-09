@@ -62,3 +62,4 @@
 
  - Added Turkish translations ([#55](https://github.com/Queerbric/Inspecio/pull/55)).
  - Fixed serialization of beacon effect config ([#54](https://github.com/Queerbric/Inspecio/issues/54)).
+ - Fixed random crashes with other mods adding new tooltips due to a bad cast ([#56](https://github.com/Queerbric/Inspecio/issues/56)).

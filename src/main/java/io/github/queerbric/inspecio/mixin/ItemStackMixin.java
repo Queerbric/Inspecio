@@ -20,6 +20,7 @@ package io.github.queerbric.inspecio.mixin;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.tooltip.*;
+import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.effect.StatusEffect;
@@ -111,13 +112,10 @@ public abstract class ItemStackMixin {
 		// Data is the plural and datum is the singular actually, but no one cares
 		var datas = new ArrayList<TooltipData>();
 		info.getReturnValue().ifPresent(datas::add);
-		if ((datas.size() > 0 && datas.get(0) instanceof ConvertibleTooltipData)) {
-			// We can't wrap arbitrary TooltipDatas until ConvertibleTooltipData is merged
-			return;
-		}
-		var config = Inspecio.get().getConfig();
 
+		var config = Inspecio.get().getConfig();
 		var stack = (ItemStack) (Object) this;
+
 		if (stack.isFood()) {
 			var comp = stack.getItem().getFoodComponent();
 
@@ -170,7 +168,11 @@ public abstract class ItemStackMixin {
 		} else if (datas.size() > 1) {
 			var comp = new CompoundTooltipComponent();
 			for (var data : datas) {
-				comp.addComponent(((ConvertibleTooltipData) data).getComponent());
+				if (data instanceof ConvertibleTooltipData convertibleTooltipData) {
+					comp.addComponent(convertibleTooltipData.getComponent());
+				} else {
+					comp.addComponent(TooltipComponentCallback.EVENT.invoker().getComponent(data));
+				}
 			}
 			info.setReturnValue(Optional.of(comp));
 		}
