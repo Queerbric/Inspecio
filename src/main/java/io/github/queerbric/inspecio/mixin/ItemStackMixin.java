@@ -124,8 +124,7 @@ public abstract class ItemStackMixin {
 			}
 
 			if (config.getEffectsConfig().hasPotions()) {
-				var tag = Inspecio.getHiddenEffectsTag();
-				if (tag != null && tag.contains(stack.getItem())) {
+				if (stack.isIn(Inspecio.HIDDEN_EFFECTS_TAG)) {
 					datas.add(new StatusEffectTooltipComponent());
 				} else {
 					if (comp.getStatusEffects().size() > 0) {

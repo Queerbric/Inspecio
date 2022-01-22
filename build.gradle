@@ -50,7 +50,22 @@ String parseReadme() {
 	return readme
 }
 
-minecraft {
+repositories {
+	maven {
+		name 'QuiltSnapshot'
+		url 'https://maven.quiltmc.org/repository/snapshot'
+		content {
+			includeGroup 'org.quiltmc.fabric_api_qsl'
+			includeGroupByRegex 'org.quiltmc.qsl(.[a-z_]+)?'
+		}
+	}
+	maven {
+		name 'TerraformersMC'
+		url 'https://maven.terraformersmc.com/releases'
+		content {
+			includeGroup 'com.terraformersmc'
+		}
+	}
 }
 
 dependencies {
@@ -61,9 +76,17 @@ dependencies {
 	})
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	include modImplementation(fabricApi.module('fabric-command-api-v1', project.fabric_api_version))
-	include modImplementation(fabricApi.module('fabric-rendering-v1', project.fabric_api_version))
-	include modImplementation(fabricApi.module('fabric-resource-loader-v0', project.fabric_api_version))
+	modImplementation "org.quiltmc.qsl.command:client_command:${project.qsl_client_command_version}+${getMCVersionString()}-SNAPSHOT"
+	modImplementation "org.quiltmc.fabric_api_qsl:fabric-rendering-v1:${project.fabric_rendering_api_version}-SNAPSHOT"
+	modImplementation "org.quiltmc.qsl.core:resource_loader:${project.qsl_resource_loader_version}+${getMCVersionString()}-SNAPSHOT"
+	modImplementation "org.quiltmc.qsl.data:tags:${project.qsl_tags_version}+${getMCVersionString()}-SNAPSHOT"
+
+	// Only for ModMenu
+	modLocalRuntime "org.quiltmc.fabric_api_qsl:fabric-resource-loader-v0:1.0.0+1.18-SNAPSHOT"
+	modLocalRuntime "org.quiltmc.fabric_api_qsl:fabric-screen-api-v1:1.0.7+1.18-SNAPSHOT"
+	modLocalRuntime("com.terraformersmc:modmenu:3.0.1") {
+		transitive = false
+	}
 }
 
 java {
