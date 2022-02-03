@@ -24,6 +24,7 @@ import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

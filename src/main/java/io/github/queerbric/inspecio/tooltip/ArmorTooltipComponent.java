@@ -24,6 +24,7 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final int prot;
@@ -33,7 +34,7 @@ public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipCom
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

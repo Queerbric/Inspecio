@@ -27,10 +27,11 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FoodComponent;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 public record FoodTooltipComponent(FoodComponent component) implements ConvertibleTooltipData, TooltipComponent {
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

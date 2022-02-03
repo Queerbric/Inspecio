@@ -27,6 +27,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Optional;
 
@@ -45,7 +46,7 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

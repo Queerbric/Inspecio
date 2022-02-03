@@ -19,8 +19,11 @@ package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
-import io.github.queerbric.inspecio.tooltip.*;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
+import io.github.queerbric.inspecio.tooltip.ArmorTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.CompoundTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.FoodTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.entity.effect.StatusEffect;
@@ -36,6 +39,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -167,11 +171,9 @@ public abstract class ItemStackMixin {
 		} else if (datas.size() > 1) {
 			var comp = new CompoundTooltipComponent();
 			for (var data : datas) {
-				if (data instanceof ConvertibleTooltipData convertibleTooltipData) {
-					comp.addComponent(convertibleTooltipData.getComponent());
-				} else {
-					comp.addComponent(TooltipComponentCallback.EVENT.invoker().getComponent(data));
-				}
+				TooltipComponent component = TooltipComponentCallback.EVENT.invoker().getComponent(data);
+				if (component != null)
+					comp.addComponent(component);
 			}
 			info.setReturnValue(Optional.of(comp));
 		}

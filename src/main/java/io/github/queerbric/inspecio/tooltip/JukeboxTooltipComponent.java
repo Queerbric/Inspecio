@@ -63,11 +63,6 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
-		return this;
-	}
-
-	@Override
 	public int getHeight() {
 		int height = 10;
 		if (this.config.getJukeboxTooltipMode() == JukeboxTooltipMode.FANCY)

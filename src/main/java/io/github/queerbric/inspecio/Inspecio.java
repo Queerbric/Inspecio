@@ -19,9 +19,7 @@ package io.github.queerbric.inspecio;
 
 import io.github.queerbric.inspecio.api.InspecioEntrypoint;
 import io.github.queerbric.inspecio.api.InventoryProvider;
-import io.github.queerbric.inspecio.tooltip.ConvertibleTooltipData;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.DispenserBlock;
@@ -55,7 +53,7 @@ import java.util.function.Consumer;
 /**
  * Represents the Inspecio mod.
  *
- * @version 1.2.0
+ * @version 1.2.1
  * @since 1.0.0
  */
 public class Inspecio implements ClientModInitializer {
@@ -88,13 +86,6 @@ public class Inspecio implements ClientModInitializer {
 				return new InventoryProvider.Context(inventory, color);
 			}
 
-			return null;
-		});
-
-		TooltipComponentCallback.EVENT.register(data -> {
-			if (data instanceof ConvertibleTooltipData convertible) {
-				return convertible.getComponent();
-			}
 			return null;
 		});
 

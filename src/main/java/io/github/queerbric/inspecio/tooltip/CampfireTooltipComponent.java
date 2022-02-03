@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ import java.util.Optional;
  * Represents a campfire tooltip. Displays a campfire inventory and the flame if lit.
  *
  * @author LambdAurora
- * @version 1.1.0
+ * @version 1.2.1
  * @since 1.1.0
  */
 public class CampfireTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -88,7 +89,7 @@ public class CampfireTooltipComponent implements ConvertibleTooltipData, Tooltip
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

@@ -41,12 +41,13 @@ import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.Vec3f;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 /**
  * Represents a tooltip component for entities.
  *
  * @author LambdAurora
- * @version 1.1.0
+ * @version 1.2.1
  * @since 1.0.0
  */
 public abstract class EntityTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -58,7 +59,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

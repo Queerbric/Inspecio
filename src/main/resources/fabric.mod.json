@@ -31,10 +31,10 @@
   "depends": {
     "minecraft": ">=1.18",
     "fabricloader": ">=0.12.12",
-    "fabric-rendering-v1": ">=1.10.3",
     "quilt_client_command": ">=1.0.0",
     "quilt_resource_loader": ">=1.0.0",
     "quilt_tags": ">=1.0.0",
+    "quilt_tooltip": ">=1.0.0",
     "java": ">=17"
   }
 }

@@ -38,6 +38,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

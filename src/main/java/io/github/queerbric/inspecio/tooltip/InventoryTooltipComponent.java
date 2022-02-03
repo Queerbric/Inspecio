@@ -29,6 +29,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.Optional;
  * Represents the inventory tooltip component.
  *
  * @author LambdAurora
- * @version 1.2.0
+ * @version 1.2.1
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -88,7 +89,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 

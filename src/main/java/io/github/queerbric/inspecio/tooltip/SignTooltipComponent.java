@@ -37,6 +37,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.SignType;
 import net.minecraft.util.math.Matrix4f;
+import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -87,7 +88,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	}
 
 	@Override
-	public TooltipComponent getComponent() {
+	public TooltipComponent toComponent() {
 		return this;
 	}
 
