@@ -78,12 +78,13 @@ dependencies {
 
 	modImplementation "org.quiltmc.qsl.command:client_command:${project.qsl_client_command_version}+${project.minecraft_version}-SNAPSHOT"
 	modImplementation "org.quiltmc.qsl.core:resource_loader:${project.qsl_resource_loader_version}+${project.minecraft_version}-SNAPSHOT"
-	modImplementation "org.quiltmc.qsl.data:tags:${project.qsl_tags_version}+${project.minecraft_version}-SNAPSHOT"
+	modImplementation include("org.quiltmc.qsl.data:tags:${project.qsl_tags_version}+${project.minecraft_version}-SNAPSHOT")
 	modImplementation "org.quiltmc.qsl.gui:tooltip:${project.qsl_tooltip_version}+${project.minecraft_version}-SNAPSHOT"
 
 	include "org.quiltmc.fabric_api_qsl:fabric-api-base:1.0.0+1.18.2-SNAPSHOT"
 	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-command-api-v1:2.0.0+1.18.2-SNAPSHOT")
 	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-lifecycle-events-v1:2.0.1+1.18.2-SNAPSHOT")
+	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-rendering-v1:2.0.0+1.18.2-SNAPSHOT")
 	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-resource-loader-v0:1.0.0+1.18.2-SNAPSHOT")
 
 	// Only for ModMenu
