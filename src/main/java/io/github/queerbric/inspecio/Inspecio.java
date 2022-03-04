@@ -19,8 +19,8 @@ package io.github.queerbric.inspecio;
 
 import io.github.queerbric.inspecio.api.InspecioEntrypoint;
 import io.github.queerbric.inspecio.api.InventoryProvider;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.HopperBlock;
@@ -33,7 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -41,10 +41,12 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.qsl.tag.api.TagRegistry;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagType;
 
 import java.util.List;
@@ -58,13 +60,13 @@ import java.util.function.Consumer;
  */
 public class Inspecio implements ClientModInitializer {
 	public static final String NAMESPACE = "inspecio";
-	public static final Tag<Item> HIDDEN_EFFECTS_TAG = TagRegistry.ITEM.create(new Identifier(NAMESPACE, "hidden_effects"), TagType.CLIENT_FALLBACK);
+	public static final TagKey<Item> HIDDEN_EFFECTS_TAG = QuiltTagKey.of(Registry.ITEM_KEY, new Identifier(NAMESPACE, "hidden_effects"), TagType.CLIENT_FALLBACK);
 	private static Inspecio INSTANCE;
 	private final Logger logger = LogManager.getLogger("inspecio");
 	private InspecioConfig config;
 
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		INSTANCE = this;
 
 		this.reloadConfig();

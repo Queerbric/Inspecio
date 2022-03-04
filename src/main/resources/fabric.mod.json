@@ -18,7 +18,7 @@
   "icon": "assets/inspecio/icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
+    "client_init": [
       "io.github.queerbric.inspecio.Inspecio"
     ],
     "client_events": [
@@ -29,12 +29,15 @@
     "inspecio.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.18",
+    "minecraft": "~1.18.2",
     "fabricloader": ">=0.12.12",
-    "quilt_client_command": ">=1.0.0",
-    "quilt_resource_loader": ">=1.0.0",
-    "quilt_tags": ">=1.0.0",
-    "quilt_tooltip": ">=1.0.0",
+    "quilted-fabric-command-api-v1": "*",
+    "quilted-fabric-resource-loader-v0": "*",
+    "quilt_tags": "*",
+    "quilt_tooltip": "*",
     "java": ">=17"
+  },
+  "breaks": {
+    "quilt_loader": "*"
   }
 }
