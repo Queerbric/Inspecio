@@ -67,6 +67,7 @@ dependencies {
 	modImplementation "org.quiltmc.qsl.gui:tooltip:${project.qsl_tooltip_version}+${project.minecraft_version}-SNAPSHOT"
 
 	include "org.quiltmc.fabric_api_qsl:fabric-api-base:1.0.0+1.18.2-SNAPSHOT"
+	modLocalRuntime "org.quiltmc.qsl.command:command:1.0.0+${project.minecraft_version}-SNAPSHOT"
 	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-command-api-v1:2.0.0+1.18.2-SNAPSHOT")
 	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-lifecycle-events-v1:2.0.1+1.18.2-SNAPSHOT")
 	modLocalRuntime include("org.quiltmc.fabric_api_qsl:fabric-rendering-v1:2.0.0+1.18.2-SNAPSHOT")

@@ -52,7 +52,7 @@ public abstract class BlockItemMixin extends Item {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		var inspecioConfig = Inspecio.get().getConfig();
+		var inspecioConfig = Inspecio.getConfig();
 		var containersConfig = inspecioConfig.getContainersConfig();
 		var effectsConfig = inspecioConfig.getEffectsConfig();
 

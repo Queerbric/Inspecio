@@ -42,7 +42,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(EntityType<?> entityType, NbtCompound itemNbt) {
-		var entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+		var entitiesConfig = Inspecio.getConfig().getEntitiesConfig();
 		if (!entitiesConfig.getSpawnEggConfig().isEnabled() || entityType == null)
 			return Optional.empty();
 

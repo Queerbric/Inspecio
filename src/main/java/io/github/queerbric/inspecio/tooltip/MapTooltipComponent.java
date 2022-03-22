@@ -40,7 +40,7 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack) {
-		if (!Inspecio.get().getConfig().getFilledMapConfig().isEnabled()) return Optional.empty();
+		if (!Inspecio.getConfig().getFilledMapConfig().isEnabled()) return Optional.empty();
 		var map = FilledMapItem.getMapId(stack);
 		return map == null ? Optional.empty() : Optional.of(new MapTooltipComponent(map));
 	}
@@ -69,7 +69,7 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 		matrices.push();
 		matrices.translate(x, y, z);
 		matrices.scale(1, 1, 0);
-		map.draw(matrices, vertices, this.map, state, !Inspecio.get().getConfig().getFilledMapConfig().shouldShowPlayerIcon(),
+		map.draw(matrices, vertices, this.map, state, !Inspecio.getConfig().getFilledMapConfig().shouldShowPlayerIcon(),
 				LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		vertices.draw();
 		matrices.pop();

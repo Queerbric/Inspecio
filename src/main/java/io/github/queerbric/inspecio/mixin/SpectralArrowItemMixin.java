@@ -38,7 +38,7 @@ public class SpectralArrowItemMixin extends ArrowItem {
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		if (!Inspecio.get().getConfig().getEffectsConfig().hasSpectralArrow()) return super.getTooltipData(stack);
+		if (!Inspecio.getConfig().getEffectsConfig().hasSpectralArrow()) return super.getTooltipData(stack);
 		return Optional.of(new StatusEffectTooltipComponent(Collections.singletonList(new StatusEffectInstance(StatusEffects.GLOWING, 200, 0)), 1.f));
 	}
 }

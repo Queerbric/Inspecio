@@ -54,14 +54,14 @@ public abstract class TippedArrowItemMixin extends Item {
 
 	@Inject(method = "appendTooltip", at = @At("RETURN"))
 	private void onAppendTooltipPost(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo info) {
-		if (Inspecio.get().getConfig().getEffectsConfig().hasTippedArrows()) {
+		if (Inspecio.getConfig().getEffectsConfig().hasTippedArrows()) {
 			Inspecio.removeVanillaTooltips(tooltip, this.inspecio$oldTooltipLength.get());
 		}
 	}
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		if (!Inspecio.get().getConfig().getEffectsConfig().hasTippedArrows()) return super.getTooltipData(stack);
+		if (!Inspecio.getConfig().getEffectsConfig().hasTippedArrows()) return super.getTooltipData(stack);
 		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 0.125F));
 	}
 }

@@ -35,6 +35,6 @@ public class LingeringPotionItemMixin {
 
 	@Inject(at = @At("HEAD"), method = "appendTooltip", cancellable = true)
 	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo info) {
-		if (Inspecio.get().getConfig().getEffectsConfig().hasPotions()) info.cancel();
+		if (Inspecio.getConfig().getEffectsConfig().hasPotions()) info.cancel();
 	}
 }

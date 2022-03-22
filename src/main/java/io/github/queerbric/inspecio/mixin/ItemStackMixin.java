@@ -88,7 +88,7 @@ public abstract class ItemStackMixin {
 			return;
 
 		var tooltip = this.inspecio$tooltipList.get();
-		InspecioConfig.AdvancedTooltipsConfig advancedTooltipsConfig = Inspecio.get().getConfig().getAdvancedTooltipsConfig();
+		InspecioConfig.AdvancedTooltipsConfig advancedTooltipsConfig = Inspecio.getConfig().getAdvancedTooltipsConfig();
 
 		if (advancedTooltipsConfig.hasLodestoneCoords() && this.getItem() instanceof CompassItem && CompassItem.hasLodestone((ItemStack) (Object) this)) {
 			var nbt = this.getNbt();
@@ -117,7 +117,7 @@ public abstract class ItemStackMixin {
 		var datas = new ArrayList<TooltipData>();
 		info.getReturnValue().ifPresent(datas::add);
 
-		var config = Inspecio.get().getConfig();
+		var config = Inspecio.getConfig();
 		var stack = (ItemStack) (Object) this;
 
 		if (stack.isFood()) {

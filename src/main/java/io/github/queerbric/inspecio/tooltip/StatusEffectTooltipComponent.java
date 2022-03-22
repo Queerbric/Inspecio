@@ -67,7 +67,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	private String getHiddenText(int length) {
-		var effectsConfig = Inspecio.get().getConfig().getEffectsConfig();
+		var effectsConfig = Inspecio.getConfig().getEffectsConfig();
 		if (effectsConfig.hasHiddenMotion()) {
 			return "§k" + "f".repeat(length);
 		} else {

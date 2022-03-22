@@ -54,7 +54,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 	}
 
 	public static Optional<TooltipData> of(BannerPattern pattern) {
-		if (!Inspecio.get().getConfig().hasBannerPattern())
+		if (!Inspecio.getConfig().hasBannerPattern())
 			return Optional.empty();
 		return Optional.of(new BannerTooltipComponent(pattern));
 	}

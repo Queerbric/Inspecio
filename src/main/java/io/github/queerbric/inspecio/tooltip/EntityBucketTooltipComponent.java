@@ -35,7 +35,7 @@ import java.util.Optional;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.0.0
+ * @version 1.3.1
  * @since 1.0.0
  */
 public class EntityBucketTooltipComponent extends EntityTooltipComponent {
@@ -47,7 +47,7 @@ public class EntityBucketTooltipComponent extends EntityTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(EntityType<?> type, NbtCompound itemNbt) {
-		var entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+		var entitiesConfig = Inspecio.getConfig().getEntitiesConfig();
 		if (!entitiesConfig.getFishBucketConfig().isEnabled())
 			return Optional.empty();
 

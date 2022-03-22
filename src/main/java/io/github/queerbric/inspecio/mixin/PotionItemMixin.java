@@ -54,14 +54,14 @@ public abstract class PotionItemMixin extends Item {
 
 	@Inject(method = "appendTooltip", at = @At("RETURN"))
 	private void onAppendTooltipPost(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo info) {
-		if (Inspecio.get().getConfig().getEffectsConfig().hasPotions()) {
+		if (Inspecio.getConfig().getEffectsConfig().hasPotions()) {
 			Inspecio.removeVanillaTooltips(tooltip, this.inspecio$oldTooltipLength.get());
 		}
 	}
 
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		if (!Inspecio.get().getConfig().getEffectsConfig().hasPotions()) return super.getTooltipData(stack);
+		if (!Inspecio.getConfig().getEffectsConfig().hasPotions()) return super.getTooltipData(stack);
 		return Optional.of(new StatusEffectTooltipComponent(PotionUtil.getPotionEffects(stack), 1.f));
 	}
 }

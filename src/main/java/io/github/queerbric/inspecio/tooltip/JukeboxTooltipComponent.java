@@ -39,11 +39,11 @@ import java.util.Optional;
  * Represents a jukebox tooltip component. Displays the inserted disc description and an inventory slot with the disc in fancy mode.
  *
  * @author LambdAurora
- * @version 1.1.0
+ * @version 1.3.1
  * @since 1.0.0
  */
 public class JukeboxTooltipComponent extends InventoryTooltipComponent {
-	private final InspecioConfig config = Inspecio.get().getConfig();
+	private final InspecioConfig config = Inspecio.getConfig();
 	private final MusicDiscItem disc;
 
 	public JukeboxTooltipComponent(ItemStack discStack) {
@@ -52,7 +52,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack) {
-		if (!Inspecio.get().getConfig().getJukeboxTooltipMode().isEnabled()) return Optional.empty();
+		if (!Inspecio.getConfig().getJukeboxTooltipMode().isEnabled()) return Optional.empty();
 		var nbt = BlockItem.getBlockEntityNbtFromStack(stack);
 		if (nbt != null && nbt.contains("RecordItem")) {
 			var discStack = ItemStack.fromNbt(nbt.getCompound("RecordItem"));

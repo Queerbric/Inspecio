@@ -49,7 +49,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 			literalSubCommand.then(literal("reload")
 					.executes(ctx -> {
 						ctx.getSource().sendFeedback(new TranslatableText("inspecio.config.reloading").formatted(Formatting.GREEN));
-						Inspecio.get().reloadConfig();
+						Inspecio.reloadConfig();
 						return 0;
 					})
 			).then(literal("armor")
@@ -155,34 +155,34 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 	                                                                              Function<InspecioConfig, InspecioConfig.StorageContainerConfig> containerGetter) {
 		var prefix = "containers/" + name;
 		return literal(name)
-				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.get().getConfig()).isEnabled()))
+				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.getConfig()).isEnabled()))
 				.then(argument("value", BoolArgumentType.bool())
-						.executes(onBooleanSetter(prefix, val -> containerGetter.apply(Inspecio.get().getConfig()).setEnabled(val))))
+						.executes(onBooleanSetter(prefix, val -> containerGetter.apply(Inspecio.getConfig()).setEnabled(val))))
 				.then(literal("compact")
-						.executes(onGetter(prefix + "/compact", () -> containerGetter.apply(Inspecio.get().getConfig()).isCompact()))
+						.executes(onGetter(prefix + "/compact", () -> containerGetter.apply(Inspecio.getConfig()).isCompact()))
 						.then(argument("value", BoolArgumentType.bool())
-								.executes(onBooleanSetter(prefix + "/compact", val -> containerGetter.apply(Inspecio.get().getConfig()).setCompact(val)))))
+								.executes(onBooleanSetter(prefix + "/compact", val -> containerGetter.apply(Inspecio.getConfig()).setCompact(val)))))
 				.then(literal("loot_table")
-						.executes(onGetter(prefix + "/loot_table", () -> containerGetter.apply(Inspecio.get().getConfig()).hasLootTable()))
+						.executes(onGetter(prefix + "/loot_table", () -> containerGetter.apply(Inspecio.getConfig()).hasLootTable()))
 						.then(argument("value", BoolArgumentType.bool())
-								.executes(onBooleanSetter(prefix + "/loot_table", val -> containerGetter.apply(Inspecio.get().getConfig()).setLootTable(val)))));
+								.executes(onBooleanSetter(prefix + "/loot_table", val -> containerGetter.apply(Inspecio.getConfig()).setLootTable(val)))));
 	}
 
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> initEntity(String name,
 	                                                                           Function<InspecioConfig, InspecioConfig.EntityConfig> containerGetter) {
 		var prefix = "entities/" + name;
 		return literal(name)
-				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.get().getConfig()).isEnabled()))
+				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.getConfig()).isEnabled()))
 				.then(argument("value", BoolArgumentType.bool())
-						.executes(onBooleanSetter(prefix, val -> containerGetter.apply(Inspecio.get().getConfig()).setEnabled(val))))
+						.executes(onBooleanSetter(prefix, val -> containerGetter.apply(Inspecio.getConfig()).setEnabled(val))))
 				.then(literal("always_show_name")
-						.executes(onGetter(prefix + "/always_show_name", () -> containerGetter.apply(Inspecio.get().getConfig()).shouldAlwaysShowName()))
+						.executes(onGetter(prefix + "/always_show_name", () -> containerGetter.apply(Inspecio.getConfig()).shouldAlwaysShowName()))
 						.then(argument("value", BoolArgumentType.bool())
-								.executes(onBooleanSetter(prefix + "/always_show_name", val -> containerGetter.apply(Inspecio.get().getConfig()).setAlwaysShowName(val)))))
+								.executes(onBooleanSetter(prefix + "/always_show_name", val -> containerGetter.apply(Inspecio.getConfig()).setAlwaysShowName(val)))))
 				.then(literal("spin")
-						.executes(onGetter(prefix + "/spin", () -> containerGetter.apply(Inspecio.get().getConfig()).shouldSpin()))
+						.executes(onGetter(prefix + "/spin", () -> containerGetter.apply(Inspecio.getConfig()).shouldSpin()))
 						.then(argument("value", BoolArgumentType.bool())
-								.executes(onBooleanSetter(prefix + "/spin", val -> containerGetter.apply(Inspecio.get().getConfig()).setSpin(val)))));
+								.executes(onBooleanSetter(prefix + "/spin", val -> containerGetter.apply(Inspecio.getConfig()).setSpin(val)))));
 	}
 
 	private static Text formatBoolean(boolean bool) {
@@ -212,7 +212,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 
 	private static int onSetJukebox(CommandContext<QuiltClientCommandSource> context) {
 		var value = JukeboxTooltipMode.JukeboxArgumentType.getJukeboxTooltipMode(context, "value");
-		var config = Inspecio.get().getConfig();
+		var config = Inspecio.getConfig();
 		config.setJukeboxTooltipMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("jukebox").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
@@ -221,7 +221,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 
 	private static int onSetSaturation(CommandContext<QuiltClientCommandSource> context) {
 		var value = SaturationTooltipMode.SaturationArgumentType.getSaturationTooltipMode(context, "value");
-		var config = Inspecio.get().getConfig();
+		var config = Inspecio.getConfig();
 		config.getFoodConfig().setSaturationMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("food/saturation").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
@@ -230,7 +230,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 
 	private static int onSetSign(CommandContext<QuiltClientCommandSource> context) {
 		var value = SignTooltipMode.SignArgumentType.getSignTooltipMode(context, "value");
-		var config = Inspecio.get().getConfig();
+		var config = Inspecio.getConfig();
 		config.setSignTooltipMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("sign").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
@@ -242,11 +242,11 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 	}
 
 	private static <T> Supplier<T> getter(Function<InspecioConfig, T> func) {
-		return () -> func.apply(Inspecio.get().getConfig());
+		return () -> func.apply(Inspecio.getConfig());
 	}
 
 	private static <T> Consumer<T> setter(BiConsumer<InspecioConfig, T> func) {
-		return val -> func.accept(Inspecio.get().getConfig(), val);
+		return val -> func.accept(Inspecio.getConfig(), val);
 	}
 
 	private static <T> Command<QuiltClientCommandSource> onGetter(String path, Supplier<T> getter) {
@@ -270,7 +270,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 
 			setter.accept(value);
 
-			Inspecio.get().getConfig().save();
+			Inspecio.getConfig().save();
 
 			context.getSource().sendFeedback(prefix(path).append(formatBoolean(value)));
 
@@ -284,7 +284,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 
 			setter.accept(value);
 
-			Inspecio.get().getConfig().save();
+			Inspecio.getConfig().save();
 
 			context.getSource().sendFeedback(prefix(path).append(new LiteralText(String.valueOf(value)).formatted(Formatting.WHITE)));
 

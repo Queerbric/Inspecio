@@ -45,7 +45,7 @@ import java.util.Optional;
 
 public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final MinecraftClient client = MinecraftClient.getInstance();
-	private final SignTooltipMode tooltipMode = Inspecio.get().getConfig().getSignTooltipMode();
+	private final SignTooltipMode tooltipMode = Inspecio.getConfig().getSignTooltipMode();
 	private final SignType type;
 	private final OrderedText[] text;
 	private final DyeColor color;
@@ -61,7 +61,7 @@ public class SignTooltipComponent implements ConvertibleTooltipData, TooltipComp
 	}
 
 	public static Optional<TooltipData> fromItemStack(ItemStack stack) {
-		if (!Inspecio.get().getConfig().getSignTooltipMode().isEnabled())
+		if (!Inspecio.getConfig().getSignTooltipMode().isEnabled())
 			return Optional.empty();
 
 		if (stack.getItem() instanceof SignItem signItem) {

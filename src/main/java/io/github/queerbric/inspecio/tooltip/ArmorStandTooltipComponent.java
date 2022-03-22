@@ -36,7 +36,7 @@ import java.util.Optional;
  * Represents an armor stand tooltip. Displays an armor stand and its armor.
  *
  * @author Zailer43
- * @version 1.1.0
+ * @version 1.3.1
  * @since 1.1.0
  */
 public class ArmorStandTooltipComponent extends EntityTooltipComponent {
@@ -48,7 +48,7 @@ public class ArmorStandTooltipComponent extends EntityTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(NbtCompound itemNbt) {
-		var entitiesConfig = Inspecio.get().getConfig().getEntitiesConfig();
+		var entitiesConfig = Inspecio.getConfig().getEntitiesConfig();
 		var entityType = EntityType.ARMOR_STAND;
 		if (!entitiesConfig.getArmorStandConfig().isEnabled())
 			return Optional.empty();

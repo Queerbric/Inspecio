@@ -42,7 +42,7 @@ import java.util.function.Function;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.1.0
+ * @version 1.3.1
  * @since 1.0.0
  */
 public class BeesTooltipComponent extends EntityTooltipComponent {
@@ -63,7 +63,7 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 	}
 
 	public static Optional<TooltipData> of(ItemStack stack) {
-		var config = Inspecio.get().getConfig().getEntitiesConfig().getBeeConfig();
+		var config = Inspecio.getConfig().getEntitiesConfig().getBeeConfig();
 		if (!config.isEnabled())
 			return Optional.empty();
 		var nbt = BlockItem.getBlockEntityNbtFromStack(stack);

@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.2.0
+ * @version 1.3.1
  * @since 1.0.0
  */
 // @TODO rework this to be more expandable?
@@ -176,20 +176,20 @@ public class InspecioConfig {
 	 * @return the current configuration
 	 */
 	public InspecioConfig save() {
-		Inspecio.get().log("Saving configuration...");
+		Inspecio.log("Saving configuration...");
 		if (!createConfigDirectoryIfNeeded())
 			return this;
 
 		var config = CODEC.encode(this, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).result();
 		if (config.isEmpty()) {
-			Inspecio.get().warn("Failed to serialize configuration.");
+			Inspecio.warn("Failed to serialize configuration.");
 			return this;
 		}
 		try (var writer = Files.newBufferedWriter(CONFIG_PATH, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			var jsonWriter = GSON.newJsonWriter(writer);
 			GSON.toJson(config.get().getAsJsonObject(), jsonWriter);
 		} catch (IOException e) {
-			Inspecio.get().warn("Failed to save configuration.", e);
+			Inspecio.warn("Failed to save configuration.", e);
 		}
 		return this;
 	}
@@ -672,7 +672,7 @@ public class InspecioConfig {
 				Files.createDirectory(CONFIG_PATH.getParent());
 			return true;
 		} catch (IOException e) {
-			Inspecio.get().warn("Could not create missing \"config\" directory.", e);
+			Inspecio.warn("Could not create missing \"config\" directory.", e);
 			return false;
 		}
 	}
@@ -683,26 +683,26 @@ public class InspecioConfig {
 				Files.createDirectory(CONFIG_BACKUP_PATH.getParent());
 			return true;
 		} catch (IOException e) {
-			Inspecio.get().warn("Could not create missing \"config/backup\" directory.", e);
+			Inspecio.warn("Could not create missing \"config/backup\" directory.", e);
 			return false;
 		}
 	}
 
-	private static InspecioConfig backupAndRestore(Inspecio mod, InspecioConfig config) {
+	private static InspecioConfig backupAndRestore(InspecioConfig config) {
 		try {
 			if (createConfigBackupDirectoryIfNeeded())
 				Files.copy(CONFIG_PATH, CONFIG_BACKUP_PATH);
 
 			config.save();
 		} catch (IOException e) {
-			mod.warn("Could not backup existing configuration.", e);
+			Inspecio.warn("Could not backup existing configuration.", e);
 		}
 
 		return config;
 	}
 
-	public static InspecioConfig load(Inspecio mod) {
-		mod.log("Loading configuration...");
+	public static InspecioConfig load() {
+		Inspecio.log("Loading configuration...");
 
 		if (!Files.exists(CONFIG_PATH)) {
 			if (!createConfigDirectoryIfNeeded())
@@ -715,21 +715,21 @@ public class InspecioConfig {
 			var result = CODEC.decode(JsonOps.INSTANCE, JsonParser.parseReader(reader)).map(Pair::getFirst);
 
 			var config = result.result().orElseGet(() -> {
-				mod.warn("Could not load configuration, using default configuration instead.");
+				Inspecio.warn("Could not load configuration, using default configuration instead.");
 				shouldSaveConfigAfterLoad = false;
-				return backupAndRestore(mod, defaultConfig());
+				return backupAndRestore(defaultConfig());
 			});
 
 			if (shouldSaveConfigAfterLoad) {
-				backupAndRestore(mod, config);
+				backupAndRestore(config);
 
 				shouldSaveConfigAfterLoad = false;
 			}
 
 			return config;
 		} catch (IOException e) {
-			mod.warn("Could not load configuration file.", e);
-			return backupAndRestore(mod, defaultConfig());
+			Inspecio.warn("Could not load configuration file.", e);
+			return backupAndRestore(defaultConfig());
 		}
 	}
 
