@@ -68,3 +68,8 @@
 
  - Updated to 1.18.2.
  - Use Quilt Standard Libraries as Fabric API does not offer some necessary APIs for the mod to fully work.
+
+### 1.3.1
+
+ - Updated the bundled Quilt stuff to fix some issues.
+ - Last update for Fabric, future releases will require Quilt.

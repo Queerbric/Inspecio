@@ -30,7 +30,7 @@
   ],
   "depends": {
     "minecraft": "~1.18.2",
-    "fabricloader": ">=0.12.12",
+    "fabricloader": ">=0.13.3",
     "quilted-fabric-command-api-v1": "*",
     "quilted-fabric-resource-loader-v0": "*",
     "fabric-rendering-v1": ">=2.0.0",
