@@ -19,8 +19,6 @@ package io.github.queerbric.inspecio;
 
 import io.github.queerbric.inspecio.api.InspecioEntrypoint;
 import io.github.queerbric.inspecio.api.InventoryProvider;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.HopperBlock;
@@ -45,6 +43,8 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.tag.api.QuiltTagKey;
 import org.quiltmc.qsl.tag.api.TagType;
@@ -63,9 +63,11 @@ public class Inspecio implements ClientModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger(NAMESPACE);
 	public static final TagKey<Item> HIDDEN_EFFECTS_TAG = QuiltTagKey.of(Registry.ITEM_KEY, new Identifier(NAMESPACE, "hidden_effects"), TagType.CLIENT_FALLBACK);
 	private static InspecioConfig config = InspecioConfig.defaultConfig();
+	private static ModContainer mod;
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		Inspecio.mod = mod;
 		reloadConfig();
 
 		InventoryProvider.register((stack, config) -> {
@@ -88,7 +90,7 @@ public class Inspecio implements ClientModInitializer {
 			return null;
 		});
 
-		var entrypoints = FabricLoader.getInstance().getEntrypoints("inspecio", InspecioEntrypoint.class);
+		var entrypoints = QuiltLoader.getEntrypoints("inspecio", InspecioEntrypoint.class);
 		for (var entrypoint : entrypoints) {
 			entrypoint.onInspecioInitialized();
 		}
@@ -148,13 +150,10 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	static String getVersion() {
-		return FabricLoader.getInstance().getModContainer(NAMESPACE)
-				.map(container -> {
-					var version = container.getMetadata().getVersion().getFriendlyString();
-					if (version.equals("${version}"))
-						return "dev";
-					return version;
-				}).orElse("unknown");
+		var version = mod.metadata().version().raw();
+		if (version.equals("${version}"))
+			return "dev";
+		return version;
 	}
 
 	private static int getInvSizeFor(ItemStack stack) {

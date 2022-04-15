@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "io.github.queerbric",
+    "id": "inspecio",
+    "version": "${version}",
+    "metadata": {
+      "name": "Inspecio",
+      "description": "More tooltips.",
+      "contributors": {
+        "Owner": "Emi, LambdAurora"
+      },
+      "contact": {
+        "homepage": "https://modrinth.com/mod/inspecio",
+        "sources": "https://github.com/Queerbric/Inspecio.git",
+        "issues": "https://github.com/Queerbric/Inspecio/issues"
+      },
+      "license": "LGPL-3.0-only",
+      "icon": "assets/inspecio/icon.png"
+    },
+    "entrypoints": {
+      "client_init": [
+        "io.github.queerbric.inspecio.Inspecio"
+      ],
+      "client_events": [
+        "io.github.queerbric.inspecio.InspecioCommand"
+      ]
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "depends": [
+      {
+        "id": "minecraft",
+        "versions": "~1.18.2"
+      },
+      {
+        "id": "quilt_loader",
+        "versions": ">=0.16.0-beta.3"
+      },
+      "quilt_client_command",
+      "quilt_resource_loader",
+      "quilt_tags",
+      "quilt_tooltip",
+      {
+        "id": "java",
+        "versions": ">=17"
+      }
+    ]
+  },
+  "mixin": "inspecio.mixins.json"
+}
