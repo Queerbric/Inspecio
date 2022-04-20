@@ -78,3 +78,7 @@
 
  - Updated to Quilt Loader.
    - Now only run with Quilt Loader, bundles the necessary QSL modules but to play with other mods you may want Quilted Fabric API.
+
+### 1.4.1
+
+ - Fix a minor issue in the Quilt metadata manifest JSON.
