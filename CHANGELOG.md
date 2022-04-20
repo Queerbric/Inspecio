@@ -73,3 +73,8 @@
 
  - Updated the bundled Quilt stuff to fix some issues.
  - Last update for Fabric, future releases will require Quilt.
+
+## 1.4.0
+
+ - Updated to Quilt Loader.
+   - Now only run with Quilt Loader, bundles the necessary QSL modules but to play with other mods you may want Quilted Fabric API.

@@ -35,14 +35,6 @@ String parseReadme() {
 
 repositories {
 	maven {
-		name 'QuiltSnapshot'
-		url 'https://maven.quiltmc.org/repository/snapshot'
-		content {
-			includeGroup 'org.quiltmc.fabric_api_qsl'
-			includeGroupByRegex 'org.quiltmc.qsl(.[a-z_]+)?'
-		}
-	}
-	maven {
 		name 'TerraformersMC'
 		url 'https://maven.terraformersmc.com/releases'
 		content {
@@ -59,10 +51,12 @@ dependencies {
 	})
 	modImplementation "org.quiltmc:quilt-loader:${project.loader_version}"
 
-	modImplementation "org.quiltmc.qsl.command:client_command:${project.qsl_client_command_version}+${project.minecraft_version}-SNAPSHOT"
-	modImplementation "org.quiltmc.qsl.core:resource_loader:${project.qsl_resource_loader_version}+${project.minecraft_version}-SNAPSHOT"
-	modImplementation include("org.quiltmc.qsl.data:tags:${project.qsl_tags_version}+${project.minecraft_version}-SNAPSHOT")
-	modImplementation "org.quiltmc.qsl.gui:tooltip:${project.qsl_tooltip_version}+${project.minecraft_version}-SNAPSHOT"
+	modImplementation include("org.quiltmc.qsl.command:client_command:${project.qsl_version}+${project.minecraft_version}")
+	modImplementation include("org.quiltmc.qsl.core:resource_loader:${project.qsl_version}+${project.minecraft_version}")
+	include("org.quiltmc.qsl.core:qsl_base:${project.qsl_version}+${project.minecraft_version}")
+	include("org.quiltmc.qsl.core:lifecycle_events:${project.qsl_version}+${project.minecraft_version}")
+	modImplementation include("org.quiltmc.qsl.data:tags:${project.qsl_version}+${project.minecraft_version}")
+	modImplementation include("org.quiltmc.qsl.gui:tooltip:${project.qsl_version}+${project.minecraft_version}")
 
 	// Only for ModMenu
 	/*modLocalRuntime("com.terraformersmc:modmenu:3.1.0") {
@@ -86,7 +80,7 @@ tasks.withType(JavaCompile).configureEach {
 processResources {
 	inputs.property 'version', project.version
 
-	filesMatching('fabric.mod.json') {
+	filesMatching('quilt.mod.json') {
 		expand 'version': project.version
 	}
 }
@@ -106,7 +100,7 @@ modrinth {
 	projectId = project.modrinth_id
 	versionName = "Inspecio ${project.mod_version} (${getMCVersionString()})"
 	gameVersions = [project.minecraft_version]
-	loaders = ["fabric"]
+	loaders = ["quilt"]
 	versionType = isMCVersionNonRelease() ? "beta" : "release"
 	uploadFile = tasks.remapJar
 	syncBodyFrom = parseReadme()

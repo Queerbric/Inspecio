@@ -1,7 +1,7 @@
 #
 # LambdAurora's ignore file
 #
-# v0.16
+# v0.17
 
 # JetBrains
 .idea/
@@ -59,7 +59,9 @@ desktop.ini
 
 # File types
 *.dll
+*.db
 *.so
+*.o
 *.dylib
 *.lib
 lib*.a

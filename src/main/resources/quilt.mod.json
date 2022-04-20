@@ -34,7 +34,7 @@
       },
       {
         "id": "quilt_loader",
-        "versions": ">=0.16.0-beta.3"
+        "versions": ">=0.16.0-beta.7"
       },
       "quilt_client_command",
       "quilt_resource_loader",
