@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Unbekannter Plattenspieler Tooltip modus",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Unbekannter Sättigungs Tooltip modus",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Unbekannter Schild Tooltip modus",
+
+  "inspecio.config.reloading": "Konfiguration wird neu geladen...",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "Dimension: %s",
+  "inspecio.tooltip.lodestone_compass.target": "Ziel: %s",
+  "inspecio.tooltip.loot_table": "Beutetabelle: %s",
+  "inspecio.tooltip.repair_cost": "Verzauberungskosten: %d"
+}
