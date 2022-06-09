@@ -51,7 +51,7 @@ dependencies {
 	})
 	modImplementation "org.quiltmc:quilt-loader:${project.loader_version}"
 
-	modImplementation include("org.quiltmc.qsl.command:client_command:${project.qsl_version}+${project.minecraft_version}")
+	modImplementation include("org.quiltmc.qsl.management:client_command:${project.qsl_version}+${project.minecraft_version}")
 	modImplementation include("org.quiltmc.qsl.core:resource_loader:${project.qsl_version}+${project.minecraft_version}")
 	include("org.quiltmc.qsl.core:qsl_base:${project.qsl_version}+${project.minecraft_version}")
 	include("org.quiltmc.qsl.core:lifecycle_events:${project.qsl_version}+${project.minecraft_version}")

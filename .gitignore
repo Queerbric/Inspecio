@@ -1,7 +1,7 @@
 #
 # LambdAurora's ignore file
 #
-# v0.17
+# v0.20
 
 # JetBrains
 .idea/
@@ -29,7 +29,10 @@ CMakeSettings.json
 Cargo.lock
 ## CMake
 CMakeCache.txt
+CMakeLists.txt.user
 CMakeFiles/
+## QMake
+.qmake.stash
 ## Gradle
 .gradle/
 ## Node.JS
@@ -60,19 +63,26 @@ desktop.ini
 # File types
 *.dll
 *.db
-*.so
+*.tar.?z
+
+# Asset files automatic backup
+.*.png-autosave.kra
+*.png~
+
+# Compilation artifacts/Binaries
 *.o
+*.so
 *.dylib
 *.lib
 lib*.a
-*.png~
-*.tar.?z
 
 # Common
 bin/
 build/
 dist/
 lib/
+!src/lib/
+!src/**/lib/
 obj/
 run/
 target/
