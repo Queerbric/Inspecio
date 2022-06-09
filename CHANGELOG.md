@@ -82,3 +82,8 @@
 ### 1.4.1
 
  - Fix a minor issue in the Quilt metadata manifest JSON.
+
+### 1.4.2
+
+ - Updated Simplified Chinese translations ([#63](https://github.com/Queerbric/Inspecio/pull/63)).
+ - Updated to Minecraft 1.19.
