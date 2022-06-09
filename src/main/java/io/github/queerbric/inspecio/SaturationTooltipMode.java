@@ -27,7 +27,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.PrimitiveCodec;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -98,7 +98,7 @@ public enum SaturationTooltipMode {
 
 	public static class SaturationArgumentType implements ArgumentType<SaturationTooltipMode> {
 		private static final SimpleCommandExceptionType UNKNOWN_VALUE = new SimpleCommandExceptionType(
-				new TranslatableText("inspecio.command.error.unknown_saturation_tooltip_mode"));
+				Text.translatable("inspecio.command.error.unknown_saturation_tooltip_mode"));
 		private static final List<SaturationTooltipMode> VALUES = List.of(values());
 
 		private SaturationArgumentType() {

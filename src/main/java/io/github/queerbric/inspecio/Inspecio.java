@@ -32,9 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -180,9 +178,9 @@ public class Inspecio implements ClientModInitializer {
 		if (config != null && config.hasLootTable()) {
 			var blockEntityNbt = BlockItem.getBlockEntityNbtFromStack(stack);
 			if (blockEntityNbt != null && blockEntityNbt.contains("LootTable")) {
-				tooltip.add(new TranslatableText("inspecio.tooltip.loot_table",
-						new LiteralText(blockEntityNbt.getString("LootTable"))
-								.formatted(Formatting.GOLD))
+				tooltip.add(Text.translatable("inspecio.tooltip.loot_table",
+								Text.literal(blockEntityNbt.getString("LootTable"))
+										.formatted(Formatting.GOLD))
 						.formatted(Formatting.GRAY));
 			}
 		}
@@ -191,7 +189,7 @@ public class Inspecio implements ClientModInitializer {
 	public static void removeVanillaTooltips(List<Text> tooltips, int fromIndex) {
 		if (fromIndex >= tooltips.size()) return;
 
-		int keepIndex = tooltips.indexOf(LiteralText.EMPTY);
+		int keepIndex = tooltips.indexOf(Text.empty());
 		if (keepIndex != -1) {
 			// we wanna keep tooltips that come after a line break
 			keepIndex++;

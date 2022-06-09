@@ -32,12 +32,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtHelper;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.qsl.tooltip.api.client.TooltipComponentCallback;
 import org.spongepowered.asm.mixin.Mixin;
@@ -93,20 +92,24 @@ public abstract class ItemStackMixin {
 		if (advancedTooltipsConfig.hasLodestoneCoords() && this.getItem() instanceof CompassItem && CompassItem.hasLodestone((ItemStack) (Object) this)) {
 			var nbt = this.getNbt();
 			assert nbt != null; // Should not be null since hasLodestone returns true.
-			var pos = NbtHelper.toBlockPos(nbt.getCompound(CompassItem.LODESTONE_POS_KEY));
-			var posText = new LiteralText(String.format("X: %d, Y: %d, Z: %d", pos.getX(), pos.getY(), pos.getZ()))
-					.formatted(Formatting.GOLD);
 
-			tooltip.add(new TranslatableText("inspecio.tooltip.lodestone_compass.target", posText).formatted(Formatting.GRAY));
-			CompassItem.getLodestoneDimension(nbt)
-					.ifPresent(dimension -> tooltip.add(new TranslatableText("inspecio.tooltip.lodestone_compass.dimension",
-							new LiteralText(dimension.getValue().toString()).formatted(Formatting.GOLD))
-							.formatted(Formatting.GRAY)));
+			GlobalPos globalPos = CompassItem.getLodestonePosition(nbt);
+
+			if (globalPos != null) {
+				BlockPos pos = globalPos.getPos();
+				var posText = Text.literal(String.format("X: %d, Y: %d, Z: %d", pos.getX(), pos.getY(), pos.getZ()))
+						.formatted(Formatting.GOLD);
+
+				tooltip.add(Text.translatable("inspecio.tooltip.lodestone_compass.target", posText).formatted(Formatting.GRAY));
+				tooltip.add(Text.translatable("inspecio.tooltip.lodestone_compass.dimension",
+								Text.literal(globalPos.getDimension().getValue().toString()).formatted(Formatting.GOLD))
+						.formatted(Formatting.GRAY));
+			}
 		}
 
 		int repairCost;
 		if (advancedTooltipsConfig.hasRepairCost() && (repairCost = this.getRepairCost()) != 0) {
-			tooltip.add(new TranslatableText("inspecio.tooltip.repair_cost", repairCost)
+			tooltip.add(Text.translatable("inspecio.tooltip.repair_cost", repairCost)
 					.formatted(Formatting.GRAY));
 		}
 	}

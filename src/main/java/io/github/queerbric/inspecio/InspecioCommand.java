@@ -24,10 +24,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.text.LiteralText;
+import net.minecraft.command.CommandBuildContext;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import org.quiltmc.qsl.command.api.client.ClientCommandRegistrationCallback;
 import org.quiltmc.qsl.command.api.client.QuiltClientCommandSource;
@@ -42,13 +42,14 @@ import static org.quiltmc.qsl.command.api.client.ClientCommandManager.literal;
 
 public final class InspecioCommand implements ClientCommandRegistrationCallback {
 	@Override
-	public void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher) {
+	public void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, CommandBuildContext buildContext,
+	                             CommandManager.RegistrationEnvironment environment) {
 		var literalSubCommand = literal("config");
 
 		{
 			literalSubCommand.then(literal("reload")
 					.executes(ctx -> {
-						ctx.getSource().sendFeedback(new TranslatableText("inspecio.config.reloading").formatted(Formatting.GREEN));
+						ctx.getSource().sendFeedback(Text.translatable("inspecio.config.reloading").formatted(Formatting.GREEN));
 						Inspecio.reloadConfig();
 						return 0;
 					})
@@ -186,12 +187,12 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 	}
 
 	private static Text formatBoolean(boolean bool) {
-		return bool ? new LiteralText("true").formatted(Formatting.GREEN) : new LiteralText("false").formatted(Formatting.RED);
+		return bool ? Text.literal("true").formatted(Formatting.GREEN) : Text.literal("false").formatted(Formatting.RED);
 	}
 
 	private static Command<QuiltClientCommandSource> onInspecioCommand(LiteralCommandNode<QuiltClientCommandSource> config) {
-		var msg = new LiteralText("Inspecio").formatted(Formatting.GOLD)
-				.append(new LiteralText(" v" + Inspecio.getVersion() + "\n").formatted(Formatting.GRAY));
+		var msg = Text.literal("Inspecio").formatted(Formatting.GOLD)
+				.append(Text.literal(" v" + Inspecio.getVersion() + "\n").formatted(Formatting.GRAY));
 		buildHelpCommand(config, 0, msg);
 		return ctx -> {
 			ctx.getSource().sendFeedback(msg);
@@ -200,8 +201,8 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 	}
 
 	private static void buildHelpCommand(LiteralCommandNode<QuiltClientCommandSource> node, int step, MutableText text) {
-		text.append(new LiteralText('\n' + " ".repeat(step * 2) + "- ").formatted(Formatting.GRAY)
-				.append(new LiteralText(node.getLiteral()).formatted(Formatting.GOLD)));
+		text.append(Text.literal('\n' + " ".repeat(step * 2) + "- ").formatted(Formatting.GRAY)
+				.append(Text.literal(node.getLiteral()).formatted(Formatting.GOLD)));
 
 		for (var child : node.getChildren()) {
 			if (child instanceof LiteralCommandNode) {
@@ -215,7 +216,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 		var config = Inspecio.getConfig();
 		config.setJukeboxTooltipMode(value);
 		config.save();
-		context.getSource().sendFeedback(prefix("jukebox").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
+		context.getSource().sendFeedback(prefix("jukebox").append(Text.literal(value.toString()).formatted(Formatting.WHITE)));
 		return 0;
 	}
 
@@ -224,7 +225,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 		var config = Inspecio.getConfig();
 		config.getFoodConfig().setSaturationMode(value);
 		config.save();
-		context.getSource().sendFeedback(prefix("food/saturation").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
+		context.getSource().sendFeedback(prefix("food/saturation").append(Text.literal(value.toString()).formatted(Formatting.WHITE)));
 		return 0;
 	}
 
@@ -233,12 +234,12 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 		var config = Inspecio.getConfig();
 		config.setSignTooltipMode(value);
 		config.save();
-		context.getSource().sendFeedback(prefix("sign").append(new LiteralText(value.toString()).formatted(Formatting.WHITE)));
+		context.getSource().sendFeedback(prefix("sign").append(Text.literal(value.toString()).formatted(Formatting.WHITE)));
 		return 0;
 	}
 
 	private static MutableText prefix(String path) {
-		return new LiteralText(path).formatted(Formatting.GOLD).append(new LiteralText(": ").formatted(Formatting.GRAY));
+		return Text.literal(path).formatted(Formatting.GOLD).append(Text.literal(": ").formatted(Formatting.GRAY));
 	}
 
 	private static <T> Supplier<T> getter(Function<InspecioConfig, T> func) {
@@ -256,7 +257,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 			Text valueText;
 
 			if (value instanceof Boolean boolValue) valueText = formatBoolean(boolValue);
-			else valueText = new LiteralText(value.toString()).formatted(Formatting.WHITE);
+			else valueText = Text.literal(value.toString()).formatted(Formatting.WHITE);
 
 			context.getSource().sendFeedback(prefix(path).append(valueText));
 
@@ -286,7 +287,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 
 			Inspecio.getConfig().save();
 
-			context.getSource().sendFeedback(prefix(path).append(new LiteralText(String.valueOf(value)).formatted(Formatting.WHITE)));
+			context.getSource().sendFeedback(prefix(path).append(Text.literal(String.valueOf(value)).formatted(Formatting.WHITE)));
 
 			return 0;
 		};

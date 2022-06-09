@@ -17,6 +17,7 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import com.mojang.blaze3d.lighting.DiffuseLighting;
 import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.mixin.CameraAccessor;
 import io.github.queerbric.inspecio.mixin.EntityAccessor;
@@ -26,7 +27,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Bucketable;
@@ -82,7 +82,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		if (Math.max(entity.getWidth(), entity.getHeight()) > 1.0) {
 			size /= Math.max(entity.getWidth(), entity.getHeight());
 		}
-		DiffuseLighting.disableGuiDepthLighting();
+		DiffuseLighting.setupFlatGuiLighting();
 		matrices.push();
 		int yOffset = 16;
 		if (entity instanceof SquidEntity) {
@@ -116,7 +116,7 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		immediate.draw();
 		entityRenderDispatcher.setRenderShadows(true);
 		matrices.pop();
-		DiffuseLighting.enableGuiDepthLighting();
+		DiffuseLighting.setup3DGuiLighting();
 	}
 
 	protected void setupAngles(Entity entity, int age, int ageOffset, boolean spin, float defaultYaw) {

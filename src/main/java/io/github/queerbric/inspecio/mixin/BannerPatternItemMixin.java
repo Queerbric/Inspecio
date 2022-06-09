@@ -23,6 +23,8 @@ import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tag.TagKey;
+import net.minecraft.util.Holder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -31,7 +33,7 @@ import java.util.Optional;
 @Mixin(BannerPatternItem.class)
 public abstract class BannerPatternItemMixin extends Item {
 	@Shadow
-	public abstract BannerPattern getPattern();
+	public abstract TagKey<BannerPattern> getPattern();
 
 	public BannerPatternItemMixin(Settings settings) {
 		super(settings);

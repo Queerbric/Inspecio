@@ -17,6 +17,8 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.lighting.DiffuseLighting;
 import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
@@ -25,7 +27,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.block.entity.BannerBlockEntityRenderer;
@@ -33,30 +34,36 @@ import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Optional;
 
 public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final MinecraftClient client = MinecraftClient.getInstance();
-	private final BannerPattern pattern;
+	private final NbtList pattern;
 	private final ModelPart bannerField;
 
-	private BannerTooltipComponent(BannerPattern pattern) {
+	private BannerTooltipComponent(NbtList pattern) {
 		this.pattern = pattern;
 		this.bannerField = this.client.getEntityModelLoader().getModelPart(EntityModelLayers.BANNER).getChild("flag");
 	}
 
-	public static Optional<TooltipData> of(BannerPattern pattern) {
+	public static Optional<TooltipData> of(TagKey<BannerPattern> pattern) {
 		if (!Inspecio.getConfig().hasBannerPattern())
 			return Optional.empty();
-		return Optional.of(new BannerTooltipComponent(pattern));
+
+		var patternList = Registry.BANNER_PATTERN.getTag(pattern).map(ImmutableList::copyOf).orElse(ImmutableList.of());
+		var patterns = new BannerPattern.Patterns();
+
+		for (var p : patternList) {
+			patterns.add(p, DyeColor.WHITE);
+		}
+
+		return Optional.of(new BannerTooltipComponent(patterns.toNbt()));
 	}
 
 	@Override
@@ -76,10 +83,9 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
-		DiffuseLighting.disableGuiDepthLighting();
+		DiffuseLighting.setupFlatGuiLighting();
 		matrices.push();
 		matrices.translate(x + 8, y + 8, z);
-		NbtList listNbt = (new BannerPattern.Patterns()).add(this.pattern, DyeColor.WHITE).toNbt();
 		matrices.push();
 		matrices.translate(0.5, 16, 0);
 		matrices.scale(6, -6, 1);
@@ -87,12 +93,12 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		this.bannerField.pitch = 0.f;
 		this.bannerField.pivotY = -32.f;
-		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, listNbt);
+		var list = BannerBlockEntity.getPatternsFromNbt(DyeColor.GRAY, this.pattern);
 		BannerBlockEntityRenderer.renderCanvas(matrices, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
 				this.bannerField, ModelLoader.BANNER_BASE, true, list);
 		matrices.pop();
 		immediate.draw();
 		matrices.pop();
-		DiffuseLighting.enableGuiDepthLighting();
+		DiffuseLighting.setup3DGuiLighting();
 	}
 }
