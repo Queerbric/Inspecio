@@ -20,6 +20,7 @@ package io.github.queerbric.inspecio.tooltip;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
+import io.github.queerbric.inspecio.HiddenEffectMode;
 import io.github.queerbric.inspecio.Inspecio;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
 import it.unimi.dsi.fastutil.floats.FloatList;
@@ -36,6 +37,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
@@ -48,6 +51,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	private final FloatList chances = new FloatArrayList();
 	private boolean hidden = false;
 	private float multiplier;
+	private static final Identifier ALT_FONT_ID = new Identifier("minecraft", "alt"); 
 
 	public StatusEffectTooltipComponent(List<StatusEffectInstance> list, float multiplier) {
 		this.list = list;
@@ -66,12 +70,33 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 		this.hidden = true;
 	}
 
-	private String getHiddenText(int length) {
+	private Text getHiddenText() {
 		var effectsConfig = Inspecio.getConfig().getEffectsConfig();
-		if (effectsConfig.hasHiddenMotion()) {
-			return "§k" + "f".repeat(length);
+		Boolean hiddenMotion = effectsConfig.hasHiddenMotion();
+		HiddenEffectMode hiddenEffectMode = effectsConfig.getHiddenEffectMode();
+		Style style = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT ? Style.EMPTY.withFont(ALT_FONT_ID) : Style.EMPTY; 
+
+		if (hiddenMotion) {
+			return Text.literal("§kffffffff§r").setStyle(style);
+		} else if (hiddenEffectMode == HiddenEffectMode.ENCHANTMENT) {
+			return Text.literal("lostquasar").setStyle(style);
 		} else {
-			return "?".repeat(length);
+			return Text.literal("????????");
+		}
+	}
+	private Text getHiddenTime() {
+		var effectsConfig = Inspecio.getConfig().getEffectsConfig();
+		Boolean hiddenMotion = effectsConfig.hasHiddenMotion();
+		HiddenEffectMode hiddenEffectMode = effectsConfig.getHiddenEffectMode();
+		Style style = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT ? Style.EMPTY.withFont(ALT_FONT_ID) : Style.EMPTY; 
+		String timeColon = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT ? "i" : ":";
+
+		if (hiddenMotion) {
+			return Text.literal("§kf§r"+timeColon+"§kff§r").setStyle(style);
+		} else if (hiddenEffectMode == HiddenEffectMode.ENCHANTMENT) {
+			return Text.literal("oiaf").setStyle(style);
+		} else {
+			return Text.literal("?:??");
 		}
 	}
 
@@ -91,7 +116,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
 		if (this.hidden) {
-			return 26 + textRenderer.getWidth(this.getHiddenText(8));
+			return 26 + textRenderer.getWidth(this.getHiddenText());
 		}
 		int max = 64;
 		for (int i = 0; i < list.size(); i++) {
@@ -136,9 +161,9 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f model, Immediate immediate) {
 		if (this.hidden) {
-			textRenderer.draw(this.getHiddenText(8) + "§r", x + 24, y, 8355711, true,
+			textRenderer.draw(this.getHiddenText(), x + 24, y, 8355711, true,
 					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-			textRenderer.draw(this.getHiddenText(1) + "§r:" + this.getHiddenText(2) + "§r", x + 24, y + 10, 8355711, true,
+			textRenderer.draw(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
 					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		} else {
 			for (int i = 0; i < list.size(); i++) {

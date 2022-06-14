@@ -337,6 +337,7 @@ public class InspecioConfig {
 		public static boolean DEFAULT_FOOD = true;
 		public static boolean DEFAULT_HIDDEN_MOTION = true;
 		public static boolean DEFAULT_BEACON = true;
+		public static HiddenEffectMode DEFAULT_HIDDEN_EFFECTS_MODE = HiddenEffectMode.ENCHANTMENT;
 
 		public static final Codec<EffectsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				configEntry("effects/potions", DEFAULT_POTIONS, EffectsConfig::hasPotions),
@@ -344,6 +345,7 @@ public class InspecioConfig {
 				configEntry("effects/spectral_arrow", DEFAULT_SPECTRAL_ARROW, EffectsConfig::hasSpectralArrow),
 				configEntry("effects/food", DEFAULT_FOOD, EffectsConfig::hasFood),
 				configEntry("effects/hidden_motion", DEFAULT_HIDDEN_MOTION, EffectsConfig::hasHiddenMotion),
+				configEntry(HiddenEffectMode.CODEC, "effects/hidden_effect_mode", () -> DEFAULT_HIDDEN_EFFECTS_MODE, EffectsConfig::getHiddenEffectMode),
 				configEntry("effects/beacon", DEFAULT_BEACON, EffectsConfig::hasBeacon)
 		).apply(instance, EffectsConfig::new));
 
@@ -352,14 +354,16 @@ public class InspecioConfig {
 		private boolean spectralArrow;
 		private boolean food;
 		private boolean hiddenMotion;
+		private HiddenEffectMode hiddenEffectMode;
 		private boolean beacon;
 
-		public EffectsConfig(boolean potions, boolean tippedArrows, boolean spectralArrow, boolean food, boolean hiddenMotion, boolean beacon) {
+		public EffectsConfig(boolean potions, boolean tippedArrows, boolean spectralArrow, boolean food, boolean hiddenMotion, HiddenEffectMode hiddenEffectMode, boolean beacon) {
 			this.potions = potions;
 			this.tippedArrows = tippedArrows;
 			this.spectralArrow = spectralArrow;
 			this.food = food;
 			this.hiddenMotion = hiddenMotion;
+			this.hiddenEffectMode = hiddenEffectMode;
 			this.beacon = beacon;
 		}
 
@@ -403,6 +407,14 @@ public class InspecioConfig {
 			this.hiddenMotion = hiddenMotion;
 		}
 
+		public HiddenEffectMode getHiddenEffectMode() {
+			return this.hiddenEffectMode;
+		}
+	
+		public void setHiddenEffectMode(HiddenEffectMode hiddenEffectMode) {
+			this.hiddenEffectMode = hiddenEffectMode;
+		}
+
 		public boolean hasBeacon() {
 			return this.beacon;
 		}
@@ -412,7 +424,7 @@ public class InspecioConfig {
 		}
 
 		public static EffectsConfig defaultConfig() {
-			return new EffectsConfig(DEFAULT_POTIONS, DEFAULT_TIPPED_ARROWS, DEFAULT_SPECTRAL_ARROW, DEFAULT_FOOD, DEFAULT_HIDDEN_MOTION, DEFAULT_BEACON);
+			return new EffectsConfig(DEFAULT_POTIONS, DEFAULT_TIPPED_ARROWS, DEFAULT_SPECTRAL_ARROW, DEFAULT_FOOD, DEFAULT_HIDDEN_MOTION, DEFAULT_HIDDEN_EFFECTS_MODE, DEFAULT_BEACON);
 		}
 	}
 
