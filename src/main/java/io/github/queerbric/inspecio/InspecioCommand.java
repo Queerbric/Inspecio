@@ -94,6 +94,10 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 							.executes(onGetter("effects/hidden_motion", getter(cfg -> cfg.getEffectsConfig().hasHiddenMotion())))
 							.then(argument("value", BoolArgumentType.bool())
 									.executes(onBooleanSetter("effects/hidden_motion", setter((cfg, val) -> cfg.getEffectsConfig().setHiddenMotion(val)))))
+					).then(literal("hidden_effect_mode")
+						.executes(onGetter("hidden_effect_mode", getter(cfg -> cfg.getEffectsConfig().getHiddenEffectMode())))
+						.then(argument("value", HiddenEffectMode.HiddenEffectType.hiddenEffectMode())
+								.executes(InspecioCommand::onSetHiddenEffect))
 					).then(literal("beacon")
 							.executes(onGetter("effects/beacon", getter(cfg -> cfg.getEffectsConfig().hasHiddenMotion())))
 							.then(argument("value", BoolArgumentType.bool())
@@ -235,6 +239,15 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 		config.setSignTooltipMode(value);
 		config.save();
 		context.getSource().sendFeedback(prefix("sign").append(Text.literal(value.toString()).formatted(Formatting.WHITE)));
+		return 0;
+	}
+
+	private static int onSetHiddenEffect(CommandContext<QuiltClientCommandSource> context) {
+		var value = HiddenEffectMode.HiddenEffectType.getHiddenEffectMode(context, "value");
+		var config = Inspecio.getConfig().getEffectsConfig();
+		config.setHiddenEffectMode(value);
+		Inspecio.getConfig().save();
+		context.getSource().sendFeedback(prefix("effects/hidden_effect_mode").append(Text.literal(value.toString()).formatted(Formatting.WHITE)));
 		return 0;
 	}
 
