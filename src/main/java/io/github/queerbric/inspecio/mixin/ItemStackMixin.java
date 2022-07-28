@@ -83,9 +83,6 @@ public abstract class ItemStackMixin {
 			)
 	)
 	private void onGetTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
-		if (!context.isAdvanced())
-			return;
-
 		var tooltip = this.inspecio$tooltipList.get();
 		InspecioConfig.AdvancedTooltipsConfig advancedTooltipsConfig = Inspecio.getConfig().getAdvancedTooltipsConfig();
 

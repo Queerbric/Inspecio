@@ -27,8 +27,10 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.PrimitiveCodec;
-
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -46,9 +48,32 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public enum HiddenEffectMode {
-	OBFUSCATED,
-	ENCHANTMENT;
-	
+	OBFUSCATED {
+		@Override
+		public String getText(boolean isLong, boolean motion) {
+			return (motion ? "f" : "?").repeat(isLong ? 8 : 2);
+		}
+
+		@Override
+		public MutableText stylize(MutableText text, boolean motion) {
+			return motion ? text.formatted(Formatting.OBFUSCATED) : text;
+		}
+	},
+	ENCHANTMENT {
+		@Override
+		public String getText(boolean isLong, boolean motion) {
+			return isLong ? "lostquasar" : "na";
+		}
+
+		@Override
+		public MutableText stylize(MutableText text, boolean motion) {
+			text = text.styled(style -> style.withFont(ALT_FONT_ID));
+			return motion ? text.formatted(Formatting.OBFUSCATED) : text;
+		}
+	};
+
+	private static final Identifier ALT_FONT_ID = new Identifier("minecraft", "alt");
+
 	public static final PrimitiveCodec<HiddenEffectMode> CODEC = new PrimitiveCodec<>() {
 		@Override
 		public <T> DataResult<HiddenEffectMode> read(final DynamicOps<T> ops, final T input) {
@@ -67,9 +92,25 @@ public enum HiddenEffectMode {
 	};
 
 	/**
-	 * Returns the next hidden effect mode available.
+	 * Gets the text to be used.
 	 *
-	 * @return the next available hidden effect mode
+	 * @param isLong {@code true} if the text is long, or {@code false} otherwise
+	 * @param motion {@code true} if motion is allowed, or {@code false} otherwise
+	 * @return the text
+	 */
+	public abstract String getText(boolean isLong, boolean motion);
+
+	/**
+	 * Stylizes the given text.
+	 *
+	 * @param text the text to style
+	 * @param motion {@code true} if motion is allowed, or {@code false} otherwise
+	 * @return the stylized text
+	 */
+	public abstract MutableText stylize(MutableText text, boolean motion);
+
+	/**
+	 * {@return the next available hidden effect mode}
 	 */
 	public HiddenEffectMode next() {
 		var v = values();
@@ -120,7 +161,7 @@ public enum HiddenEffectMode {
 		public Collection<String> getExamples() {
 			return VALUES.stream().map(HiddenEffectMode::getName).collect(Collectors.toList());
 		}
-		
+
 		@Override
 		public HiddenEffectMode parse(StringReader reader) throws CommandSyntaxException {
 			var value = reader.readString();

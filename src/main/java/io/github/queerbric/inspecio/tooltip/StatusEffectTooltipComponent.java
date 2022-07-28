@@ -37,7 +37,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
-import net.minecraft.text.Style;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
@@ -51,7 +51,6 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	private final FloatList chances = new FloatArrayList();
 	private boolean hidden = false;
 	private float multiplier;
-	private static final Identifier ALT_FONT_ID = new Identifier("minecraft", "alt"); 
 
 	public StatusEffectTooltipComponent(List<StatusEffectInstance> list, float multiplier) {
 		this.list = list;
@@ -72,32 +71,25 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 
 	private Text getHiddenText() {
 		var effectsConfig = Inspecio.getConfig().getEffectsConfig();
-		Boolean hiddenMotion = effectsConfig.hasHiddenMotion();
+		boolean hiddenMotion = effectsConfig.hasHiddenMotion();
 		HiddenEffectMode hiddenEffectMode = effectsConfig.getHiddenEffectMode();
-		Style style = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT ? Style.EMPTY.withFont(ALT_FONT_ID) : Style.EMPTY; 
 
-		if (hiddenMotion) {
-			return Text.literal("§kffffffff§r").setStyle(style);
-		} else if (hiddenEffectMode == HiddenEffectMode.ENCHANTMENT) {
-			return Text.literal("lostquasar").setStyle(style);
-		} else {
-			return Text.literal("????????");
-		}
+		return hiddenEffectMode.stylize(Text.literal(hiddenEffectMode.getText(true, hiddenMotion)), hiddenMotion);
 	}
+
 	private Text getHiddenTime() {
 		var effectsConfig = Inspecio.getConfig().getEffectsConfig();
-		Boolean hiddenMotion = effectsConfig.hasHiddenMotion();
+		boolean hiddenMotion = effectsConfig.hasHiddenMotion();
 		HiddenEffectMode hiddenEffectMode = effectsConfig.getHiddenEffectMode();
-		Style style = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT ? Style.EMPTY.withFont(ALT_FONT_ID) : Style.EMPTY; 
-		String timeColon = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT ? "i" : ":";
 
-		if (hiddenMotion) {
-			return Text.literal("§kf§r"+timeColon+"§kff§r").setStyle(style);
-		} else if (hiddenEffectMode == HiddenEffectMode.ENCHANTMENT) {
-			return Text.literal("oiaf").setStyle(style);
-		} else {
-			return Text.literal("?:??");
-		}
+		String timeColon = hiddenEffectMode == HiddenEffectMode.ENCHANTMENT && hiddenMotion ? "i" : ":";
+
+		MutableText minutes = hiddenEffectMode.stylize(Text.literal(hiddenEffectMode.getText(false, hiddenMotion)), hiddenMotion);
+		Text seconds = minutes.copy();
+
+		return Text.empty().append(minutes)
+				.append(hiddenEffectMode.stylize(Text.literal(timeColon), false))
+				.append(seconds);
 	}
 
 	@Override
@@ -118,6 +110,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 		if (this.hidden) {
 			return 26 + textRenderer.getWidth(this.getHiddenText());
 		}
+
 		int max = 64;
 		for (int i = 0; i < list.size(); i++) {
 			StatusEffectInstance statusEffectInstance = list.get(i);

@@ -87,3 +87,9 @@
 
  - Updated Simplified Chinese translations ([#63](https://github.com/Queerbric/Inspecio/pull/63)).
  - Updated to Minecraft 1.19.
+
+## 1.5.0
+
+ - Added enchantment style effect for hidden effect ([#89](https://github.com/Queerbric/Inspecio/pull/89)).
+ - Removed the need to have advanced tooltips to see Repair Cost ([#81](https://github.com/Queerbric/Inspecio/issues/81)).
+ - Updated to Minecraft 1.19.1.
