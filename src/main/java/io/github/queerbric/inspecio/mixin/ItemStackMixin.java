@@ -77,10 +77,7 @@ public abstract class ItemStackMixin {
 
 	@Inject(
 			method = "getTooltip",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/item/ItemStack;isDamaged()Z"
-			)
+			at = @At(value = "RETURN")
 	)
 	private void onGetTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
 		var tooltip = this.inspecio$tooltipList.get();
