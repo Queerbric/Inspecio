@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "알 수 없는 쥬크 박스 툴팁 모드",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "알 수 없는 포화도 툴팁 모드",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "알 수 없는 표지판 툴팁 모드",
+
+  "inspecio.config.reloading": "환경설정 다시 불러오는 중...",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "차원: %s",
+  "inspecio.tooltip.lodestone_compass.target": "대상: %s",
+  "inspecio.tooltip.loot_table": "루트 테이블: %s",
+  "inspecio.tooltip.repair_cost": "수리 비용: %d"
+}
