@@ -81,6 +81,9 @@ public abstract class BlockItemMixin extends Item {
 		} else if (this.getBlock() instanceof JukeboxBlock) {
 			var data = JukeboxTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
+		} else if (this.getBlock() instanceof SpawnerBlock) {
+			var data = SpawnEntityTooltipComponent.ofMobSpawner(stack);
+			if (data.isPresent()) return data;
 		} else {
 			InspecioConfig.StorageContainerConfig config = containersConfig.forBlock(this.getBlock());
 			InventoryProvider.Context context = InventoryProvider.searchInventoryContextOf(stack, config);

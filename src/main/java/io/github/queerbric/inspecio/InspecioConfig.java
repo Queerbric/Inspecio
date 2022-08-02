@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.3.1
+ * @version 1.6.0
  * @since 1.0.0
  */
 // @TODO rework this to be more expandable?
@@ -407,7 +407,7 @@ public class InspecioConfig {
 		public HiddenEffectMode getHiddenEffectMode() {
 			return this.hiddenEffectMode;
 		}
-	
+
 		public void setHiddenEffectMode(HiddenEffectMode hiddenEffectMode) {
 			this.hiddenEffectMode = hiddenEffectMode;
 		}
@@ -428,7 +428,7 @@ public class InspecioConfig {
 	/**
 	 * Represents entities configuration.
 	 *
-	 * @version 1.1.0
+	 * @version 1.6.0
 	 * @since 1.0.0
 	 */
 	public static class EntitiesConfig {
@@ -436,24 +436,28 @@ public class InspecioConfig {
 
 		public static final Codec<EntitiesConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				configEntry(EntityConfig.CODEC, "entities/armor_stand", EntityConfig::defaultConfig, EntitiesConfig::getArmorStandConfig),
-				configEntry(EntityConfig.CODEC, "entities/bee", EntityConfig::defaultConfig, EntitiesConfig::getBeeConfig),
+				configEntry(BeeEntityConfig.CODEC, "entities/bee", BeeEntityConfig::defaultConfig, EntitiesConfig::getBeeConfig),
 				configEntry(EntityConfig.CODEC, "entities/fish_bucket", EntityConfig::defaultConfig, EntitiesConfig::getFishBucketConfig),
 				configEntry(EntityConfig.CODEC, "entities/spawn_egg", EntityConfig::defaultConfig, EntitiesConfig::getSpawnEggConfig),
+				configEntry(EntityConfig.CODEC, "entities/mob_spawner", EntityConfig::defaultConfig, EntitiesConfig::getMobSpawnerConfig),
 				Codec.INT.fieldOf("pufferfish_puff_state").orElse(DEFAULT_PUFF_STATE)
 						.forGetter(EntitiesConfig::getPufferFishPuffState)
 		).apply(instance, EntitiesConfig::new));
 
 		private final EntityConfig armorStandConfig;
-		private final EntityConfig beeConfig;
+		private final BeeEntityConfig beeConfig;
 		private final EntityConfig fishBucketConfig;
 		private final EntityConfig spawnEggConfig;
+		private final EntityConfig mobSpawnerConfig;
 		private int pufferFishPuffState;
 
-		public EntitiesConfig(EntityConfig armorStandConfig, EntityConfig beeConfig, EntityConfig fishBucketConfig, EntityConfig spawnEggConfig, int pufferFishPuffState) {
+		public EntitiesConfig(EntityConfig armorStandConfig, BeeEntityConfig beeConfig, EntityConfig fishBucketConfig, EntityConfig spawnEggConfig,
+		                      EntityConfig mobSpawnerConfig, int pufferFishPuffState) {
 			this.armorStandConfig = armorStandConfig;
 			this.beeConfig = beeConfig;
 			this.fishBucketConfig = fishBucketConfig;
 			this.spawnEggConfig = spawnEggConfig;
+			this.mobSpawnerConfig = mobSpawnerConfig;
 			this.setPufferFishPuffState(pufferFishPuffState);
 		}
 
@@ -461,7 +465,7 @@ public class InspecioConfig {
 			return this.armorStandConfig;
 		}
 
-		public EntityConfig getBeeConfig() {
+		public BeeEntityConfig getBeeConfig() {
 			return this.beeConfig;
 		}
 
@@ -473,6 +477,10 @@ public class InspecioConfig {
 			return this.spawnEggConfig;
 		}
 
+		public EntityConfig getMobSpawnerConfig() {
+			return this.mobSpawnerConfig;
+		}
+
 		public int getPufferFishPuffState() {
 			return this.pufferFishPuffState;
 		}
@@ -482,8 +490,8 @@ public class InspecioConfig {
 		}
 
 		public static EntitiesConfig defaultConfig() {
-			return new EntitiesConfig(EntityConfig.defaultConfig(), EntityConfig.defaultConfig(), EntityConfig.defaultConfig(), EntityConfig.defaultConfig(),
-					DEFAULT_PUFF_STATE);
+			return new EntitiesConfig(EntityConfig.defaultConfig(), BeeEntityConfig.defaultConfig(), EntityConfig.defaultConfig(), EntityConfig.defaultConfig(),
+					EntityConfig.defaultConfig(), DEFAULT_PUFF_STATE);
 		}
 	}
 
@@ -541,6 +549,43 @@ public class InspecioConfig {
 
 		public static EntityConfig defaultConfig() {
 			return new EntityConfig(DEFAULT_ENABLED, DEFAULT_ALWAYS_SHOW_NAME, DEFAULT_SPIN);
+		}
+	}
+
+	/**
+	 * Represents the configuration of tooltips relating to bee hives and bee nests.
+	 *
+	 * @version 1.6.0
+	 * @since 1.6.0
+	 */
+	public static class BeeEntityConfig extends EntityConfig {
+		public static final boolean DEFAULT_SHOW_HONEY_LEVEL = true;
+
+		public static final Codec<BeeEntityConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.BOOL.fieldOf("enabled").orElse(DEFAULT_ENABLED).forGetter(EntityConfig::isEnabled),
+				Codec.BOOL.fieldOf("always_show_name").orElse(DEFAULT_ALWAYS_SHOW_NAME)
+						.forGetter(EntityConfig::shouldAlwaysShowName),
+				Codec.BOOL.fieldOf("spin").orElse(DEFAULT_SPIN).forGetter(EntityConfig::shouldSpin),
+				Codec.BOOL.fieldOf("show_honey_level").orElse(DEFAULT_SHOW_HONEY_LEVEL).forGetter(BeeEntityConfig::shouldShowHoney)
+		).apply(instance, BeeEntityConfig::new));
+
+		private boolean showHoneyLevel;
+
+		public BeeEntityConfig(boolean enabled, boolean alwaysShowName, boolean spin, boolean showHoneyLevel) {
+			super(enabled, alwaysShowName, spin);
+			this.showHoneyLevel = showHoneyLevel;
+		}
+
+		public boolean shouldShowHoney() {
+			return this.showHoneyLevel;
+		}
+
+		public void setShowHoneyLevel(boolean showHoneyLevel) {
+			this.showHoneyLevel = showHoneyLevel;
+		}
+
+		public static BeeEntityConfig defaultConfig() {
+			return new BeeEntityConfig(DEFAULT_ENABLED, DEFAULT_ALWAYS_SHOW_NAME, DEFAULT_SPIN, DEFAULT_SHOW_HONEY_LEVEL);
 		}
 	}
 

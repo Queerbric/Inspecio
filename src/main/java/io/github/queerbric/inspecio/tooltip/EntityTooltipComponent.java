@@ -47,14 +47,14 @@ import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
  * Represents a tooltip component for entities.
  *
  * @author LambdAurora
- * @version 1.2.1
+ * @version 1.6.0
  * @since 1.0.0
  */
-public abstract class EntityTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
+public abstract class EntityTooltipComponent<C extends InspecioConfig.EntityConfig> implements ConvertibleTooltipData, TooltipComponent {
 	protected final MinecraftClient client = MinecraftClient.getInstance();
-	protected final InspecioConfig.EntityConfig config;
+	protected final C config;
 
-	protected EntityTooltipComponent(InspecioConfig.EntityConfig config) {
+	protected EntityTooltipComponent(C config) {
 		this.config = config;
 	}
 
@@ -99,21 +99,33 @@ public abstract class EntityTooltipComponent implements ConvertibleTooltipData, 
 		matrices.scale(1f, 1f, -1);
 		matrices.translate(0, 0, 1000);
 		matrices.scale(size, size, size);
+
 		var quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.f);
 		var quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(-10.f);
 		quaternion.hamiltonProduct(quaternion2);
 		matrices.multiply(quaternion);
+
+		if (this.client.cameraEntity != null) {
+			entity.setPos(this.client.cameraEntity.getX(), this.client.cameraEntity.getY(), this.client.cameraEntity.getZ());
+		}
 		this.setupAngles(entity, this.client.player.age, ageOffset, spin, defaultYaw);
+
 		var entityRenderDispatcher = this.client.getEntityRenderDispatcher();
 		quaternion2.conjugate();
 		((CameraAccessor) entityRenderDispatcher.camera).setYaw(0f);
 		entity.setFireTicks(((EntityAccessor) entity).getHasVisualFire() ? 1 : entity.getFireTicks());
 		entityRenderDispatcher.setRotation(quaternion2);
+
 		entityRenderDispatcher.setRenderShadows(false);
+
 		var immediate = this.client.getBufferBuilders().getEntityVertexConsumers();
 		entity.setCustomNameVisible(allowCustomName && entity.hasCustomName() && (this.config.shouldAlwaysShowName() || Screen.hasControlDown()));
-		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+
+		entityRenderDispatcher.render(entity, 0, 0, 0, 0.f, 1.f, matrices, immediate,
+				LightmapTextureManager.MAX_LIGHT_COORDINATE
+		);
 		immediate.draw();
+
 		entityRenderDispatcher.setRenderShadows(true);
 		matrices.pop();
 		DiffuseLighting.setup3DGuiLighting();

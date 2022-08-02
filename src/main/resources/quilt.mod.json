@@ -6,7 +6,7 @@
     "version": "${version}",
     "metadata": {
       "name": "Inspecio",
-      "description": "More tooltips.",
+      "description": "Adds a lot of fancy tooltips to existing items.",
       "contributors": {
         "LambdAurora": "Owner",
         "Emi": "Owner"

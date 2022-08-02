@@ -36,10 +36,10 @@ import java.util.Optional;
  * Represents an armor stand tooltip. Displays an armor stand and its armor.
  *
  * @author Zailer43
- * @version 1.3.1
+ * @version 1.6.0
  * @since 1.1.0
  */
-public class ArmorStandTooltipComponent extends EntityTooltipComponent {
+public class ArmorStandTooltipComponent extends EntityTooltipComponent<InspecioConfig.EntityConfig> {
 	private final Entity entity;
 
 	public ArmorStandTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {

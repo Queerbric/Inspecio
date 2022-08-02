@@ -96,12 +96,10 @@ Compact:
 
 #### Lodestone Compass
 
-Only shows up if Advanced Tooltip is enabled (`F3 + H`) and if the config option is enabled.
 ![lodestone_compass](images/lodestone_compass.png)
 
 #### Repair Cost
 
-Only shows up if Advanced Tooltip is enabled (`F3 + H`) and if the config option is enabled.
 ![repair_cost](images/repair_cost.png)
 
 ## Configuration
@@ -145,6 +143,7 @@ Here's the default configuration:
   "effects": {
     "food": true,
     "hidden_motion": true,
+    "hidden_effect_mode": "enchantment",
     "beacon": true,
     "potions": true,
     "tipped_arrows": true,
@@ -170,6 +169,12 @@ Here's the default configuration:
     "bee": {
       "enabled": true,
       "always_show_name": false,
+      "spin": true,
+      "show_honey_level": true
+    },
+    "mob_spawner": {
+      "enabled": true,
+      "always_show_name": false,
       "spin": true
     }
   },
@@ -180,51 +185,57 @@ Here's the default configuration:
 
 Here's a list of each configuration entries and what they do:
 
- - `armor` (`bool`) - if `true` then displays the armor bar on armor items, else `false`.
- - `banner_pattern` (`bool`) - if `true` then displays the pattern in the tooltip of banner patterns, else `false`.
+ - `armor` (`bool`) - `true` if the display of the armor bar on armor items is enabled, or `false` otherwise.
+ - `banner_pattern` (`bool`) - `true` if the display of the pattern in the tooltip of banner patterns is enabled, or `false` otherwise.
  - `advanced_tooltips`
-   - `repair_cost` (`bool`) - if `true`, will display the repair cost value if the game has advanced tooltips enabled (F3 + H).
-   - `lodestone_coords` (`bool`) - if `true`, will display the lodestone coordinates on lodestone compass if the game has advanced tooltips enabled (F3 + H).
+   - `repair_cost` (`bool`) - `true` if the display the repair cost value is enabled, or `false` otherwise.
+   - `lodestone_coords` (`bool`) - `true` if a display of the lodestone coordinates on lodestone compass is enabled, or `false` otherwise.
  - `containers`
-   - `campfire` (`bool`) - if `true` then displays a special tooltip on campfires which hold custom NBT.
+   - `campfire` (`bool`) - `true` if the display of a special tooltip on campfires which hold custom NBT is enabled, or `false` otherwise.
    - `storage`
-     - `enabled` (`bool`) - `true` if the inventory of storage items like chests, barrels, etc. should be shown in the tooltip, else `false`.
-     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, else `false`.
-     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, else `false`.
+     - `enabled` (`bool`) - `true` if the inventory of storage items like chests, barrels, etc. should be shown in the tooltip, or `false` otherwise.
+     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, or `false` otherwise.
+     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, or `false` otherwise.
    - `shulker_box`
-     - `enabled` (`bool`) - `true` if the inventory of shulker boxes should be shown in the tooltip, else `false`.
-     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, else `false`.
-     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, else `false`.
-     - `color` (`bool`) - `true` if the inventory tooltip should be colored the same as the shulker box, else `false`.
+     - `enabled` (`bool`) - `true` if the inventory of shulker boxes should be shown in the tooltip, or `false` otherwise.
+     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, or `false` otherwise.
+     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, or `false` otherwise.
+     - `color` (`bool`) - `true` if the inventory tooltip should be colored the same as the shulker box, or `false` otherwise.
  - `effects`
-   - `potions` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on potion items, else `false`.
-   - `tipped_arrows` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on tipped arrows, else `false`.
-   - `spectral_arrow` (`bool`) - if `true` then replaces the effect tooltips with a fancy one on spectral arrow item, else `false`.
-   - `food` (`bool`) - if `true` then adds effect tooltips on food items, else `false`.
-   - `hidden_motion` (`bool`) - if `true` then uses obfuscated text for hidden effect tooltips, else `false`.
-   - `beacon` (`bool`) - if `true` then add a tooltip with the primary and secondary effects (if they exist), otherwise it does nothing.
+   - `potions` (`bool`) - `true` if replacing the effect tooltips with a fancy one on potion items is enabled, or `false` otherwise.
+   - `tipped_arrows` (`bool`) - `true` if replacing the effect tooltips with a fancy one on tipped arrows is enabled, or `false` otherwise.
+   - `spectral_arrow` (`bool`) - `true` if replacing the effect tooltips with a fancy one on spectral arrow item is enabled, or `false` otherwise.
+   - `food` (`bool`) - `true` if adding effect tooltips on food items is enabled, or `false` otherwise.
+   - `hidden_motion` (`bool`) - `true` if using obfuscated text for hidden effect tooltips is enabled, or `false` otherwise.
+   - `hidden_effect_mode` (`string`) - `"enchantment"` will display the obfuscated text for hidden effect tooltips with the enchantment font, `"obfuscated"` will use the normal font.
+   - `beacon` (`bool`) - `true` if adding a tooltip with the primary and secondary effects (if they exist) is enabled, or `false` otherwise.
  - `entities`
    - `armor_stand`
-      - `enabled` (`bool`) - if `true` if armor stand tooltip should be displayed, else `false`.
-      - `always_show_name` (`bool`) - if `true` then always show name of armor stand, else `false` and use the CTRL key instead.
-      - `spin` (`bool`) - `true` if the armor stand spin in the tooltip, else `false`
+      - `enabled` (`bool`) - `true` if armor stand tooltip should be displayed, or `false` otherwise.
+      - `always_show_name` (`bool`) - `true` if the name of an armor stand should always be shown, or `false` otherwise and use the CTRL key instead.
+      - `spin` (`bool`) - `true` if the armor stand spin in the tooltip, or `false` otherwise
    - `bee`
-     - `enabled` (`bool`) - if `true` then displays bees if present in the beehive tooltip, else `false`.
-     - `always_show_name` (`bool`) - if `true` then always show name of bees, else `false` and use the CTRL key instead.
-     - `spin` (`bool`) - `true` if the bees spin in the tooltip, else `false`
+     - `enabled` (`bool`) - `true` if displaying the bees in the beehive tooltip is enabled, or `false` otherwise.
+     - `always_show_name` (`bool`) - `true` if the name of the bees should always be shown, or `false` otherwise and use the CTRL key instead.
+     - `spin` (`bool`) - `true` if the bees spin in the tooltip, or `false` otherwise.
+     - `show_honey_level` (`bool`) `true` if the honey level should be shown, or `false` otherwise.
    - `fish_bucket`
-     - `enabled` (`bool`) - `true` if fish bucket tooltips should display the entity they hold, else `false`.
-     - `spin` (`bool`) - `true` if the entity spins in the tooltip, else `false`.
+     - `enabled` (`bool`) - `true` if fish bucket tooltips should display the entity they hold, or `false` otherwise.
+     - `spin` (`bool`) - `true` if the entity spins in the tooltip, or `false` otherwise.
+   - `mob_spawner`
+     - `enabled` (`bool`) - `true` if mob spawner tooltips should display the entity they hold, or `false` otherwise.
+     - `always_show_name` (`bool`) - `true` if the name of the hold entity should always be shown, or `false` otherwise.
+     - `spin` (`bool`) - `true` if the entity spins in the tooltip, or `false` otherwise.
    - `spawn_egg`
-     - `enabled` (`bool`) - `true` if spawn egg tooltips should display the entity they hold, else `false`.
-     - `always_show_name` (`bool`) - `true` if the name of the hold entity should always be shown, else `false`.
-     - `spin` (`bool`) - `true` if the entity spins in the tooltip, else `false`.
+     - `enabled` (`bool`) - `true` if spawn egg tooltips should display the entity they hold, or `false` otherwise.
+     - `always_show_name` (`bool`) - `true` if the name of the hold entity should always be shown, or `false` otherwise.
+     - `spin` (`bool`) - `true` if the entity spins in the tooltip, or `false` otherwise.
    - `pufferfish_puff_state` (`int`) - the pufferfish puff state, between 0 and 2 inclusive.
  - `filled_map`
-   - `enabled` (`bool`) - `true` if filled map tooltips should display the map, else `false`.
-   - `show_player_icon` (`bool`) - `true` if show the player icon on filled map tooltips, else `false`.
+   - `enabled` (`bool`) - `true` if filled map tooltips should display the map, or `false` otherwise.
+   - `show_player_icon` (`bool`) - `true` if show the player icon on filled map tooltips, or `false` otherwise.
  - `food`
-   - `hunger` (`bool`) - `true` if hunger bar should be displayed on food items, else `false`.
+   - `hunger` (`bool`) - `true` if hunger bar should be displayed on food items, or `false` otherwise.
    - `saturation` (`string`) - `"disabled"` does nothing, `"merged"` adds the saturation bar as an outline to the hunger bar, `"separated"` adds its own saturation bar.
  - `jukebox` (`string`) - `"disabled"` does nothing, `"fast"` will add the inserted disc name if possible in the tooltip of jukeboxes, `"fancy"` will display the disc item as well.
  - `sign` (`string`) - `"disabled"` does nothing, `"fast"` will add the sign content as text tooltip if possible, `"fancy"` will add a fancy sign tooltip if possible.

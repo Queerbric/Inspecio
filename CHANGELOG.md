@@ -93,3 +93,10 @@
  - Added enchantment style effect for hidden effect ([#89](https://github.com/Queerbric/Inspecio/pull/89)).
  - Removed the need to have advanced tooltips to see Repair Cost ([#81](https://github.com/Queerbric/Inspecio/issues/81)).
  - Updated to Minecraft 1.19.1.
+
+## 1.6.0
+
+ - Added honey level in beehives/bee nests tooltips ([#71](https://github.com/Queerbric/Inspecio/issues/71)).
+ - Added Mob Spawner tooltip ([#91](https://github.com/Queerbric/Inspecio/issues/91)).
+ - Added Korean translations ([#92](https://github.com/Queerbric/Inspecio/pull/92)).
+ - Fixed fully advanced tooltips being required to see Repair Cost ([#81](https://github.com/Queerbric/Inspecio/issues/81) -> [#94](https://github.com/Queerbric/Inspecio/pull/94)).

@@ -4,6 +4,7 @@ plugins {
 	id 'maven-publish'
 	id 'org.quiltmc.gradle.licenser' version '1.1.+'
 	id 'com.modrinth.minotaur' version '2.+'
+	id 'com.matthewprenger.cursegradle' version '1.4.+'
 }
 
 group = project.maven_group
@@ -31,6 +32,30 @@ String parseReadme() {
 	def readme = (String) file('README.md').text
 	readme = readme.replaceAll(linkRegex, '![$1](https://raw.githubusercontent.com/Queerbric/Inspecio/1.17/$2)')
 	return readme
+}
+
+String fetchChangelog() {
+	def changelogText = file('CHANGELOG.md').text
+	def regexVersion = ((String) project.mod_version).replaceAll('\\.', /\\./).replaceAll('\\+', '\\+')
+	def changelogRegex = ~"###? ${regexVersion}\\n\\n(( *- .+\\n)+)"
+	def matcher = changelogText =~ changelogRegex
+
+	if (matcher.find()) {
+		String changelogContent = matcher.group(1)
+
+		def changelogLines = changelogText.split('\n')
+		def linkRefRegex = ~'^\\[([A-z0-9 _\\-/+.]+)]: '
+		for (int i = changelogLines.length - 1; i > 0; i--) {
+			def line = changelogLines[i]
+			if ((line =~ linkRefRegex).find())
+				changelogContent += '\n' + line
+			else break
+		}
+
+		return changelogContent
+	} else {
+		return null
+	}
 }
 
 repositories {
@@ -106,23 +131,9 @@ modrinth {
 	syncBodyFrom = parseReadme()
 
 	// Changelog fetching
-	def changelogText = file('CHANGELOG.md').text
-	def regexVersion = ((String) project.mod_version).replaceAll('\\.', /\\./).replaceAll('\\+', '\\+')
-	def changelogRegex = ~"###? ${regexVersion}\\n\\n(( *- .+\\n)+)"
-	def matcher = changelogText =~ changelogRegex
+	def changelogContent = fetchChangelog()
 
-	if (matcher.find()) {
-		def changelogContent = matcher.group(1)
-
-		def changelogLines = changelogText.split('\n')
-		def linkRefRegex = ~'^\\[([A-z0-9 _\\-/+.]+)]: '
-		for (int i = changelogLines.length - 1; i > 0; i--) {
-			def line = changelogLines[i]
-			if ((line =~ linkRefRegex).find())
-				changelogContent += '\n' + line
-			else break
-		}
-
+	if (changelogContent) {
 		changelog = changelogContent
 	} else {
 		afterEvaluate {
@@ -130,6 +141,40 @@ modrinth {
 		}
 	}
 }
+
+curseforge {
+	if (System.getenv("CURSEFORGE_TOKEN")) {
+		apiKey = System.getenv("CURSEFORGE_TOKEN")
+	}
+
+	project {
+		id = project.curseforge_id
+		releaseType = isMCVersionNonRelease() ? "beta" : "release"
+		addGameVersion project.minecraft_version
+		addGameVersion "Quilt"
+
+		// Changelog fetching
+		def changelogContent = fetchChangelog()
+
+		if (changelogContent) {
+			changelog = changelogContent.replaceAll("\\[(.+?)]\\((.+?)\\)", '<a href="$2">$1</a>') // Because CF doesn't understand markdown...
+		} else {
+			afterEvaluate {
+				uploadTask.setEnabled(false)
+			}
+		}
+
+		mainArtifact(remapJar) {
+			displayName = "Inspecio ${project.mod_version} (${getMCVersionString()})"
+		}
+
+		afterEvaluate {
+			uploadTask.setGroup('publishing')
+			uploadTask.dependsOn("remapJar")
+		}
+	}
+}
+tasks.curseforge.setGroup('publishing')
 
 // configure the maven publication
 publishing {

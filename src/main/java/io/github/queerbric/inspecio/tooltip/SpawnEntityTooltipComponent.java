@@ -28,12 +28,17 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.MobSpawnerLogic;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 
-public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
+public class SpawnEntityTooltipComponent extends EntityTooltipComponent<InspecioConfig.EntityConfig> {
 	private final Entity entity;
 
 	public SpawnEntityTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {
@@ -51,6 +56,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 		if (entity != null) {
 			adjustEntity(entity, itemNbt, entitiesConfig);
 			var itemEntityNbt = itemNbt.getCompound("EntityTag").copy();
+
 			if (!itemEntityNbt.contains("VillagerData")) {
 				var villagerData = new NbtCompound();
 				villagerData.putString("profession", "minecraft:none");
@@ -58,6 +64,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 				villagerData.putString("type", "minecraft:plains");
 				itemEntityNbt.put("VillagerData", villagerData);
 			}
+
 			if (itemEntityNbt.contains(Entity.ID_KEY, NbtElement.STRING_TYPE)) { // The spawn egg specifies its own entity type.
 				var id = itemEntityNbt.getString(Entity.ID_KEY);
 				if (id.startsWith("minecraft:")) {
@@ -75,6 +82,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 					}
 				}
 			}
+
 			var entityTag = entity.writeNbt(new NbtCompound());
 			var uuid = entity.getUuid();
 			entityTag.copyFrom(itemEntityNbt);
@@ -82,6 +90,33 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent {
 			entity.readNbt(entityTag);
 			return Optional.of(new SpawnEntityTooltipComponent(entitiesConfig.getSpawnEggConfig(), entity));
 		}
+
+		return Optional.empty();
+	}
+
+	public static Optional<TooltipData> ofMobSpawner(ItemStack stack) {
+		var entitiesConfig = Inspecio.getConfig().getEntitiesConfig();
+		if (!entitiesConfig.getMobSpawnerConfig().isEnabled())
+			return Optional.empty();
+
+		var nbt = BlockItem.getBlockEntityNbtFromStack(stack);
+		if (nbt == null)
+			return Optional.empty();
+
+		var client = MinecraftClient.getInstance();
+
+		var logic = new MobSpawnerLogic() {
+			@Override
+			public void sendStatus(World world, BlockPos pos, int eventType) {
+			}
+		};
+		logic.readNbt(client.world, client.player.getBlockPos(), nbt);
+
+		var entity = logic.getRenderedEntity(client.world);
+		if (entity != null) {
+			return Optional.of(new SpawnEntityTooltipComponent(entitiesConfig.getMobSpawnerConfig(), entity));
+		}
+
 		return Optional.empty();
 	}
 

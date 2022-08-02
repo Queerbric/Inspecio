@@ -35,10 +35,10 @@ import java.util.Optional;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.3.1
+ * @version 1.6.0
  * @since 1.0.0
  */
-public class EntityBucketTooltipComponent extends EntityTooltipComponent {
+public class EntityBucketTooltipComponent extends EntityTooltipComponent<InspecioConfig.EntityConfig> {
 	private final Entity entity;
 
 	private EntityBucketTooltipComponent(InspecioConfig.EntityConfig config, Entity entity) {

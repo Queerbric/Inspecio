@@ -17,10 +17,13 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
+import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -29,9 +32,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.*;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +44,19 @@ import java.util.function.Function;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.3.1
+ * @version 1.6.0
  * @since 1.0.0
  */
-public class BeesTooltipComponent extends EntityTooltipComponent {
-	private final List<Bee> bees = new ArrayList<>();
+public class BeesTooltipComponent extends EntityTooltipComponent<InspecioConfig.BeeEntityConfig> {
+	private static final Identifier HONEY_LEVEL_TEXTURE = new Identifier(Inspecio.NAMESPACE, "textures/tooltips/honey_level.png");
 
-	public BeesTooltipComponent(InspecioConfig.EntityConfig config, NbtList bees) {
+	private final List<Bee> bees = new ArrayList<>();
+	private final int honeyLevel;
+
+	public BeesTooltipComponent(InspecioConfig.BeeEntityConfig config, int honeyLevel, NbtList bees) {
 		super(config);
+		this.honeyLevel = honeyLevel;
+
 		bees.stream().map(nbt -> (NbtCompound) nbt).forEach(nbt -> {
 			var bee = nbt.getCompound("EntityData");
 			bee.remove("UUID");
@@ -64,37 +71,78 @@ public class BeesTooltipComponent extends EntityTooltipComponent {
 
 	public static Optional<TooltipData> of(ItemStack stack) {
 		var config = Inspecio.getConfig().getEntitiesConfig().getBeeConfig();
-		if (!config.isEnabled())
+		if (!config.isEnabled() && !config.shouldShowHoney())
 			return Optional.empty();
+
+		int honeyLevel = 0;
+
+		var stateNbt = stack.getSubNbt(BlockItem.BLOCK_STATE_TAG_KEY);
+		if (stateNbt != null) {
+			NbtElement honeyLevelNbt = stateNbt.get(BeehiveBlock.HONEY_LEVEL.getName());
+
+			if (honeyLevelNbt instanceof NbtInt nbtInt) {
+				honeyLevel = nbtInt.intValue();
+			} else if (honeyLevelNbt instanceof NbtString nbtString) {
+				try {
+					honeyLevel = Integer.parseInt(nbtString.asString());
+				} catch (NumberFormatException e) {
+					// ignored
+				}
+			}
+		}
+
 		var nbt = BlockItem.getBlockEntityNbtFromStack(stack);
-		if (nbt == null || !nbt.contains(BeehiveBlockEntity.BEES_KEY, NbtElement.LIST_TYPE))
+		if ((nbt == null || !nbt.contains(BeehiveBlockEntity.BEES_KEY, NbtElement.LIST_TYPE)) && !config.shouldShowHoney())
 			return Optional.empty();
-		var bees = nbt.getList(BeehiveBlockEntity.BEES_KEY, NbtElement.COMPOUND_TYPE);
-		if (!bees.isEmpty())
-			return Optional.of(new BeesTooltipComponent(config, bees));
+
+		var bees = nbt == null || !config.isEnabled() ? new NbtList() : nbt.getList(BeehiveBlockEntity.BEES_KEY, NbtElement.COMPOUND_TYPE);
+		if (!bees.isEmpty() || config.shouldShowHoney())
+			return Optional.of(new BeesTooltipComponent(config, honeyLevel, bees));
+
 		return Optional.empty();
 	}
 
 	@Override
 	public int getHeight() {
-		return this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 32 : 24);
+		if (this.bees.isEmpty()) {
+			return this.config.shouldShowHoney() ? 12 : 0;
+		} else {
+			return (this.shouldRenderCustomNames() ? 32 : 24) + (this.config.shouldShowHoney() ? 16 : 0);
+		}
 	}
 
 	@Override
 	public int getWidth(TextRenderer textRenderer) {
-		return this.bees.size() * 24;
+		return Math.max(this.bees.size() * 26, (this.config.shouldShowHoney() ? 52 : 0));
 	}
 
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
 		matrices.push();
-		matrices.translate(2, 4, z);
-		int xOffset = x;
-		for (var bee : this.bees) {
-			this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee(), bee.ticksInHive(),
-					this.config.shouldSpin(), true);
-			xOffset += 26;
+
+		if (!this.bees.isEmpty()) {
+			matrices.translate(2, 4, z);
+
+			int xOffset = x;
+			for (var bee : this.bees) {
+				this.renderEntity(matrices, xOffset, y + (this.shouldRenderCustomNames() ? 8 : 0), bee.bee(), bee.ticksInHive(),
+						this.config.shouldSpin(), true);
+				xOffset += 26;
+			}
 		}
+
+		if (config.shouldShowHoney()) {
+			matrices.translate(x, y + (this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 32 : 24)), 0);
+			matrices.scale(2, 2, 1);
+
+			RenderSystem.setShaderTexture(0, HONEY_LEVEL_TEXTURE);
+			DrawableHelper.drawTexture(matrices, 0, 0, 0, 0, 0, 26, 5, 32, 16);
+
+			if (honeyLevel != 0) {
+				DrawableHelper.drawTexture(matrices, 0, 0, z, 0, 5, Math.min(25, honeyLevel * 5 + 1), 6, 32, 16);
+			}
+		}
+
 		matrices.pop();
 	}
 
