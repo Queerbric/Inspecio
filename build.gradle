@@ -153,12 +153,15 @@ curseforge {
 		releaseType = isMCVersionNonRelease() ? "beta" : "release"
 		addGameVersion project.minecraft_version
 		addGameVersion "Quilt"
+		addGameVersion "Java 17"
+		addGameVersion "Java 18"
 
 		// Changelog fetching
 		def changelogContent = fetchChangelog()
 
 		if (changelogContent) {
-			changelog = changelogContent.replaceAll("\\[(.+?)]\\((.+?)\\)", '<a href="$2">$1</a>') // Because CF doesn't understand markdown...
+			changelogType = 'markdown'
+			changelog = 'Changelog:\n\n' + changelogContent // Because CF doesn't understand markdown...
 		} else {
 			afterEvaluate {
 				uploadTask.setEnabled(false)
@@ -167,6 +170,10 @@ curseforge {
 
 		mainArtifact(remapJar) {
 			displayName = "Inspecio ${project.mod_version} (${getMCVersionString()})"
+
+			relations {
+				embeddedLibrary 'qsl'
+			}
 		}
 
 		afterEvaluate {
