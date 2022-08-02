@@ -161,7 +161,7 @@ curseforge {
 
 		if (changelogContent) {
 			changelogType = 'markdown'
-			changelog = 'Changelog:\n\n' + changelogContent // Because CF doesn't understand markdown...
+			changelog = 'Changelog:\n\n' + changelogContent
 		} else {
 			afterEvaluate {
 				uploadTask.setEnabled(false)
