@@ -30,7 +30,7 @@ String parseReadme() {
 	def linkRegex = /!\[([A-z_ ]+)]\((images\/[A-z.\/_]+)\)/
 
 	def readme = (String) file('README.md').text
-	readme = readme.replaceAll(linkRegex, '![$1](https://raw.githubusercontent.com/Queerbric/Inspecio/1.17/$2)')
+	readme = readme.replaceAll(linkRegex, '![$1](https://raw.githubusercontent.com/Queerbric/Inspecio/1.19/$2)')
 	return readme
 }
 
@@ -141,6 +141,7 @@ modrinth {
 		}
 	}
 }
+tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 
 curseforge {
 	if (System.getenv("CURSEFORGE_TOKEN")) {
