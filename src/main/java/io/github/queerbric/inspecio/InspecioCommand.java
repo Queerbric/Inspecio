@@ -43,7 +43,7 @@ import static org.quiltmc.qsl.command.api.client.ClientCommandManager.literal;
 public final class InspecioCommand implements ClientCommandRegistrationCallback {
 	@Override
 	public void registerCommands(CommandDispatcher<QuiltClientCommandSource> dispatcher, CommandBuildContext buildContext,
-	                             CommandManager.RegistrationEnvironment environment) {
+			CommandManager.RegistrationEnvironment environment) {
 		var literalSubCommand = literal("config");
 
 		{
@@ -73,6 +73,12 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 									.then(argument("value", BoolArgumentType.bool())
 											.executes(onBooleanSetter("containers/shulker_box/color",
 													setter((cfg, val) -> cfg.getContainersConfig().getShulkerBoxConfig().setColor(val)))))))
+					.then(initContainer("chiseled_bookshelf", cfg -> cfg.getContainersConfig().getChiseledBookshelfConfig())
+							.then(literal("block_render")
+									.executes(onGetter("containers/chiseled_bookshelf/block_render", getter(cfg -> cfg.getContainersConfig().getChiseledBookshelfConfig().hasBlockRender())))
+									.then(argument("value", BoolArgumentType.bool())
+											.executes(onBooleanSetter("containers/chiseled_bookshelf/block_render",
+													setter((cfg, val) -> cfg.getContainersConfig().getChiseledBookshelfConfig().setBlockRender(val)))))))
 			).then(literal("effects")
 					.then(literal("potions")
 							.executes(onGetter("effects/potions", getter(cfg -> cfg.getEffectsConfig().hasPotions())))
@@ -164,7 +170,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 	}
 
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> initContainer(String name,
-	                                                                              Function<InspecioConfig, InspecioConfig.StorageContainerConfig> containerGetter) {
+			Function<InspecioConfig, InspecioConfig.StorageContainerConfig> containerGetter) {
 		var prefix = "containers/" + name;
 		return literal(name)
 				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.getConfig()).isEnabled()))
@@ -181,7 +187,7 @@ public final class InspecioCommand implements ClientCommandRegistrationCallback 
 	}
 
 	private static LiteralArgumentBuilder<QuiltClientCommandSource> initEntity(String name,
-	                                                                           Function<InspecioConfig, InspecioConfig.EntityConfig> containerGetter) {
+			Function<InspecioConfig, InspecioConfig.EntityConfig> containerGetter) {
 		var prefix = "entities/" + name;
 		return literal(name)
 				.executes(onGetter(prefix, () -> containerGetter.apply(Inspecio.getConfig()).isEnabled()))

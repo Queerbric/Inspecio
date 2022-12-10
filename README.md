@@ -138,6 +138,12 @@ Here's the default configuration:
       "compact": false,
       "loot_table": true,
       "color": true
+    },
+    "chiseled_bookshelf": {
+      "enabled": true,
+      "compact": false,
+      "loot_table": true,
+      "block_render": true
     }
   },
   "effects": {
@@ -201,6 +207,11 @@ Here's a list of each configuration entries and what they do:
      - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, or `false` otherwise.
      - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, or `false` otherwise.
      - `color` (`bool`) - `true` if the inventory tooltip should be colored the same as the shulker box, or `false` otherwise.
+   - `chiseled_bookshelf`
+     - `enabled` (`bool`) - `true` if the inventory of chiseled bookshelves should be shown in the tooltip, or `false` otherwise.
+     - `compact` (`bool`) - `true` if the inventory should be compacted to take as little space as possible, or `false` otherwise.
+     - `loot_table` (`bool`) - `true` if the loot table identifier should be displayed in the tooltip if specified, or `false` otherwise.
+     - `block_render` (`bool`) - `true` if the tooltip of chiseled bookshelves should display the block form instead of a standard inventory, or `false` otherwise.
  - `effects`
    - `potions` (`bool`) - `true` if replacing the effect tooltips with a fancy one on potion items is enabled, or `false` otherwise.
    - `tipped_arrows` (`bool`) - `true` if replacing the effect tooltips with a fancy one on tipped arrows is enabled, or `false` otherwise.

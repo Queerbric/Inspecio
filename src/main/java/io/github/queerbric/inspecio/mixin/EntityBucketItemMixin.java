@@ -23,12 +23,14 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.EntityBucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Optional;
 
+@ClientOnly
 @Mixin(EntityBucketItem.class)
 public abstract class EntityBucketItemMixin extends Item {
 	@Shadow

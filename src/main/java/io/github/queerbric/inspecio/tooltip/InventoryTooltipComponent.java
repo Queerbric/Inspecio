@@ -66,7 +66,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		if (inventory.stream().allMatch(ItemStack::isEmpty))
 			return Optional.empty();
 
-		int columns = Math.min(inventory.size() % 3 == 0 ? inventory.size() / 3 : inventory.size(), 9);
+		int columns = Math.min(context.columns(), 9);
 
 		if (compact) {
 			var compactedInventory = new ArrayList<ItemStack>();

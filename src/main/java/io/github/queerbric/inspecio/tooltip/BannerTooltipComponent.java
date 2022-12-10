@@ -35,9 +35,9 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Optional;
@@ -56,7 +56,7 @@ public class BannerTooltipComponent implements ConvertibleTooltipData, TooltipCo
 		if (!Inspecio.getConfig().hasBannerPattern())
 			return Optional.empty();
 
-		var patternList = Registry.BANNER_PATTERN.getTag(pattern).map(ImmutableList::copyOf).orElse(ImmutableList.of());
+		var patternList = Registries.BANNER_PATTERN.getTag(pattern).map(ImmutableList::copyOf).orElse(ImmutableList.of());
 		var patterns = new BannerPattern.Patterns();
 
 		for (var p : patternList) {

@@ -18,10 +18,12 @@
 package io.github.queerbric.inspecio.mixin;
 
 import net.minecraft.entity.ItemEntity;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+@ClientOnly
 @Mixin(ItemEntity.class)
 public interface ItemEntityAccessor {
 	@Accessor

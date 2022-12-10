@@ -18,9 +18,11 @@
 package io.github.queerbric.inspecio.mixin;
 
 import net.minecraft.entity.Entity;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+@ClientOnly
 @Mixin(Entity.class)
 public interface EntityAccessor {
 	@Accessor("touchingWater")

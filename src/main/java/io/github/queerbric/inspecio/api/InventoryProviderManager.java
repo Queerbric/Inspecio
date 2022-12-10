@@ -25,12 +25,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @ApiStatus.Internal
 final class InventoryProviderManager {
 	static final Map<Item, InventoryProvider> MAPPED_PROVIDERS = new Object2ObjectOpenHashMap<>();

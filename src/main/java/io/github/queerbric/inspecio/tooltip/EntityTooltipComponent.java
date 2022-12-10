@@ -19,10 +19,7 @@ package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.lighting.DiffuseLighting;
 import io.github.queerbric.inspecio.InspecioConfig;
-import io.github.queerbric.inspecio.mixin.CameraAccessor;
-import io.github.queerbric.inspecio.mixin.EntityAccessor;
-import io.github.queerbric.inspecio.mixin.ItemEntityAccessor;
-import io.github.queerbric.inspecio.mixin.WitherEntityAccessor;
+import io.github.queerbric.inspecio.mixin.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,7 +37,7 @@ import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.Axis;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 /**
@@ -100,9 +97,9 @@ public abstract class EntityTooltipComponent<C extends InspecioConfig.EntityConf
 		matrices.translate(0, 0, 1000);
 		matrices.scale(size, size, size);
 
-		var quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.f);
-		var quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(-10.f);
-		quaternion.hamiltonProduct(quaternion2);
+		var quaternion = Axis.Z_POSITIVE.rotationDegrees(180.f);
+		var quaternion2 = Axis.X_POSITIVE.rotationDegrees(-10.f);
+		quaternion.mul(quaternion2);
 		matrices.multiply(quaternion);
 
 		if (this.client.cameraEntity != null) {
@@ -161,9 +158,9 @@ public abstract class EntityTooltipComponent<C extends InspecioConfig.EntityConf
 			bucketable.copyDataFromNbt(itemNbt);
 			if (entity instanceof PufferfishEntity pufferfish) {
 				pufferfish.setPuffState(config.getPufferFishPuffState());
-			} else if (entity instanceof TropicalFishEntity tropicalFish) {
+			} else if (entity instanceof TropicalFishEntityAccessor tropicalFish) {
 				if (itemNbt.contains("BucketVariantTag", NbtElement.INT_TYPE)) {
-					tropicalFish.setVariant(itemNbt.getInt("BucketVariantTag"));
+					tropicalFish.invokeSetVariantId(itemNbt.getInt(TropicalFishEntity.BUCKET_VARIANT_TAG_KEY));
 				}
 			}
 		}

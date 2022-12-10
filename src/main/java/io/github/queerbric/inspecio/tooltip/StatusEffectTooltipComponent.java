@@ -40,7 +40,7 @@ import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.List;
@@ -145,7 +145,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				StatusEffectInstance statusEffectInstance = list.get(i);
 				StatusEffect statusEffect = statusEffectInstance.getEffectType();
 				var sprite = statusEffectSpriteManager.getSprite(statusEffect);
-				RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+				RenderSystem.setShaderTexture(0, sprite.getId());
 				DrawableHelper.drawSprite(matrices, x, y + i * 20, z, 18, 18, sprite);
 			}
 		}
@@ -154,9 +154,9 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f model, Immediate immediate) {
 		if (this.hidden) {
-			textRenderer.draw(this.getHiddenText(), x + 24, y, 8355711, true,
+			textRenderer.m_mrvofiwb(this.getHiddenText(), x + 24, y, 8355711, true,
 					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-			textRenderer.draw(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
+			textRenderer.m_mrvofiwb(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
 					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		} else {
 			for (int i = 0; i < list.size(); i++) {
@@ -170,18 +170,18 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 					off += 5;
 				}
 				Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
-				textRenderer.draw(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
+				textRenderer.m_etfbxupi(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
 						true, model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				if (statusEffectInstance.getDuration() > 1) {
 					String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
 					if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 						duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
 					}
-					textRenderer.draw(duration, x + 24, y + i * 20 + 10, 8355711, true,
+					textRenderer.m_etfbxupi(duration, x + 24, y + i * 20 + 10, 8355711, true,
 							model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 					String chance = (int) (this.chances.getFloat(i) * 100f) + "%";
-					textRenderer.draw(chance, x + 24, y + i * 20 + 10, 8355711, true,
+					textRenderer.m_etfbxupi(chance, x + 24, y + i * 20 + 10, 8355711, true,
 							model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				}
 			}

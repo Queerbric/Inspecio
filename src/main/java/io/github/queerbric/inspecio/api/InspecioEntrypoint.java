@@ -17,13 +17,12 @@
 
 package io.github.queerbric.inspecio.api;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 /**
  * Represents the Inspecio entrypoint, useful to use the API stuff of Inspecio.
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public interface InspecioEntrypoint {
 	void onInspecioInitialized();
 }

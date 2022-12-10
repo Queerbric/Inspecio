@@ -31,13 +31,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.random.LegacySimpleRandom;
+import net.minecraft.util.random.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -53,13 +55,17 @@ import java.util.function.Consumer;
 /**
  * Represents the Inspecio mod.
  *
- * @version 1.3.1
+ * @version 1.7.0
  * @since 1.0.0
  */
 public class Inspecio implements ClientModInitializer {
 	public static final String NAMESPACE = "inspecio";
 	private static final Logger LOGGER = LogManager.getLogger(NAMESPACE);
-	public static final TagKey<Item> HIDDEN_EFFECTS_TAG = QuiltTagKey.of(Registry.ITEM_KEY, new Identifier(NAMESPACE, "hidden_effects"), TagType.CLIENT_FALLBACK);
+	public static final TagKey<Item> HIDDEN_EFFECTS_TAG = QuiltTagKey.of(
+			RegistryKeys.ITEM, new Identifier(NAMESPACE, "hidden_effects"),
+			TagType.CLIENT_FALLBACK
+	);
+	public static final RandomGenerator COMMON_RANDOM = new LegacySimpleRandom(System.currentTimeMillis());
 	private static InspecioConfig config = InspecioConfig.defaultConfig();
 	private static ModContainer mod;
 
@@ -77,10 +83,8 @@ public class Inspecio implements ClientModInitializer {
 				var nbt = BlockItem.getBlockEntityNbtFromStack(stack);
 				if (nbt == null) return null;
 
-				DefaultedList<ItemStack> inventory = DefaultedList.ofSize(getInvSizeFor(stack), ItemStack.EMPTY);
-				Inventories.readNbt(nbt, inventory);
-				if (inventory.stream().allMatch(ItemStack::isEmpty))
-					return null;
+				var inventory = readInventory(nbt, getInvSizeFor(stack));
+				if (inventory == null) return null;
 
 				return new InventoryProvider.Context(inventory, color);
 			}
@@ -218,5 +222,31 @@ public class Inspecio implements ClientModInitializer {
 				return new StatusEffectInstance(effect, 200, 0);
 		}
 		return null;
+	}
+
+	/**
+	 * Reads the inventory from the given NBT.
+	 *
+	 * @param nbt the NBT to read
+	 * @param size the size of the inventory
+	 * @return {@code null} if the inventory is empty, or the inventory otherwise
+	 */
+	public static @Nullable DefaultedList<ItemStack> readInventory(NbtCompound nbt, int size) {
+		var inventory = DefaultedList.ofSize(size, ItemStack.EMPTY);
+		Inventories.readNbt(nbt, inventory);
+
+		boolean empty = true;
+		for (var item : inventory) {
+			if (!item.isEmpty()) {
+				empty = false;
+				break;
+			}
+		}
+
+		if (empty) {
+			return null;
+		}
+
+		return inventory;
 	}
 }

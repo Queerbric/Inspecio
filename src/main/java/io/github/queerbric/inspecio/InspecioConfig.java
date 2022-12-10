@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.6.0
+ * @version 1.7.0
  * @since 1.0.0
  */
 // @TODO rework this to be more expandable?
@@ -91,14 +91,14 @@ public class InspecioConfig {
 	private final AdvancedTooltipsConfig advancedTooltipsConfig;
 
 	public InspecioConfig(boolean armor, boolean bannerPattern,
-	                      ContainersConfig containersConfig,
-	                      EffectsConfig effectsConfig,
-	                      EntitiesConfig entitiesConfig,
-	                      FilledMapConfig filledMapConfig,
-	                      FoodConfig foodConfig,
-	                      JukeboxTooltipMode jukeboxTooltipMode,
-	                      SignTooltipMode signTooltipMode,
-	                      AdvancedTooltipsConfig advancedTooltipsConfig) {
+			ContainersConfig containersConfig,
+			EffectsConfig effectsConfig,
+			EntitiesConfig entitiesConfig,
+			FilledMapConfig filledMapConfig,
+			FoodConfig foodConfig,
+			JukeboxTooltipMode jukeboxTooltipMode,
+			SignTooltipMode signTooltipMode,
+			AdvancedTooltipsConfig advancedTooltipsConfig) {
 		this.armor = armor;
 		this.bannerPattern = bannerPattern;
 		this.containersConfig = containersConfig;
@@ -197,17 +197,23 @@ public class InspecioConfig {
 		public static final Codec<ContainersConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				configEntry("containers/campfire", DEFAULT_CAMPFIRE, ContainersConfig::isCampfireEnabled),
 				configEntry(StorageContainerConfig.CODEC, "containers/storage", StorageContainerConfig::defaultConfig, ContainersConfig::getStorageConfig),
-				configEntry(ShulkerBoxConfig.CODEC, "containers/shulker_box", ShulkerBoxConfig::defaultConfig, ContainersConfig::getShulkerBoxConfig)
+				configEntry(ShulkerBoxConfig.CODEC, "containers/shulker_box", ShulkerBoxConfig::defaultConfig, ContainersConfig::getShulkerBoxConfig),
+				configEntry(ChiseledBookshelfConfig.CODEC, "containers/chiseled_bookshelf",
+						ChiseledBookshelfConfig::defaultConfig, ContainersConfig::getChiseledBookshelfConfig
+				)
 		).apply(instance, ContainersConfig::new));
 
 		private boolean campfire;
 		private final StorageContainerConfig storageContainerConfig;
 		private final ShulkerBoxConfig shulkerBoxConfig;
+		private final ChiseledBookshelfConfig chiseledBookshelfConfig;
 
-		public ContainersConfig(boolean campfire, StorageContainerConfig storageContainerConfig, ShulkerBoxConfig shulkerBoxConfig) {
+		public ContainersConfig(boolean campfire, StorageContainerConfig storageContainerConfig,
+				ShulkerBoxConfig shulkerBoxConfig, ChiseledBookshelfConfig chiseledBookshelfConfig) {
 			this.campfire = campfire;
 			this.storageContainerConfig = storageContainerConfig;
 			this.shulkerBoxConfig = shulkerBoxConfig;
+			this.chiseledBookshelfConfig = chiseledBookshelfConfig;
 		}
 
 		public boolean isCampfireEnabled() {
@@ -226,6 +232,10 @@ public class InspecioConfig {
 			return this.shulkerBoxConfig;
 		}
 
+		public ChiseledBookshelfConfig getChiseledBookshelfConfig() {
+			return this.chiseledBookshelfConfig;
+		}
+
 		public @Nullable StorageContainerConfig forBlock(Block block) {
 			InspecioConfig.StorageContainerConfig config = null;
 			if (block instanceof ChestBlock
@@ -237,7 +247,8 @@ public class InspecioConfig {
 		}
 
 		public static ContainersConfig defaultConfig() {
-			return new ContainersConfig(DEFAULT_CAMPFIRE, StorageContainerConfig.defaultConfig(), ShulkerBoxConfig.defaultConfig());
+			return new ContainersConfig(DEFAULT_CAMPFIRE, StorageContainerConfig.defaultConfig(),
+					ShulkerBoxConfig.defaultConfig(), ChiseledBookshelfConfig.defaultConfig());
 		}
 	}
 
@@ -318,6 +329,36 @@ public class InspecioConfig {
 
 		public static ShulkerBoxConfig defaultConfig() {
 			return new ShulkerBoxConfig(DEFAULT_ENABLED, DEFAULT_COMPACT, DEFAULT_LOOT_TABLE, DEFAULT_COLOR);
+		}
+	}
+
+	public static class ChiseledBookshelfConfig extends StorageContainerConfig {
+		public static final boolean DEFAULT_BLOCK_RENDER = true;
+
+		public static final Codec<ChiseledBookshelfConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				configEntry("containers/chiseled_bookshelf/enabled", DEFAULT_ENABLED, StorageContainerConfig::isEnabled),
+				configEntry("containers/chiseled_bookshelf/compact", DEFAULT_COMPACT, StorageContainerConfig::isCompact),
+				configEntry("containers/chiseled_bookshelf/loot_table", DEFAULT_LOOT_TABLE, StorageContainerConfig::hasLootTable),
+				configEntry("containers/chiseled_bookshelf/block_render", DEFAULT_BLOCK_RENDER, ChiseledBookshelfConfig::hasBlockRender)
+		).apply(instance, ChiseledBookshelfConfig::new));
+
+		private boolean blockRender;
+
+		public ChiseledBookshelfConfig(boolean enabled, boolean compact, boolean lootTable, boolean blockRender) {
+			super(enabled, compact, lootTable);
+			this.blockRender = blockRender;
+		}
+
+		public boolean hasBlockRender() {
+			return this.blockRender;
+		}
+
+		public void setBlockRender(boolean blockRender) {
+			this.blockRender = blockRender;
+		}
+
+		public static ChiseledBookshelfConfig defaultConfig() {
+			return new ChiseledBookshelfConfig(DEFAULT_ENABLED, DEFAULT_COMPACT, DEFAULT_LOOT_TABLE, DEFAULT_BLOCK_RENDER);
 		}
 	}
 
@@ -452,7 +493,7 @@ public class InspecioConfig {
 		private int pufferFishPuffState;
 
 		public EntitiesConfig(EntityConfig armorStandConfig, BeeEntityConfig beeConfig, EntityConfig fishBucketConfig, EntityConfig spawnEggConfig,
-		                      EntityConfig mobSpawnerConfig, int pufferFishPuffState) {
+				EntityConfig mobSpawnerConfig, int pufferFishPuffState) {
 			this.armorStandConfig = armorStandConfig;
 			this.beeConfig = beeConfig;
 			this.fishBucketConfig = fishBucketConfig;

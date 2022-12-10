@@ -25,11 +25,13 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpectralArrowItem;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Collections;
 import java.util.Optional;
 
+@ClientOnly
 @Mixin(SpectralArrowItem.class)
 public class SpectralArrowItemMixin extends ArrowItem {
 	public SpectralArrowItemMixin(Settings settings) {
@@ -39,6 +41,9 @@ public class SpectralArrowItemMixin extends ArrowItem {
 	@Override
 	public Optional<TooltipData> getTooltipData(ItemStack stack) {
 		if (!Inspecio.getConfig().getEffectsConfig().hasSpectralArrow()) return super.getTooltipData(stack);
-		return Optional.of(new StatusEffectTooltipComponent(Collections.singletonList(new StatusEffectInstance(StatusEffects.GLOWING, 200, 0)), 1.f));
+		return Optional.of(new StatusEffectTooltipComponent(
+				Collections.singletonList(new StatusEffectInstance(StatusEffects.GLOWING, 200, 0)),
+				1.f
+		));
 	}
 }

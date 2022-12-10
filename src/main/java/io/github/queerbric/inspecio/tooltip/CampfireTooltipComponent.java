@@ -26,12 +26,11 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Optional;
@@ -40,7 +39,7 @@ import java.util.Optional;
  * Represents a campfire tooltip. Displays a campfire inventory and the flame if lit.
  *
  * @author LambdAurora
- * @version 1.3.1
+ * @version 1.7.0
  * @since 1.1.0
  */
 public class CampfireTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -62,21 +61,12 @@ public class CampfireTooltipComponent implements ConvertibleTooltipData, Tooltip
 		if (nbt == null)
 			return Optional.empty();
 
-		var inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
-		Inventories.readNbt(nbt, inventory);
+		var inventory = Inspecio.readInventory(nbt, 4);
 
-		boolean empty = true;
-		for (var item : inventory) {
-			if (!item.isEmpty()) {
-				empty = false;
-				break;
-			}
-		}
-
-		if (empty)
+		if (inventory == null)
 			return Optional.empty();
 
-		var itemId = Registry.ITEM.getId(stack.getItem());
+		var itemId = Registries.ITEM.getId(stack.getItem());
 		var fireId = new Identifier(itemId.getNamespace(), "block/" + itemId.getPath() + "_fire");
 
 		var stateNbt = stack.getSubNbt(BlockItem.BLOCK_STATE_TAG_KEY);

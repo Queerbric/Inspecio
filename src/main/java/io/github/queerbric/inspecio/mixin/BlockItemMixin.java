@@ -31,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@ClientOnly
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin extends Item {
 	@Shadow
@@ -83,6 +85,9 @@ public abstract class BlockItemMixin extends Item {
 			if (data.isPresent()) return data;
 		} else if (this.getBlock() instanceof SpawnerBlock) {
 			var data = SpawnEntityTooltipComponent.ofMobSpawner(stack);
+			if (data.isPresent()) return data;
+		} else if (this.getBlock() instanceof ChiseledBookshelfBlock) {
+			var data = ChiseledBookshelfTooltipComponent.of(stack);
 			if (data.isPresent()) return data;
 		} else {
 			InspecioConfig.StorageContainerConfig config = containersConfig.forBlock(this.getBlock());

@@ -30,7 +30,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 import java.util.Optional;
 
@@ -76,7 +76,7 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
-		textRenderer.draw(this.disc.getDescription(),
+		textRenderer.m_mrvofiwb(this.disc.getDescription(),
 				x, y, 11184810, true, matrix4f, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 	}
 

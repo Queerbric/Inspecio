@@ -100,3 +100,9 @@
  - Added Mob Spawner tooltip ([#91](https://github.com/Queerbric/Inspecio/issues/91)).
  - Added Korean translations ([#92](https://github.com/Queerbric/Inspecio/pull/92)).
  - Fixed fully advanced tooltips being required to see Repair Cost ([#81](https://github.com/Queerbric/Inspecio/issues/81) -> [#94](https://github.com/Queerbric/Inspecio/pull/94)).
+
+## 1.7.0
+
+ - Added chiseled bookshelf tooltips.
+ - Added hanging sign tooltips.
+ - Changed how suspicious soup effects are read to work with Quilt deserialization patches.

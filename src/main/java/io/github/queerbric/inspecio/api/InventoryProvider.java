@@ -18,12 +18,11 @@
 package io.github.queerbric.inspecio.api;
 
 import io.github.queerbric.inspecio.InspecioConfig;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.Nullable;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ import java.util.List;
  * @version 1.2.0
  * @since 1.2.0
  */
-@Environment(EnvType.CLIENT)
+@ClientOnly
 @FunctionalInterface
 public interface InventoryProvider {
 	/**
@@ -65,9 +64,17 @@ public interface InventoryProvider {
 		}
 	}
 
-	record Context(List<ItemStack> inventory, @Nullable DyeColor color) {
-		int getColumns() {
-			return this.inventory.size() % 3 == 0 ? this.inventory.size() / 3 : this.inventory.size();
+	record Context(List<ItemStack> inventory, int columns, @Nullable DyeColor color) {
+		public Context(List<ItemStack> inventory, int columns) {
+			this(inventory, columns, null);
+		}
+
+		public Context(List<ItemStack> inventory, @Nullable DyeColor color) {
+			this(inventory, getColumns(inventory), color);
+		}
+
+		static int getColumns(List<ItemStack> inventory) {
+			return inventory.size() % 3 == 0 ? inventory.size() / 3 : inventory.size();
 		}
 	}
 }

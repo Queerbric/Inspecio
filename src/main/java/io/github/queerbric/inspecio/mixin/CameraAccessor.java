@@ -18,12 +18,13 @@
 package io.github.queerbric.inspecio.mixin;
 
 import net.minecraft.client.render.Camera;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+@ClientOnly
 @Mixin(Camera.class)
 public interface CameraAccessor {
-    @Accessor("yaw")
-    void setYaw(float yaw);
-
+	@Accessor("yaw")
+	void setYaw(float yaw);
 }

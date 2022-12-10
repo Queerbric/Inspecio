@@ -20,17 +20,21 @@ package io.github.queerbric.inspecio.mixin;
 import io.github.queerbric.inspecio.tooltip.SignTooltipComponent;
 import net.minecraft.block.Block;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.item.HangingSignItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SignItem;
 import net.minecraft.item.WallStandingBlockItem;
+import net.minecraft.util.math.Direction;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Optional;
 
-@Mixin(SignItem.class)
+@ClientOnly
+@Mixin(value = {SignItem.class, HangingSignItem.class})
 public class SignItemMixin extends WallStandingBlockItem {
-	public SignItemMixin(Block standingBlock, Block wallBlock, Settings settings) {
-		super(standingBlock, wallBlock, settings);
+	public SignItemMixin(Block standingBlock, Block wallBlock, Settings settings, Direction direction) {
+		super(standingBlock, wallBlock, settings, direction);
 	}
 
 	@Override

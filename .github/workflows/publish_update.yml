@@ -7,14 +7,18 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        java: [ 17 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK ${{matrix.java}}
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: ${{matrix.java}}
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: Build with Gradle
         run: ./gradlew build modrinth curseforge --parallel --stacktrace

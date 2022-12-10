@@ -112,7 +112,7 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent<Inspecio
 		};
 		logic.readNbt(client.world, client.player.getBlockPos(), nbt);
 
-		var entity = logic.getRenderedEntity(client.world);
+		var entity = logic.getRenderedEntity(client.world, Inspecio.COMMON_RANDOM, client.player.getBlockPos());
 		if (entity != null) {
 			return Optional.of(new SpawnEntityTooltipComponent(entitiesConfig.getMobSpawnerConfig(), entity));
 		}

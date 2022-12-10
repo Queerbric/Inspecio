@@ -17,26 +17,20 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import io.github.queerbric.inspecio.tooltip.MapTooltipComponent;
-import net.minecraft.client.item.TooltipData;
-import net.minecraft.item.FilledMapItem;
-import net.minecraft.item.Item;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SuspiciousStewItem;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-import java.util.Optional;
+import java.util.function.Consumer;
 
 @ClientOnly
-@Mixin(FilledMapItem.class)
-public abstract class FilledMapItemMixin extends Item {
-
-	public FilledMapItemMixin(Settings settings) {
-		super(settings);
-	}
-
-	@Override
-	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		return MapTooltipComponent.of(stack).or(() -> super.getTooltipData(stack));
+@Mixin(SuspiciousStewItem.class)
+public interface SuspiciousStewItemAccessor {
+	@Invoker
+	static void invokeM_cryeecjp(ItemStack stack, Consumer<StatusEffectInstance> consumer) {
+		throw new IllegalStateException("Mixin injection failed.");
 	}
 }
