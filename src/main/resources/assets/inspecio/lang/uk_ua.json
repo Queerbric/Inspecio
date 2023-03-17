@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Невідомий режим підказки програвача",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Невідомий режим підказки насичення",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Невідомий режим підказки таблички",
+
+  "inspecio.config.reloading": "Перезавантаження параметрів...",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "Вимір: %s",
+  "inspecio.tooltip.lodestone_compass.target": "Ціль: %s",
+  "inspecio.tooltip.loot_table": "Таблиця здобичі: %s",
+  "inspecio.tooltip.repair_cost": "Ціна ремонту: %d"
+}
