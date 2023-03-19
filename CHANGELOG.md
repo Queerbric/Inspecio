@@ -106,3 +106,9 @@
  - Added chiseled bookshelf tooltips.
  - Added hanging sign tooltips.
  - Changed how suspicious soup effects are read to work with Quilt deserialization patches.
+
+## 1.8.0
+
+- Updated to Minecraft 1.19.4.
+- Added painting preview in painting items with a known variant.
+- Added Ukrainian translations ([#100](https://github.com/Queerbric/Inspecio/pull/100)).

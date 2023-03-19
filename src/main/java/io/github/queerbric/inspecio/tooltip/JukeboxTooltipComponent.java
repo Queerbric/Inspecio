@@ -38,7 +38,7 @@ import java.util.Optional;
  * Represents a jukebox tooltip component. Displays the inserted disc description and an inventory slot with the disc in fancy mode.
  *
  * @author LambdAurora
- * @version 1.3.1
+ * @version 1.8.0
  * @since 1.0.0
  */
 public class JukeboxTooltipComponent extends InventoryTooltipComponent {
@@ -76,13 +76,12 @@ public class JukeboxTooltipComponent extends InventoryTooltipComponent {
 
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f matrix4f, VertexConsumerProvider.Immediate immediate) {
-		textRenderer.m_mrvofiwb(this.disc.getDescription(),
-				x, y, 11184810, true, matrix4f, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		textRenderer.computeVertices(this.disc.getDescription(), x, y, 11184810, true, matrix4f, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		if (this.config.getJukeboxTooltipMode() == JukeboxTooltipMode.FANCY)
-			super.drawItems(textRenderer, x, y + 10, matrices, itemRenderer, z);
+			super.drawItems(textRenderer, x, y + 10, matrices, itemRenderer);
 	}
 }

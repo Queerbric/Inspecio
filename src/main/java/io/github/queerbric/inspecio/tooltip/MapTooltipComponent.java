@@ -61,13 +61,13 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		var vertices = this.client.getBufferBuilders().getEntityVertexConsumers();
 		var map = this.client.gameRenderer.getMapRenderer();
 		var state = FilledMapItem.getMapState(this.map, this.client.world);
 		if (state == null) return;
 		matrices.push();
-		matrices.translate(x, y, z);
+		matrices.translate(x, y, 0);
 		matrices.scale(1, 1, 0);
 		map.render(matrices, vertices, this.map, state, !Inspecio.getConfig().getFilledMapConfig().shouldShowPlayerIcon(),
 				LightmapTextureManager.MAX_LIGHT_COORDINATE);

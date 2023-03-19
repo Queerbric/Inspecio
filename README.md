@@ -185,7 +185,8 @@ Here's the default configuration:
     }
   },
   "armor": true,
-  "banner_pattern": true
+  "banner_pattern": true,
+  "painting": true
 }
 ```
 
@@ -193,6 +194,7 @@ Here's a list of each configuration entries and what they do:
 
  - `armor` (`bool`) - `true` if the display of the armor bar on armor items is enabled, or `false` otherwise.
  - `banner_pattern` (`bool`) - `true` if the display of the pattern in the tooltip of banner patterns is enabled, or `false` otherwise.
+ - `painting` (`bool`) - `true` if the painting should be previewed in the tooltip of a painting item that has a known variant, or `false` otherwise.
  - `advanced_tooltips`
    - `repair_cost` (`bool`) - `true` if the display the repair cost value is enabled, or `false` otherwise.
    - `lodestone_coords` (`bool`) - `true` if a display of the lodestone coordinates on lodestone compass is enabled, or `false` otherwise.

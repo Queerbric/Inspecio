@@ -35,7 +35,7 @@ import java.util.Optional;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.6.0
+ * @version 1.8.0
  * @since 1.0.0
  */
 public class EntityBucketTooltipComponent extends EntityTooltipComponent<InspecioConfig.EntityConfig> {
@@ -62,10 +62,10 @@ public class EntityBucketTooltipComponent extends EntityTooltipComponent<Inspeci
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		if (this.shouldRender()) {
 			matrices.push();
-			matrices.translate(2, 2, z);
+			matrices.translate(2, 2, 0);
 			((EntityAccessor) this.entity).setTouchingWater(true);
 			this.entity.setVelocity(1.f, 1.f, 1.f);
 			this.renderEntity(matrices, x + 16, y, this.entity, 0, this.config.shouldSpin(), false, 90.f);

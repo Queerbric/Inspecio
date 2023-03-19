@@ -19,10 +19,7 @@ package io.github.queerbric.inspecio.mixin;
 
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
-import io.github.queerbric.inspecio.tooltip.ArmorTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.CompoundTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.FoodTooltipComponent;
-import io.github.queerbric.inspecio.tooltip.StatusEffectTooltipComponent;
+import io.github.queerbric.inspecio.tooltip.*;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -132,7 +129,7 @@ public abstract class ItemStackMixin {
 						datas.add(new StatusEffectTooltipComponent(comp.getStatusEffects()));
 					} else if (stack.getItem() instanceof SuspiciousStewItem) {
 						var effects = new ArrayList<StatusEffectInstance>();
-						SuspiciousStewItemAccessor.invokeM_cryeecjp(stack, effects::add);
+						SuspiciousStewItemAccessor.invokeConsumeStatusEffects(stack, effects::add);
 
 						if (effects.size() != 0) {
 							datas.add(new StatusEffectTooltipComponent(effects, 1.f));
@@ -145,8 +142,12 @@ public abstract class ItemStackMixin {
 		}
 
 		if (stack.getItem() instanceof ArmorItem armor && config.hasArmor()) {
-			int prot = armor.getMaterial().getProtectionAmount(armor.getSlotType());
+			int prot = armor.getMaterial().getProtection(armor.getArmorSlot());
 			datas.add(new ArmorTooltipComponent(prot));
+		}
+
+		if (stack.getItem() instanceof DecorationItem) {
+			PaintingTooltipComponent.of(stack).ifPresent(datas::add);
 		}
 
 		if (datas.size() == 1) {

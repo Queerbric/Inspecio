@@ -19,7 +19,6 @@ package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.lighting.DiffuseLighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.texture.NativeImage;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.SignTooltipMode;
@@ -149,11 +148,11 @@ public abstract class SignTooltipComponent<M extends Model> implements Convertib
 			if (this.color == DyeColor.BLACK) {
 				outlineColor = -988212;
 			} else {
-				int r = (int) (NativeImage.getRed(signColor) * 0.4);
-				int g = (int) (NativeImage.getGreen(signColor) * 0.4);
-				int b = (int) (NativeImage.getBlue(signColor) * 0.4);
+				int r = (int) (((signColor >> 24) & 255) * 0.4);
+				int g = (int) (((signColor >> 16) & 255) * 0.4);
+				int b = (int) (((signColor >> 8) & 255) * 0.4);
 
-				outlineColor = NativeImage.getAbgrColor(0, b, g, r);
+				outlineColor = (b >> 8) | (g >> 16) | (r >> 24);
 			}
 
 			for (int i = 0; i < this.text.length; i++) {
@@ -167,20 +166,22 @@ public abstract class SignTooltipComponent<M extends Model> implements Convertib
 			for (int i = 0; i < this.text.length; i++) {
 				var text = this.text[i];
 				float textX = center ? (45 - textRenderer.getWidth(text) / 2.f) : x;
-				textRenderer.m_ldakjnum(text, textX, y + i * 10, signColor, false, matrix4f, immediate, false,
-						0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+				textRenderer.computeVertices(
+						text, textX, y + i * 10, signColor, false, matrix4f, immediate, TextRenderer.TextLayerType.NORMAL,
+						0, LightmapTextureManager.MAX_LIGHT_COORDINATE
+				);
 			}
 		}
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		if (this.tooltipMode != SignTooltipMode.FANCY)
 			return;
 
 		DiffuseLighting.setupFlatGuiLighting();
 		matrices.push();
-		matrices.translate(x + 2, y, z);
+		matrices.translate(x + 2, y, 0);
 
 		matrices.push();
 		var immediate = CLIENT.getBufferBuilders().getEntityVertexConsumers();

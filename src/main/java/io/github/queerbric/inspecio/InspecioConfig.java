@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * Uses Codec for serialization/deserialization.
  *
  * @author LambdAurora
- * @version 1.7.0
+ * @version 1.8.0
  * @since 1.0.0
  */
 // @TODO rework this to be more expandable?
@@ -49,12 +49,14 @@ public class InspecioConfig {
 
 	public static final boolean DEFAULT_ARMOR = true;
 	public static final boolean DEFAULT_BANNER_PATTERN = true;
+	public static final boolean DEFAULT_PAINTING = true;
 	public static final JukeboxTooltipMode DEFAULT_JUKEBOX_TOOLTIP_MODE = JukeboxTooltipMode.FANCY;
 	public static final SignTooltipMode DEFAULT_SIGN_TOOLTIP_MODE = SignTooltipMode.FANCY;
 
 	public static final Codec<InspecioConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			configEntry("armor", DEFAULT_ARMOR, InspecioConfig::hasArmor),
 			configEntry("banner_pattern", DEFAULT_BANNER_PATTERN, InspecioConfig::hasBannerPattern),
+			configEntry("painting", DEFAULT_PAINTING, InspecioConfig::hasPainting),
 			configEntry(ContainersConfig.CODEC, "containers", ContainersConfig::defaultConfig, InspecioConfig::getContainersConfig),
 			configEntry(EffectsConfig.CODEC, "effects", EffectsConfig::defaultConfig, InspecioConfig::getEffectsConfig),
 			configEntry(EntitiesConfig.CODEC, "entities", EntitiesConfig::defaultConfig, InspecioConfig::getEntitiesConfig),
@@ -81,6 +83,7 @@ public class InspecioConfig {
 
 	private boolean armor;
 	private boolean bannerPattern;
+	private boolean painting;
 	private final ContainersConfig containersConfig;
 	private final EffectsConfig effectsConfig;
 	private final EntitiesConfig entitiesConfig;
@@ -90,7 +93,7 @@ public class InspecioConfig {
 	private SignTooltipMode signTooltipMode;
 	private final AdvancedTooltipsConfig advancedTooltipsConfig;
 
-	public InspecioConfig(boolean armor, boolean bannerPattern,
+	public InspecioConfig(boolean armor, boolean bannerPattern, boolean painting,
 			ContainersConfig containersConfig,
 			EffectsConfig effectsConfig,
 			EntitiesConfig entitiesConfig,
@@ -101,6 +104,7 @@ public class InspecioConfig {
 			AdvancedTooltipsConfig advancedTooltipsConfig) {
 		this.armor = armor;
 		this.bannerPattern = bannerPattern;
+		this.painting = painting;
 		this.containersConfig = containersConfig;
 		this.effectsConfig = effectsConfig;
 		this.entitiesConfig = entitiesConfig;
@@ -125,6 +129,14 @@ public class InspecioConfig {
 
 	public void setBannerPattern(boolean bannerPattern) {
 		this.bannerPattern = bannerPattern;
+	}
+
+	public boolean hasPainting() {
+		return this.painting;
+	}
+
+	public void setPainting(boolean painting) {
+		this.painting = painting;
 	}
 
 	public ContainersConfig getContainersConfig() {
@@ -835,7 +847,7 @@ public class InspecioConfig {
 	 */
 	public static InspecioConfig defaultConfig() {
 		return new InspecioConfig(
-				DEFAULT_ARMOR, DEFAULT_BANNER_PATTERN,
+				DEFAULT_ARMOR, DEFAULT_BANNER_PATTERN, DEFAULT_PAINTING,
 				ContainersConfig.defaultConfig(),
 				EffectsConfig.defaultConfig(),
 				EntitiesConfig.defaultConfig(),

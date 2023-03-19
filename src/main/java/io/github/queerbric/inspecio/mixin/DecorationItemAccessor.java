@@ -17,20 +17,14 @@
 
 package io.github.queerbric.inspecio.mixin;
 
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SuspiciousStewItem;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
+import net.minecraft.item.DecorationItem;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.function.Consumer;
-
-@ClientOnly
-@Mixin(SuspiciousStewItem.class)
-public interface SuspiciousStewItemAccessor {
-	@Invoker
-	static void invokeConsumeStatusEffects(ItemStack stack, Consumer<StatusEffectInstance> consumer) {
-		throw new IllegalStateException("Mixin injection failed.");
-	}
+@Mixin(DecorationItem.class)
+public interface DecorationItemAccessor {
+	@Accessor
+	EntityType<? extends AbstractDecorationEntity> getEntityType();
 }

@@ -70,8 +70,9 @@ dependencies {
 	mappings "org.quiltmc:quilt-mappings:${minecraft_version}+build.${project.quilt_mappings}:intermediary-v2"
 	modImplementation "org.quiltmc:quilt-loader:${project.loader_version}"
 
-	modImplementation include("org.quiltmc.qsl.management:client_command:${project.qsl_version}+${project.minecraft_version}")
+	modImplementation include("org.quiltmc.qsl.core:crash_info:${project.qsl_version}+${project.minecraft_version}")
 	modImplementation include("org.quiltmc.qsl.core:resource_loader:${project.qsl_version}+${project.minecraft_version}")
+	modImplementation include("org.quiltmc.qsl.management:client_command:${project.qsl_version}+${project.minecraft_version}")
 	include("org.quiltmc.qsl.core:qsl_base:${project.qsl_version}+${project.minecraft_version}")
 	include("org.quiltmc.qsl.core:lifecycle_events:${project.qsl_version}+${project.minecraft_version}")
 	modImplementation include("org.quiltmc.qsl.data:tags:${project.qsl_version}+${project.minecraft_version}")

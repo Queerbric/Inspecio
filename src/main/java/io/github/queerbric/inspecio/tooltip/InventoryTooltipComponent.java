@@ -39,7 +39,7 @@ import java.util.Optional;
  * Represents the inventory tooltip component.
  *
  * @author LambdAurora
- * @version 1.2.1
+ * @version 1.8.0
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -107,15 +107,15 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer) {
 		int x = 1;
 		int y = 1;
 		int lines = this.getColumns();
 
 		for (var stack : this.inventory) {
-			drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, z, this.color == null ? null : color.getColorComponents());
-			itemRenderer.renderInGuiWithOverrides(stack, xOffset + x, yOffset + y);
-			itemRenderer.renderGuiItemOverlay(textRenderer, stack, xOffset + x, yOffset + y);
+			drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, 0, this.color == null ? null : color.getColorComponents());
+			itemRenderer.method_4023(matrices, stack, xOffset + x, yOffset + y);
+			itemRenderer.method_4025(matrices, textRenderer, stack, xOffset + x, yOffset + y);
 			x += 18;
 			if (x >= 18 * lines) {
 				x = 1;

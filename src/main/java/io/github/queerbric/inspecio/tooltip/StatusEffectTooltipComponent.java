@@ -112,17 +112,12 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 		}
 
 		int max = 64;
-		for (int i = 0; i < list.size(); i++) {
-			StatusEffectInstance statusEffectInstance = list.get(i);
-			String statusEffectName = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
-			if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
-				statusEffectName = statusEffectName + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
-			}
+		for (int i = 0; i < this.list.size(); i++) {
+			StatusEffectInstance statusEffectInstance = this.list.get(i);
+			String statusEffectName = this.getStatusEffectName(statusEffectInstance);
+
 			if (statusEffectInstance.getDuration() > 1) {
-				String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
-				if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
-					duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
-				}
+				var duration = this.getDuration(i, statusEffectInstance);
 				max = Math.max(max, 26 + textRenderer.getWidth(duration));
 			} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 				String string2 = (int) (this.chances.getFloat(i) * 100f) + "%";
@@ -134,7 +129,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		if (this.hidden) {
 			RenderSystem.setShaderTexture(0, MYSTERY_TEXTURE);
 			DrawableHelper.drawTexture(matrices, x, y, 0, 0, 18, 18, 18, 18);
@@ -146,7 +141,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				StatusEffect statusEffect = statusEffectInstance.getEffectType();
 				var sprite = statusEffectSpriteManager.getSprite(statusEffect);
 				RenderSystem.setShaderTexture(0, sprite.getId());
-				DrawableHelper.drawSprite(matrices, x, y + i * 20, z, 18, 18, sprite);
+				DrawableHelper.drawSprite(matrices, x, y + i * 20, 0, 18, 18, sprite);
 			}
 		}
 	}
@@ -154,37 +149,53 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f model, Immediate immediate) {
 		if (this.hidden) {
-			textRenderer.m_mrvofiwb(this.getHiddenText(), x + 24, y, 8355711, true,
-					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-			textRenderer.m_mrvofiwb(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
-					model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+			textRenderer.computeVertices(this.getHiddenText(), x + 24, y, 8355711, true,
+					model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+			textRenderer.computeVertices(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
+					model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		} else {
-			for (int i = 0; i < list.size(); i++) {
-				StatusEffectInstance statusEffectInstance = list.get(i);
-				String statusEffectName = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
-				if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
-					statusEffectName = statusEffectName + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
-				}
+			for (int i = 0; i < this.list.size(); i++) {
+				StatusEffectInstance statusEffectInstance = this.list.get(i);
+				String statusEffectName = this.getStatusEffectName(statusEffectInstance);
+
 				int off = 0;
 				if (statusEffectInstance.getDuration() <= 1) {
 					off += 5;
 				}
+
 				Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
-				textRenderer.m_etfbxupi(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
-						true, model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+				textRenderer.computeVertices(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
+						true, model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				if (statusEffectInstance.getDuration() > 1) {
-					String duration = StatusEffectUtil.durationToString(statusEffectInstance, multiplier);
-					if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
-						duration += " - " + (int) (this.chances.getFloat(i) * 100f) + "%";
-					}
-					textRenderer.m_etfbxupi(duration, x + 24, y + i * 20 + 10, 8355711, true,
-							model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+					var duration = this.getDuration(i, statusEffectInstance);
+					textRenderer.computeVertices(duration, x + 24, y + i * 20 + 10, 8355711, true,
+							model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 					String chance = (int) (this.chances.getFloat(i) * 100f) + "%";
-					textRenderer.m_etfbxupi(chance, x + 24, y + i * 20 + 10, 8355711, true,
-							model, immediate, false, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+					textRenderer.computeVertices(chance, x + 24, y + i * 20 + 10, 8355711, true,
+							model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				}
 			}
 		}
+	}
+
+	private String getStatusEffectName(StatusEffectInstance statusEffectInstance) {
+		String statusEffectName = I18n.translate(statusEffectInstance.getEffectType().getTranslationKey());
+
+		if (statusEffectInstance.getAmplifier() >= 1 && statusEffectInstance.getAmplifier() <= 9) {
+			statusEffectName = statusEffectName + ' ' + I18n.translate("enchantment.level." + (statusEffectInstance.getAmplifier() + 1));
+		}
+
+		return statusEffectName;
+	}
+
+	private Text getDuration(int index, StatusEffectInstance statusEffect) {
+		var duration = StatusEffectUtil.durationToString(statusEffect, multiplier);
+
+		if (this.chances.size() > index && this.chances.getFloat(index) < 1f) {
+			duration = duration.copy().append(" - " + (int) (this.chances.getFloat(index) * 100f) + "%");
+		}
+
+		return duration;
 	}
 }

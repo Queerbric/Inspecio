@@ -61,10 +61,10 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		int yOff = 0;
 		for (var comp : components) {
-			comp.drawItems(textRenderer, x, y + yOff, matrices, itemRenderer, z);
+			comp.drawItems(textRenderer, x, y + yOff, matrices, itemRenderer);
 			yOff += comp.getHeight();
 		}
 	}

@@ -39,7 +39,7 @@ import java.util.Optional;
  * Represents a campfire tooltip. Displays a campfire inventory and the flame if lit.
  *
  * @author LambdAurora
- * @version 1.7.0
+ * @version 1.8.0
  * @since 1.1.0
  */
 public class CampfireTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -94,16 +94,16 @@ public class CampfireTooltipComponent implements ConvertibleTooltipData, Tooltip
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer) {
 		int x = 1 + 18 * 2;
 		int y = 1 + 18 * 2;
 
 		for (int i = 0; i < this.inventory.size(); i++) {
 			var stack = this.inventory.get(i);
 
-			InventoryTooltipComponent.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, z, null);
-			itemRenderer.renderInGuiWithOverrides(stack, xOffset + x, yOffset + y);
-			itemRenderer.renderGuiItemOverlay(textRenderer, stack, xOffset + x, yOffset + y);
+			InventoryTooltipComponent.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, 0, null);
+			itemRenderer.method_4023(matrices, stack, xOffset + x, yOffset + y);
+			itemRenderer.method_4025(matrices, textRenderer, stack, xOffset + x, yOffset + y);
 
 			if (i == 1)
 				y -= 18 * 2;
@@ -118,7 +118,7 @@ public class CampfireTooltipComponent implements ConvertibleTooltipData, Tooltip
 
 			var sprite = MinecraftClient.getInstance().getSpriteAtlas(ATLAS_TEXTURE).apply(this.fireTexture);
 			if (sprite != null)
-				DrawableHelper.drawSprite(matrices, xOffset + 19, yOffset + 19, z, 16, 16, sprite);
+				DrawableHelper.drawSprite(matrices, xOffset + 19, yOffset + 19, 0, 16, 16, sprite);
 		}
 	}
 }

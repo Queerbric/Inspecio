@@ -8,8 +8,8 @@
       "name": "Inspecio",
       "description": "Adds a lot of fancy tooltips to existing items.",
       "contributors": {
-        "LambdAurora": "Owner",
-        "Emi": "Owner"
+        "LambdAurora": "Author",
+        "Emi": "Author"
       },
       "contact": {
         "homepage": "https://modrinth.com/mod/inspecio",
@@ -31,11 +31,11 @@
     "depends": [
       {
         "id": "minecraft",
-        "versions": "~1.19.3"
+        "versions": "~1.19.4"
       },
       {
         "id": "quilt_loader",
-        "versions": ">=0.17.6"
+        "versions": ">=0.17.11"
       },
       "quilt_client_command",
       "quilt_resource_loader",

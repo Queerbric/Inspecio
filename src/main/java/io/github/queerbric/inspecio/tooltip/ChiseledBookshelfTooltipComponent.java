@@ -42,7 +42,7 @@ import java.util.Optional;
  * Represents the chiseled bookshelf tooltip component.
  *
  * @author LambdAurora
- * @version 1.7.0
+ * @version 1.8.0
  * @since 1.7.0
  */
 @ClientOnly
@@ -74,8 +74,8 @@ public class ChiseledBookshelfTooltipComponent implements ConvertibleTooltipData
 		}
 
 		var state = Blocks.CHISELED_BOOKSHELF.getDefaultState();
-		for (int slot = 0; slot < ChiseledBookshelfBlock.f_dvhczcuf.size(); slot++) {
-			state = state.with(ChiseledBookshelfBlock.f_dvhczcuf.get(slot), !inventory.get(slot).isEmpty());
+		for (int slot = 0; slot < ChiseledBookshelfBlock.SLOT_OCCUPATION_PROPERTIES.size(); slot++) {
+			state = state.with(ChiseledBookshelfBlock.SLOT_OCCUPATION_PROPERTIES.get(slot), !inventory.get(slot).isEmpty());
 		}
 
 		return Optional.of(new ChiseledBookshelfTooltipComponent(state));
@@ -97,9 +97,9 @@ public class ChiseledBookshelfTooltipComponent implements ConvertibleTooltipData
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		DiffuseLighting.setupInventoryEntityLighting();
-		matrices.translate(x, y, z);
+		matrices.translate(x, y, 0);
 		matrices.scale(-1, -1, 1);
 		matrices.translate(-20, -20, 0);
 		matrices.scale(20, 20, 1);

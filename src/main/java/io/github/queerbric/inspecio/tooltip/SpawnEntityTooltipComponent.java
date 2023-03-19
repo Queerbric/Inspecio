@@ -131,10 +131,10 @@ public class SpawnEntityTooltipComponent extends EntityTooltipComponent<Inspecio
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		if (this.shouldRender()) {
 			matrices.push();
-			matrices.translate(30, 0, z);
+			matrices.translate(30, 0, 0);
 			((EntityAccessor) this.entity).setTouchingWater(true);
 			this.entity.setVelocity(1.f, 1.f, 1.f);
 			this.renderEntity(matrices, x + 20, y + 20, this.entity, 0, this.config.shouldSpin(), true, 90.f);

@@ -44,7 +44,7 @@ import java.util.function.Function;
  * Represents a tooltip component which displays bees from a beehive.
  *
  * @author LambdAurora
- * @version 1.6.0
+ * @version 1.8.0
  * @since 1.0.0
  */
 public class BeesTooltipComponent extends EntityTooltipComponent<InspecioConfig.BeeEntityConfig> {
@@ -117,11 +117,11 @@ public class BeesTooltipComponent extends EntityTooltipComponent<InspecioConfig.
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
 		matrices.push();
 
 		if (!this.bees.isEmpty()) {
-			matrices.translate(2, 4, z);
+			matrices.translate(2, 4, 0);
 
 			int xOffset = x;
 			for (var bee : this.bees) {
@@ -139,7 +139,7 @@ public class BeesTooltipComponent extends EntityTooltipComponent<InspecioConfig.
 			DrawableHelper.drawTexture(matrices, 0, 0, 0, 0, 0, 26, 5, 32, 16);
 
 			if (honeyLevel != 0) {
-				DrawableHelper.drawTexture(matrices, 0, 0, z, 0, 5, Math.min(25, honeyLevel * 5 + 1), 6, 32, 16);
+				DrawableHelper.drawTexture(matrices, 0, 0, 0, 0, 5, Math.min(25, honeyLevel * 5 + 1), 6, 32, 16);
 			}
 		}
 
