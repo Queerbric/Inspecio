@@ -18,19 +18,38 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.queerbric.inspecio.Inspecio;
+import io.github.queerbric.inspecio.mixin.ItemStackAccessor;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
+
+import java.util.Optional;
 
 public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
 	private final int prot;
 
 	public ArmorTooltipComponent(int prot) {
 		this.prot = prot;
+	}
+
+	public static Optional<ArmorTooltipComponent> of(ItemStack stack) {
+		if (stack.getItem() instanceof ArmorItem armor && Inspecio.getConfig().hasArmor()) {
+			int prot = armor.getMaterial().getProtection(armor.getArmorSlot());
+
+			int hideFlags = ((ItemStackAccessor) (Object) stack).invokeGetHideFlags();
+			if (ItemStackAccessor.invokeIsSectionVisible(hideFlags, ItemStack.TooltipSection.MODIFIERS)) {
+				return Optional.of(new ArmorTooltipComponent(prot));
+			}
+		}
+
+		return Optional.empty();
 	}
 
 	@Override

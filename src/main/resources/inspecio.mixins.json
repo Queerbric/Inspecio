@@ -12,6 +12,7 @@
     "EntityBucketItemMixin",
     "FilledMapItemMixin",
     "ItemEntityAccessor",
+    "ItemStackAccessor",
     "ItemStackMixin",
     "LingeringPotionItemMixin",
     "PotionItemMixin",

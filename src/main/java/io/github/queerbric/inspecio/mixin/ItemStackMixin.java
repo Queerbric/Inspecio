@@ -141,9 +141,8 @@ public abstract class ItemStackMixin {
 			}
 		}
 
-		if (stack.getItem() instanceof ArmorItem armor && config.hasArmor()) {
-			int prot = armor.getMaterial().getProtection(armor.getArmorSlot());
-			datas.add(new ArmorTooltipComponent(prot));
+		if (stack.getItem() instanceof ArmorItem) {
+			ArmorTooltipComponent.of(stack).ifPresent(datas::add);
 		}
 
 		if (stack.getItem() instanceof DecorationItem) {
