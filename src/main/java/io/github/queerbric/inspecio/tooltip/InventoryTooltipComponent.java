@@ -39,7 +39,7 @@ import java.util.Optional;
  * Represents the inventory tooltip component.
  *
  * @author LambdAurora
- * @version 1.8.0
+ * @version 1.8.1
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
@@ -130,6 +130,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		RenderSystem.setShaderColor(color[0], color[1], color[2], 1.f);
 		RenderSystem.setShaderTexture(0, DrawableHelper.STATS_ICON_TEXTURE);
 		DrawableHelper.drawTexture(matrices, x, y, z, 0.f, 0.f, 18, 18, 128, 128);
+		RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);
 	}
 
 	protected int getColumns() {
