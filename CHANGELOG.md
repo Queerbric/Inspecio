@@ -112,3 +112,9 @@
 - Updated to Minecraft 1.19.4.
 - Added painting preview in painting items with a known variant.
 - Added Ukrainian translations ([#100](https://github.com/Queerbric/Inspecio/pull/100)).
+
+### 1.8.1
+
+- Fixed ignoring `HideFlags` in armor NBT ([#98](https://github.com/Queerbric/Inspecio/issues/98)).
+- Fixed messed up colors in shulker box previews ([#102](https://github.com/Queerbric/Inspecio/issues/102)).
+- Fixed unbounded hunger/saturation tooltips with auto-wrapping ([#105](https://github.com/Queerbric/Inspecio/issues/105)).
