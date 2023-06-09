@@ -21,11 +21,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -94,16 +92,16 @@ public class CampfireTooltipComponent implements ConvertibleTooltipData, Tooltip
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int xOffset, int yOffset, GuiGraphics graphics) {
 		int x = 1 + 18 * 2;
 		int y = 1 + 18 * 2;
 
 		for (int i = 0; i < this.inventory.size(); i++) {
 			var stack = this.inventory.get(i);
 
-			InventoryTooltipComponent.drawSlot(matrices, x + xOffset - 1, y + yOffset - 1, 0, null);
-			itemRenderer.method_4023(matrices, stack, xOffset + x, yOffset + y);
-			itemRenderer.method_4025(matrices, textRenderer, stack, xOffset + x, yOffset + y);
+			InventoryTooltipComponent.drawSlot(graphics, x + xOffset - 1, y + yOffset - 1, 0, null);
+			graphics.drawItem(stack, xOffset + x, yOffset + y);
+			graphics.drawItemInSlot(textRenderer, stack, xOffset + x, yOffset + y);
 
 			if (i == 1)
 				y -= 18 * 2;
@@ -118,7 +116,7 @@ public class CampfireTooltipComponent implements ConvertibleTooltipData, Tooltip
 
 			var sprite = MinecraftClient.getInstance().getSpriteAtlas(ATLAS_TEXTURE).apply(this.fireTexture);
 			if (sprite != null)
-				DrawableHelper.drawSprite(matrices, xOffset + 19, yOffset + 19, 0, 16, 16, sprite);
+				graphics.drawSprite(xOffset + 19, yOffset + 19, 0, 16, 16, sprite);
 		}
 	}
 }

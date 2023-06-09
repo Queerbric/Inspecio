@@ -17,15 +17,11 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.mixin.ItemStackAccessor;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
@@ -68,13 +64,12 @@ public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipCom
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
-		RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		for (int i = 0; i < this.prot / 2; i++) {
-			DrawableHelper.drawTexture(matrices, x + i * 9, y, 34, 9, 9, 9, 256, 256);
+			graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, x + i * 9, y, 34, 9, 9, 9, 256, 256);
 		}
 		if (this.prot % 2 == 1) {
-			DrawableHelper.drawTexture(matrices, x + this.prot / 2 * 9, y, 25, 9, 9, 9, 256, 256);
+			graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, x + this.prot / 2 * 9, y, 25, 9, 9, 9, 256, 256);
 		}
 	}
 }

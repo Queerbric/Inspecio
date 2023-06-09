@@ -17,16 +17,14 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.InspecioConfig;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -117,7 +115,8 @@ public class BeesTooltipComponent extends EntityTooltipComponent<InspecioConfig.
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
+		MatrixStack matrices = graphics.getMatrices();
 		matrices.push();
 
 		if (!this.bees.isEmpty()) {
@@ -135,11 +134,10 @@ public class BeesTooltipComponent extends EntityTooltipComponent<InspecioConfig.
 			matrices.translate(x, y + (this.bees.isEmpty() ? 0 : (this.shouldRenderCustomNames() ? 32 : 24)), 0);
 			matrices.scale(2, 2, 1);
 
-			RenderSystem.setShaderTexture(0, HONEY_LEVEL_TEXTURE);
-			DrawableHelper.drawTexture(matrices, 0, 0, 0, 0, 0, 26, 5, 32, 16);
+			graphics.drawTexture(HONEY_LEVEL_TEXTURE, 0, 0, 0, 0, 0, 26, 5, 32, 16);
 
 			if (honeyLevel != 0) {
-				DrawableHelper.drawTexture(matrices, 0, 0, 0, 0, 5, Math.min(25, honeyLevel * 5 + 1), 6, 32, 16);
+				graphics.drawTexture(HONEY_LEVEL_TEXTURE, 0, 0, 0, 0, 5, Math.min(25, honeyLevel * 5 + 1), 6, 32, 16);
 			}
 		}
 

@@ -17,18 +17,15 @@
 
 package io.github.queerbric.inspecio.tooltip;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.queerbric.inspecio.Inspecio;
 import io.github.queerbric.inspecio.mixin.DecorationItemAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.PaintingManager;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
@@ -88,10 +85,9 @@ public record PaintingTooltipComponent(PaintingVariant painting) implements Conv
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		PaintingManager paintingManager = MinecraftClient.getInstance().getPaintingManager();
 		Sprite sprite = paintingManager.getPaintingSprite(this.painting);
-		RenderSystem.setShaderTexture(0, paintingManager.getBackSprite().getId());
-		DrawableHelper.drawSprite(matrices, x, y - 2, 0, this.getWidth(textRenderer), this.getHeight(), sprite);
+		graphics.drawSprite(x, y - 2, 0, this.getWidth(textRenderer), this.getHeight(), sprite);
 	}
 }

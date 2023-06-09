@@ -118,3 +118,4 @@
 - Fixed ignoring `HideFlags` in armor NBT ([#98](https://github.com/Queerbric/Inspecio/issues/98)).
 - Fixed messed up colors in shulker box previews ([#102](https://github.com/Queerbric/Inspecio/issues/102)).
 - Fixed unbounded hunger/saturation tooltips with auto-wrapping ([#105](https://github.com/Queerbric/Inspecio/issues/105)).
+- (1.20+) Added ability to see both sides of a sign in a tooltip by pressing the control key.

@@ -20,10 +20,10 @@ package io.github.queerbric.inspecio.tooltip;
 import io.github.queerbric.inspecio.Inspecio;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
@@ -61,11 +61,12 @@ public class MapTooltipComponent implements ConvertibleTooltipData, TooltipCompo
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		var vertices = this.client.getBufferBuilders().getEntityVertexConsumers();
 		var map = this.client.gameRenderer.getMapRenderer();
 		var state = FilledMapItem.getMapState(this.map, this.client.world);
 		if (state == null) return;
+		MatrixStack matrices = graphics.getMatrices();
 		matrices.push();
 		matrices.translate(x, y, 0);
 		matrices.scale(1, 1, 0);

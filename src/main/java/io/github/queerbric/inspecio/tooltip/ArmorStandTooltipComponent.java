@@ -22,9 +22,9 @@ import io.github.queerbric.inspecio.InspecioConfig;
 import io.github.queerbric.inspecio.mixin.EntityAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -67,8 +67,9 @@ public class ArmorStandTooltipComponent extends EntityTooltipComponent<InspecioC
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		if (this.shouldRender()) {
+			MatrixStack matrices = graphics.getMatrices();
 			matrices.push();
 			matrices.translate(30, 0, 0);
 			((EntityAccessor) this.entity).setTouchingWater(true);

@@ -18,7 +18,6 @@
 package io.github.queerbric.inspecio.tooltip;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import io.github.queerbric.inspecio.HiddenEffectMode;
 import io.github.queerbric.inspecio.Inspecio;
@@ -26,14 +25,12 @@ import it.unimi.dsi.fastutil.floats.FloatArrayList;
 import it.unimi.dsi.fastutil.floats.FloatList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.texture.StatusEffectSpriteManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
@@ -129,10 +126,9 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		if (this.hidden) {
-			RenderSystem.setShaderTexture(0, MYSTERY_TEXTURE);
-			DrawableHelper.drawTexture(matrices, x, y, 0, 0, 18, 18, 18, 18);
+			graphics.drawTexture(MYSTERY_TEXTURE, x, y, 0, 0, 18, 18, 18, 18);
 		} else {
 			MinecraftClient client = MinecraftClient.getInstance();
 			StatusEffectSpriteManager statusEffectSpriteManager = client.getStatusEffectSpriteManager();
@@ -140,8 +136,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				StatusEffectInstance statusEffectInstance = list.get(i);
 				StatusEffect statusEffect = statusEffectInstance.getEffectType();
 				var sprite = statusEffectSpriteManager.getSprite(statusEffect);
-				RenderSystem.setShaderTexture(0, sprite.getId());
-				DrawableHelper.drawSprite(matrices, x, y + i * 20, 0, 18, 18, sprite);
+				graphics.drawSprite(x, y + i * 20, 0, 18, 18, sprite);
 			}
 		}
 	}
@@ -149,9 +144,9 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	@Override
 	public void drawText(TextRenderer textRenderer, int x, int y, Matrix4f model, Immediate immediate) {
 		if (this.hidden) {
-			textRenderer.computeVertices(this.getHiddenText(), x + 24, y, 8355711, true,
+			textRenderer.draw(this.getHiddenText(), x + 24, y, 8355711, true,
 					model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-			textRenderer.computeVertices(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
+			textRenderer.draw(this.getHiddenTime(), x + 24, y + 10, 8355711, true,
 					model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		} else {
 			for (int i = 0; i < this.list.size(); i++) {
@@ -164,15 +159,15 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 				}
 
 				Integer color = statusEffectInstance.getEffectType().getType().getFormatting().getColorValue();
-				textRenderer.computeVertices(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
+				textRenderer.draw(statusEffectName, x + 24, y + i * 20 + off, color != null ? color : 16777215,
 						true, model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				if (statusEffectInstance.getDuration() > 1) {
 					var duration = this.getDuration(i, statusEffectInstance);
-					textRenderer.computeVertices(duration, x + 24, y + i * 20 + 10, 8355711, true,
+					textRenderer.draw(duration, x + 24, y + i * 20 + 10, 8355711, true,
 							model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				} else if (this.chances.size() > i && this.chances.getFloat(i) < 1f) {
 					String chance = (int) (this.chances.getFloat(i) * 100f) + "%";
-					textRenderer.computeVertices(chance, x + 24, y + i * 20 + 10, 8355711, true,
+					textRenderer.draw(chance, x + 24, y + i * 20 + 10, 8355711, true,
 							model, immediate, TextRenderer.TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 				}
 			}

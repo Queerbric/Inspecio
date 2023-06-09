@@ -66,6 +66,7 @@ public class Inspecio implements ClientModInitializer {
 			TagType.CLIENT_FALLBACK
 	);
 	public static final RandomGenerator COMMON_RANDOM = new LegacySimpleRandom(System.currentTimeMillis());
+	public static final Identifier GUI_ICONS_TEXTURE = new Identifier("textures/gui/icons.png");
 	private static InspecioConfig config = InspecioConfig.defaultConfig();
 	private static ModContainer mod;
 

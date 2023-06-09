@@ -19,6 +19,7 @@ package io.github.queerbric.inspecio.tooltip;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -61,10 +62,10 @@ public class CompoundTooltipComponent implements TooltipComponent, ConvertibleTo
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
+	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		int yOff = 0;
 		for (var comp : components) {
-			comp.drawItems(textRenderer, x, y + yOff, matrices, itemRenderer);
+			comp.drawItems(textRenderer, x, y + yOff, graphics);
 			yOff += comp.getHeight();
 		}
 	}
