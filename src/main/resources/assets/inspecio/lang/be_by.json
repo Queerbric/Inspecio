@@ -1,0 +1,12 @@
+{
+  "inspecio.command.error.unknown_jukebox_tooltip_mode": "Невядомы рэжым падказак прайгравальніка",
+  "inspecio.command.error.unknown_saturation_tooltip_mode": "Невядомы рэжым падказак насычанасці",
+  "inspecio.command.error.unknown_sign_tooltip_mode": "Невядомы рэжым падказак шыльд",
+
+  "inspecio.config.reloading": "Перазагрузка налад...",
+
+  "inspecio.tooltip.lodestone_compass.dimension": "Вымярэнне: %s",
+  "inspecio.tooltip.lodestone_compass.target": "Цэль: %s",
+  "inspecio.tooltip.loot_table": "Табліца прадметаў: %s",
+  "inspecio.tooltip.repair_cost": "Кошт рамонту: %d"
+}
