@@ -121,7 +121,7 @@ public abstract class ItemStackMixin {
 				datas.add(new FoodTooltipComponent(comp));
 			}
 
-			if (config.getEffectsConfig().hasPotions()) {
+			if (config.getEffectsConfig().hasFood()) {
 				if (stack.isIn(Inspecio.HIDDEN_EFFECTS_TAG)) {
 					datas.add(new StatusEffectTooltipComponent());
 				} else {
