@@ -42,7 +42,6 @@ import java.util.Optional;
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
-	// TODO: This texture got removed
 	private static final Identifier SLOT_TEXTURE = new Identifier("container/slot");
 	private final List<ItemStack> inventory;
 	private final int columns;

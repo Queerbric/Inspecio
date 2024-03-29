@@ -61,8 +61,9 @@ public abstract class BlockItemMixin extends Item {
 		if (effectsConfig.hasBeacon() && this.getBlock() instanceof BeaconBlock) {
 			var blockEntityTag = BlockItem.getBlockEntityNbtFromStack(stack);
 			var effectsList = new ArrayList<StatusEffectInstance>();
-			var primary = Inspecio.getRawEffectFromTag(blockEntityTag, "Primary");
-			var secondary = Inspecio.getRawEffectFromTag(blockEntityTag, "Secondary");
+
+			var primary = Inspecio.getRawEffectFromTag(blockEntityTag, "primary_effect");
+			var secondary = Inspecio.getRawEffectFromTag(blockEntityTag, "secondary_effect");
 
 			if (primary != null && primary.equals(secondary)) {
 				primary = new StatusEffectInstance(primary.getEffectType(), 200, 1);
