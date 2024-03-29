@@ -20,11 +20,12 @@ package io.github.queerbric.inspecio;
 import io.github.queerbric.inspecio.api.InspecioEntrypoint;
 import io.github.queerbric.inspecio.api.InventoryProvider;
 import net.minecraft.block.Block;
-import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.dispenser.DispenserBlock;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -65,8 +66,6 @@ public class Inspecio implements ClientModInitializer {
 			RegistryKeys.ITEM, new Identifier(NAMESPACE, "hidden_effects"),
 			TagType.CLIENT_FALLBACK
 	);
-	public static final RandomGenerator COMMON_RANDOM = new LegacySimpleRandom(System.currentTimeMillis());
-	public static final Identifier GUI_ICONS_TEXTURE = new Identifier("textures/gui/icons.png");
 	private static InspecioConfig config = InspecioConfig.defaultConfig();
 	private static ModContainer mod;
 
@@ -218,9 +217,7 @@ public class Inspecio implements ClientModInitializer {
 			return null;
 		}
 		if (tag.contains(tagKey, NbtElement.INT_TYPE)) {
-			var effect = StatusEffect.byRawId(tag.getInt(tagKey));
-			if (effect != null)
-				return new StatusEffectInstance(effect, 200, 0);
+			// TODO: Reimplement this
 		}
 		return null;
 	}

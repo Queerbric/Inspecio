@@ -24,11 +24,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 import java.util.Optional;
 
 public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
+	private static final Identifier ARMOR_HALF_TEXTURE = new Identifier("hud/armor_half");
+	private static final Identifier ARMOR_FULL_TEXTURE = new Identifier("hud/armor_full");
 	private final int prot;
 
 	public ArmorTooltipComponent(int prot) {
@@ -66,10 +69,10 @@ public class ArmorTooltipComponent implements ConvertibleTooltipData, TooltipCom
 	@Override
 	public void drawItems(TextRenderer textRenderer, int x, int y, GuiGraphics graphics) {
 		for (int i = 0; i < this.prot / 2; i++) {
-			graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, x + i * 9, y, 34, 9, 9, 9, 256, 256);
+			graphics.drawGuiTexture(ARMOR_FULL_TEXTURE, x + i * 9, y, 9, 9);
 		}
 		if (this.prot % 2 == 1) {
-			graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, x + this.prot / 2 * 9, y, 25, 9, 9, 9, 256, 256);
+			graphics.drawGuiTexture(ARMOR_HALF_TEXTURE,x + this.prot / 2 * 9, y, 9, 9);
 		}
 	}
 }

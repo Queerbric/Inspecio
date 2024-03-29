@@ -42,7 +42,8 @@ import java.util.Optional;
  * @since 1.0.0
  */
 public class InventoryTooltipComponent implements ConvertibleTooltipData, TooltipComponent {
-	private static final Identifier STATS_ICONS_TEXTURE = new Identifier("textures/gui/container/stats_icons.png");
+	// TODO: This texture got removed
+	private static final Identifier SLOT_TEXTURE = new Identifier("container/slot");
 	private final List<ItemStack> inventory;
 	private final int columns;
 	private final DyeColor color;
@@ -128,7 +129,7 @@ public class InventoryTooltipComponent implements ConvertibleTooltipData, Toolti
 		if (color == null)
 			color = new float[]{1.f, 1.f, 1.f};
 		RenderSystem.setShaderColor(color[0], color[1], color[2], 1.f);
-		graphics.drawTexture(STATS_ICONS_TEXTURE, x, y, z, 0.f, 0.f, 18, 18, 128, 128);
+		graphics.drawGuiTexture(SLOT_TEXTURE, x, y, z, 18, 18);
 		RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);
 	}
 

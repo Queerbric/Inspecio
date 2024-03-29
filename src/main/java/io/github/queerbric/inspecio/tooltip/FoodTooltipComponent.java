@@ -24,10 +24,16 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.item.FoodComponent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 public record FoodTooltipComponent(int hunger, float saturation) implements ConvertibleTooltipData, TooltipComponent {
+
+	private static final Identifier FOOD_EMPTY_TEXTURE = new Identifier("hud/food_empty");
+	private static final Identifier FOOD_HALF_TEXTURE = new Identifier("hud/food_half");
+	private static final Identifier FOOD_FULL_TEXTURE = new Identifier("hud/food_full");
+
 	public FoodTooltipComponent(FoodComponent component) {
 		this(component.getHunger(), component.getHunger() * component.getSaturationModifier());
 	}
@@ -76,11 +82,12 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 		if (foodConfig.hasHunger()) {
 			for (int i = 0; i < (this.hunger + 1) / 2; i++) {
 				pos.wrap(i);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 16, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_EMPTY_TEXTURE, pos.x, pos.y, 9, 9);
 				pos.moveForward();
 			}
 		}
 
+		/* TODO: Texture got removed in Minecraft.
 		// Draw saturation outline.
 		if (foodConfig.getSaturationMode().isEnabled()) {
 			RenderSystem.setShaderColor(159 / 255.f, 134 / 255.f, 9 / 255.f, 1.f);
@@ -99,6 +106,7 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 				pos.moveForward();
 			}
 		}
+	 	*/
 
 		// Draw hunger bars.
 		RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);
@@ -107,16 +115,17 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 
 			for (int i = 0; i < this.hunger / 2; i++) {
 				pos.wrap(i);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 52, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_FULL_TEXTURE, pos.x, pos.y, 9, 9);
 				pos.moveForward();
 			}
 
 			if (this.hunger % 2 == 1) {
 				pos.wrap(this.hunger / 2);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 61, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_HALF_TEXTURE, pos.x, pos.y, 9, 9);
 			}
 		}
 
+		/* TODO: Texture got removed in Minecraft.
 		// Draw saturation bar if separate (or alone).
 		if (foodConfig.getSaturationMode() == SaturationTooltipMode.SEPARATED || !foodConfig.hasHunger()) {
 			RenderSystem.setShaderColor(229 / 255.f, 204 / 255.f, 209 / 255.f, 1.f);
@@ -140,6 +149,7 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 
 			RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);
 		}
+		 */
 	}
 
 	private int getHungerChunks() {
