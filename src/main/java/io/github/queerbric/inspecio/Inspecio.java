@@ -20,9 +20,9 @@ package io.github.queerbric.inspecio;
 import io.github.queerbric.inspecio.api.InspecioEntrypoint;
 import io.github.queerbric.inspecio.api.InventoryProvider;
 import net.minecraft.block.Block;
-import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.dispenser.DispenserBlock;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.inventory.Inventories;
@@ -31,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
@@ -38,8 +39,6 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.random.LegacySimpleRandom;
-import net.minecraft.util.random.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -65,8 +64,6 @@ public class Inspecio implements ClientModInitializer {
 			RegistryKeys.ITEM, new Identifier(NAMESPACE, "hidden_effects"),
 			TagType.CLIENT_FALLBACK
 	);
-	public static final RandomGenerator COMMON_RANDOM = new LegacySimpleRandom(System.currentTimeMillis());
-	public static final Identifier GUI_ICONS_TEXTURE = new Identifier("textures/gui/icons.png");
 	private static InspecioConfig config = InspecioConfig.defaultConfig();
 	private static ModContainer mod;
 
@@ -214,15 +211,16 @@ public class Inspecio implements ClientModInitializer {
 	}
 
 	public static @Nullable StatusEffectInstance getRawEffectFromTag(NbtCompound tag, String tagKey) {
-		if (tag == null) {
+		if (tag.contains(tagKey, NbtElement.STRING_TYPE)) {
+			Identifier identifier = Identifier.tryParse(tag.getString(tagKey));
+			StatusEffect statusEffect = Registries.STATUS_EFFECT.get(identifier);
+			if(statusEffect == null){
+				return null;
+			}
+			return new StatusEffectInstance(statusEffect, 200, 1);
+		} else {
 			return null;
 		}
-		if (tag.contains(tagKey, NbtElement.INT_TYPE)) {
-			var effect = StatusEffect.byRawId(tag.getInt(tagKey));
-			if (effect != null)
-				return new StatusEffectInstance(effect, 200, 0);
-		}
-		return null;
 	}
 
 	/**

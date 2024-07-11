@@ -24,10 +24,17 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.item.FoodComponent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.quiltmc.qsl.tooltip.api.ConvertibleTooltipData;
 
 public record FoodTooltipComponent(int hunger, float saturation) implements ConvertibleTooltipData, TooltipComponent {
+
+	private static final Identifier FOOD_EMPTY_TEXTURE = new Identifier("hud/food_empty");
+	private static final Identifier FOOD_HALF_TEXTURE = new Identifier("hud/food_half");
+	private static final Identifier FOOD_FULL_TEXTURE = new Identifier("hud/food_full");
+	private static final Identifier HUNGER_OUTLINE = new Identifier(Inspecio.NAMESPACE, "textures/tooltips/hunger_outline.png");
+
 	public FoodTooltipComponent(FoodComponent component) {
 		this(component.getHunger(), component.getHunger() * component.getSaturationModifier());
 	}
@@ -76,7 +83,7 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 		if (foodConfig.hasHunger()) {
 			for (int i = 0; i < (this.hunger + 1) / 2; i++) {
 				pos.wrap(i);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 16, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_EMPTY_TEXTURE, pos.x, pos.y, 9, 9);
 				pos.moveForward();
 			}
 		}
@@ -94,7 +101,7 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 				if (this.saturation - i < 1f) {
 					width = Math.round(width * (saturation - i));
 				}
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 25, 27, width, 9, 256, 256);
+				graphics.drawTexture(HUNGER_OUTLINE, pos.x, pos.y, 0, 0, width, 9, 9, 9);
 
 				pos.moveForward();
 			}
@@ -107,13 +114,13 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 
 			for (int i = 0; i < this.hunger / 2; i++) {
 				pos.wrap(i);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 52, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_FULL_TEXTURE, pos.x, pos.y, 9, 9);
 				pos.moveForward();
 			}
 
 			if (this.hunger % 2 == 1) {
 				pos.wrap(this.hunger / 2);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 61, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_HALF_TEXTURE, pos.x, pos.y, 9, 9);
 			}
 		}
 
@@ -129,13 +136,13 @@ public record FoodTooltipComponent(int hunger, float saturation) implements Conv
 
 			for (int i = 0; i < intSaturation / 2; i++) {
 				pos.wrap(i);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 52, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_FULL_TEXTURE, pos.x, pos.y, 9, 9);
 				pos.moveForward();
 			}
 
 			if (intSaturation % 2 == 1) {
 				pos.wrap(intSaturation / 2);
-				graphics.drawTexture(Inspecio.GUI_ICONS_TEXTURE, pos.x, pos.y, 61, 27, 9, 9, 256, 256);
+				graphics.drawGuiTexture(FOOD_HALF_TEXTURE, pos.x, pos.y, 9, 9);
 			}
 
 			RenderSystem.setShaderColor(1.f, 1.f, 1.f, 1.f);

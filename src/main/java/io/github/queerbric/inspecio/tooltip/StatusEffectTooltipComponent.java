@@ -185,7 +185,7 @@ public class StatusEffectTooltipComponent implements ConvertibleTooltipData, Too
 	}
 
 	private Text getDuration(int index, StatusEffectInstance statusEffect) {
-		var duration = StatusEffectUtil.durationToString(statusEffect, multiplier);
+		var duration = StatusEffectUtil.durationToString(statusEffect, multiplier, 1.f);
 
 		if (this.chances.size() > index && this.chances.getFloat(index) < 1f) {
 			duration = duration.copy().append(" - " + (int) (this.chances.getFloat(index) * 100f) + "%");

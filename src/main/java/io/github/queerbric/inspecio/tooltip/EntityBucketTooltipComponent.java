@@ -32,7 +32,7 @@ import net.minecraft.nbt.NbtCompound;
 import java.util.Optional;
 
 /**
- * Represents a tooltip component which displays bees from a beehive.
+ * Represents a tooltip component which displays entities from a bucket.
  *
  * @author LambdAurora
  * @version 1.8.0

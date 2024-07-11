@@ -25,6 +25,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.*;
+import net.minecraft.block.dispenser.DispenserBlock;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
